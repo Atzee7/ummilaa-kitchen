@@ -18,7 +18,7 @@
 
 @section('content')
 
-<div class="px-[80px] py-[60px] bg-[#faf8f8] min-h-screen">
+<div class="px-4 md:px-10 lg:px-[80px] py-8 lg:py-[60px] bg-[#faf8f8] min-h-screen">
 
     <div class="mb-10">
         <h1 class="font-playfair text-[2.2rem] text-[#1a1a1a]">Checkout</h1>
@@ -53,7 +53,7 @@
 
     <form method="POST" action="{{ route('checkout.store') }}" id="checkout-form">
         @csrf
-        <div class="grid grid-cols-[1fr_400px] gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 lg:gap-8 items-start">
 
             {{-- KIRI --}}
             <div>
@@ -107,7 +107,7 @@
                     <div class="font-extrabold text-[#1a1a1a] text-base mb-[22px] pb-[14px] border-b border-[#f5f0f0] flex items-center gap-[10px]">
                         <i class="fas fa-truck text-maroon w-5 text-center"></i> Metode Pengiriman
                     </div>
-                    <div class="grid grid-cols-2 gap-[14px]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-[14px]">
                         <label class="delivery-option relative border-2 border-maroon-200 rounded-[16px] p-5 cursor-pointer transition-all duration-[250ms] overflow-hidden {{ !$bisaDelivery ? 'opacity-45 cursor-not-allowed bg-[#f9f9f9]' : 'hover:border-[#d4a0a0] hover:bg-[#fdf8f8]' }}" id="label-delivery">
                             <div class="delivery-top-bar absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[16px]"></div>
                             <input type="radio" name="metode_pengiriman" value="delivery" id="radio-delivery" class="hidden" {{ $bisaDelivery ? 'checked' : 'disabled' }}>
@@ -182,7 +182,7 @@
             </div>
 
             {{-- KANAN: SUMMARY --}}
-            <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden shadow-[0_4px_24px_rgba(139,26,26,0.07)] sticky top-[90px]">
+            <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden shadow-[0_4px_24px_rgba(139,26,26,0.07)] lg:sticky lg:top-[90px]">
                 <div class="px-7 py-[22px] bg-[linear-gradient(135deg,#8B1A1A,#6B1414)] text-white">
                     <h3 class="font-playfair text-[1.1rem] font-bold">Ringkasan Pesanan</h3>
                     <p class="text-[0.78rem] opacity-75 mt-0.5">{{ $carts->count() }} produk</p>

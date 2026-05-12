@@ -95,6 +95,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Testimoni Admin — TAMBAHAN
         Route::get('/testimonials', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'index'])->name('testimonials.index');
         Route::delete('/testimonials/{id}', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'destroy'])->name('testimonials.destroy');
+
+        // API polling pesanan aktif
+        Route::get('/api/pesanan-aktif', [App\Http\Controllers\Admin\DashboardController::class, 'pesananAktifApi'])->name('api.pesanan-aktif');
     });
 });
 

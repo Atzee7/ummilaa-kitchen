@@ -7,13 +7,13 @@
 @section('content')
 
 {{-- HERO --}}
-<section class="grid grid-cols-2 items-center gap-[60px] px-[80px] py-[80px] min-h-[90vh] bg-white relative overflow-hidden
+<section class="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-[60px] px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] min-h-0 lg:min-h-[90vh] bg-white relative overflow-hidden
     before:content-[''] before:absolute before:top-[-100px] before:right-[-100px] before:w-[600px] before:h-[600px] before:rounded-full before:bg-[radial-gradient(circle,#fdf0f0_0%,transparent_70%)] before:z-0">
     <div class="relative z-[1]">
         <div class="inline-flex items-center gap-2 bg-maroon-100 text-maroon px-[18px] py-2 rounded-[30px] text-[0.82rem] font-bold tracking-[1px] uppercase mb-6">
             <i class="fas fa-fire text-[0.75rem]"></i> Kuliner Favorit Malang
         </div>
-        <h1 class="font-playfair text-[3.2rem] leading-[1.2] text-[#1a1a1a] mb-5">
+        <h1 class="font-playfair text-[2rem] md:text-[2.6rem] lg:text-[3.2rem] leading-[1.2] text-[#1a1a1a] mb-5">
             Pesan <span class="text-maroon">Makanan Lezat</span> & Fresh Langsung ke Pintu Anda
         </h1>
         <p class="text-base text-[#777] leading-[1.8] mb-9 max-w-[400px]">Aneka dimsum, risol, frozen food, dan catering berkualitas dari dapur Ummilaa Kitchen. Mudah dipesan, cepat dikirim.</p>
@@ -27,24 +27,24 @@
         </div>
     </div>
     <div class="relative z-[1]">
-        <img class="w-full h-[520px] object-cover rounded-[24px] shadow-[0_30px_70px_rgba(139,26,26,0.2)]"
+        <img class="w-full h-[280px] md:h-[400px] lg:h-[520px] object-cover rounded-[24px] shadow-[0_30px_70px_rgba(139,26,26,0.2)]"
              src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800" alt="Dimsum Ummilaa Kitchen">
-        <div class="absolute top-[30px] right-[-20px] bg-maroon rounded-[16px] px-5 py-4 shadow-[0_10px_40px_rgba(139,26,26,0.3)] text-white text-center">
+        <div class="absolute top-[20px] right-[10px] lg:top-[30px] lg:right-[-20px] bg-maroon rounded-[16px] px-4 py-3 lg:px-5 lg:py-4 shadow-[0_10px_40px_rgba(139,26,26,0.3)] text-white text-center">
             <strong class="block text-[1.4rem] font-playfair">50+</strong>
             <span class="text-[0.78rem] opacity-85">Varian Menu</span>
         </div>
     </div>
 </section>
 
-<div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-[80px]"></div>
+<div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-5 md:mx-10 lg:mx-[80px]"></div>
 
 {{-- CATALOGUE --}}
-<section class="px-[80px] py-[80px]" id="catalogue">
+<section class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px]" id="catalogue">
     <div class="mb-[50px]">
-        <div class="flex justify-between items-end">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-3">
             <div>
                 <div class="text-[0.78rem] font-bold tracking-[2px] uppercase text-maroon mb-2.5">Menu Pilihan</div>
-                <h2 class="font-playfair text-[2.2rem] text-[#1a1a1a]">Our Special <span class="text-maroon">Catalogue</span></h2>
+                <h2 class="font-playfair text-[1.6rem] md:text-[2rem] lg:text-[2.2rem] text-[#1a1a1a]">Our Special <span class="text-maroon">Catalogue</span></h2>
                 <p class="text-[#999] mt-2 text-[0.95rem]">Produk segar dan lezat siap dipesan hari ini</p>
             </div>
             <a href="{{ route('catalogue') }}" class="inline-flex items-center gap-2 text-maroon font-bold text-[0.9rem] transition-all duration-200 hover:gap-3 no-underline">
@@ -63,9 +63,9 @@
         <div class="flex gap-7 will-change-transform" id="productCarousel">
             @foreach($featuredProducts as $product)
             <a href="{{ $product->status !== 'habis' ? route('product.show', $product->id) : '#' }}"
-               class="product-card flex-[0_0_calc(25%-21px)] rounded-[20px] overflow-hidden bg-white border border-maroon-200 transition-all duration-300 no-underline block {{ $product->status === 'habis' ? 'pointer-events-none' : '' }} hover:shadow-[0_16px_48px_rgba(139,26,26,0.12)] hover:-translate-y-1.5">
+               class="product-card flex-[0_0_calc(50%-14px)] md:flex-[0_0_calc(33.333%-19px)] lg:flex-[0_0_calc(25%-21px)] rounded-[20px] overflow-hidden bg-white border border-maroon-200 transition-all duration-300 no-underline block {{ $product->status === 'habis' ? 'pointer-events-none' : '' }} hover:shadow-[0_16px_48px_rgba(139,26,26,0.12)] hover:-translate-y-1.5">
                 <div class="relative overflow-hidden">
-                    <img class="w-full h-[200px] object-cover bg-maroon-50 block transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'group-hover:scale-105' }}"
+                    <img class="w-full h-[160px] md:h-[180px] lg:h-[200px] object-cover bg-maroon-50 block transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'group-hover:scale-105' }}"
                          src="{{ $product->image && Str::startsWith($product->image, 'products/') ? asset('storage/' . $product->image) : $product->image }}"
                          alt="{{ $product->name }}">
 
@@ -100,16 +100,16 @@
 <div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-[80px]"></div>
 
 {{-- AREA PENGIRIMAN --}}
-<section class="px-[80px] py-[80px] bg-[#fdf9f9]">
+<section class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] bg-[#fdf9f9]">
     <div class="text-center mb-9">
         <div class="text-[0.78rem] font-bold tracking-[2px] uppercase text-maroon mb-2.5">Jangkauan Layanan</div>
-        <h2 class="font-playfair text-[2.2rem] text-[#1a1a1a]">Area <span class="text-maroon">Pengiriman</span></h2>
+        <h2 class="font-playfair text-[1.6rem] md:text-[2rem] lg:text-[2.2rem] text-[#1a1a1a]">Area <span class="text-maroon">Pengiriman</span></h2>
         <p class="text-[#999] mt-2 text-[0.95rem]">
             Kami melayani delivery dalam radius <strong class="text-maroon">5 km</strong> dari outlet. Di luar area? Kamu tetap bisa ambil sendiri!
         </p>
     </div>
 
-    <div class="grid grid-cols-3 gap-5 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         <div class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
             <div class="text-[2.2rem] mb-3">🛵</div>
             <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Delivery</div>
@@ -131,7 +131,7 @@
     </div>
 
     <div class="rounded-[20px] overflow-hidden shadow-[0_8px_32px_rgba(139,26,26,0.1)] border border-maroon-200">
-        <div id="mapCoverage" class="h-[420px] w-full"></div>
+        <div id="mapCoverage" class="h-[280px] md:h-[350px] lg:h-[420px] w-full"></div>
     </div>
 
     <p class="text-center text-[0.8rem] text-[#bbb] mt-[14px]">

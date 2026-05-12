@@ -10,7 +10,8 @@
 <body class="font-['Nunito'] bg-[#f4f6f9]">
 
 {{-- ══════════════ SIDEBAR ══════════════ --}}
-<aside class="fixed top-0 left-0 w-[260px] min-h-screen bg-[#8B1A1A] flex flex-col z-50">
+<div id="sidebar-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 lg:hidden"></div>
+<aside id="admin-sidebar" class="fixed top-0 left-0 w-[260px] min-h-screen bg-[#8B1A1A] flex flex-col z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
     {{-- Brand --}}
     <div class="flex items-center gap-3 px-6 py-5 border-b border-white/[0.07]">
@@ -83,13 +84,11 @@
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
             Pesanan
+            <span id="order-badge" class="hidden ml-auto bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center leading-none">0</span>
         </a>
 
         <a href="{{ route('admin.kasir.index') }}"
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
-               {{ $isActive('admin.kasir')
-                   ? 'bg-black/20 text-white [&>svg]:opacity-100 before:content-[\'\'] before:absolute before:left-0 before:top-[20%] before:bottom-[20%] before:w-[3px] before:bg-white before:rounded-r-[3px]'
-                   : 'text-white/55 hover:bg-white/[0.06] hover:text-white/90' }}">
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative text-white/55 hover:bg-white/[0.06] hover:text-white/90">
             <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -165,13 +164,21 @@
 </aside>
 
 {{-- ══════════════ MAIN ══════════════ --}}
-<div class="ml-[260px] min-h-screen">
+<div class="lg:ml-[260px] min-h-screen">
 
     {{-- Top bar --}}
-    <div class="bg-white px-8 h-[60px] flex items-center justify-between border-b border-gray-100 sticky top-0 z-40">
-        <span class="font-['Playfair_Display'] text-lg font-bold text-[#1e1e2d]">@yield('title', 'Dashboard')</span>
+    <div class="bg-white px-4 md:px-8 h-[60px] flex items-center justify-between border-b border-gray-100 sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            {{-- Hamburger (mobile only) --}}
+            <button id="sidebar-toggle" class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors border-none bg-transparent cursor-pointer">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <span class="font-['Playfair_Display'] text-lg font-bold text-[#1e1e2d]">@yield('title', 'Dashboard')</span>
+        </div>
         <div class="flex items-center gap-3 text-sm text-gray-400">
-            <span>{{ now()->translatedFormat('l, d F Y') }}</span>
+            <span class="hidden md:block">{{ now()->translatedFormat('l, d F Y') }}</span>
             <div class="w-8 h-8 rounded-full bg-[#8B1A1A] text-white flex items-center justify-center text-sm font-black">
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
             </div>
@@ -179,7 +186,7 @@
     </div>
 
     {{-- Page content --}}
-    <div class="p-8">
+    <div class="p-4 md:p-6 lg:p-8">
         @if(session('success'))
             <div class="mb-5 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm flex items-center gap-2.5">
                 ✅ {{ session('success') }}
@@ -192,5 +199,68 @@
 </div>
 
 @stack('scripts')
+<script>
+(function () {
+    const apiUrl = '{{ route("admin.api.pesanan-aktif") }}';
+    const badge  = document.getElementById('order-badge');
+    const tbody  = document.getElementById('tbody-pesanan-aktif');
+
+    const statusColor = {
+        pending:    'bg-yellow-100 text-yellow-700',
+        diproses:   'bg-blue-100 text-blue-700',
+        dikirim:    'bg-purple-100 text-purple-700',
+        selesai:    'bg-green-100 text-green-700',
+        dibatalkan: 'bg-red-100 text-red-700',
+    };
+
+    function renderRow(o) {
+        const sc = statusColor[o.status] || 'bg-gray-100 text-gray-700';
+        const label = o.status.charAt(0).toUpperCase() + o.status.slice(1);
+        return `<tr class="border-b border-gray-50 hover:bg-gray-50">
+            <td class="py-3 px-4 font-semibold text-gray-700">#${o.id}</td>
+            <td class="py-3 px-4 text-gray-600">${o.nama}</td>
+            <td class="py-3 px-4 font-semibold">Rp${Number(o.total).toLocaleString('id-ID')}</td>
+            <td class="py-3 px-4 text-gray-600 uppercase">${o.metode}</td>
+            <td class="py-3 px-4"><span class="px-2 py-1 rounded-full text-xs font-semibold ${sc}">${label}</span></td>
+            <td class="py-3 px-4 text-gray-500">${o.tanggal}</td>
+        </tr>`;
+    }
+
+    function poll() {
+        fetch(apiUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(data => {
+                if (data.badge_count > 0) {
+                    badge.textContent = data.badge_count > 99 ? '99+' : data.badge_count;
+                    badge.classList.remove('hidden');
+                    badge.classList.add('flex');
+                } else {
+                    badge.classList.add('hidden');
+                    badge.classList.remove('flex');
+                }
+                if (tbody) {
+                    tbody.innerHTML = data.orders.length
+                        ? data.orders.map(renderRow).join('')
+                        : '<tr><td colspan="6" class="py-8 text-center text-gray-400">Tidak ada pesanan aktif saat ini</td></tr>';
+                }
+            })
+            .catch(() => {});
+    }
+
+    poll();
+    setInterval(poll, 15000);
+})();
+
+    const sidebar  = document.getElementById('admin-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+        backdrop.classList.toggle('hidden');
+    });
+    backdrop.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+    });
+</script>
 </body>
 </html>

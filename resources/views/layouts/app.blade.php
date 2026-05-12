@@ -13,13 +13,14 @@
 <body class="font-sans text-[#333] bg-white">
 
 {{-- NAVBAR --}}
-<nav class="flex items-center justify-between px-[60px] py-4 bg-white shadow-sm sticky top-0 z-[100]">
-    <a href="{{ route('home') }}" class="font-playfair text-[1.6rem] font-bold text-maroon no-underline">
+<nav x-data="{ mobileMenu: false }" class="flex items-center justify-between px-5 md:px-10 lg:px-[60px] py-4 bg-white shadow-sm sticky top-0 z-[100]">
+    <a href="{{ route('home') }}" class="font-playfair text-[1.4rem] lg:text-[1.6rem] font-bold text-maroon no-underline">
         Ummilaa
         <span class="text-[0.75rem] block text-[#666] font-sans font-medium tracking-[2px]">KITCHEN</span>
     </a>
 
-    <div class="flex gap-9 items-center">
+    {{-- Desktop Nav Links --}}
+    <div class="hidden lg:flex gap-9 items-center">
         <a href="{{ route('home') }}"
            class="font-bold text-base transition-colors duration-200 hover:text-maroon {{ request()->routeIs('home') ? 'text-maroon' : 'text-[#333]' }}">Home</a>
         <a href="{{ route('about') }}"
@@ -30,7 +31,8 @@
            class="font-bold text-base transition-colors duration-200 hover:text-maroon {{ request()->routeIs('contact') ? 'text-maroon' : 'text-[#333]' }}">Contact Us</a>
     </div>
 
-    <div class="flex items-center gap-5">
+    {{-- Desktop Right Actions --}}
+    <div class="hidden lg:flex items-center gap-5">
         @auth
         <a href="{{ route('cart') }}" class="relative text-[1.2rem] text-maroon cursor-pointer">
             <i class="fas fa-shopping-cart"></i>
@@ -66,13 +68,70 @@
         </a>
         @endauth
     </div>
+
+    {{-- Mobile Right: Cart + Hamburger --}}
+    <div class="flex items-center gap-4 lg:hidden">
+        @auth
+        <a href="{{ route('cart') }}" class="relative text-[1.1rem] text-maroon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="absolute top-[-8px] right-[-8px] bg-maroon text-white rounded-full w-[16px] h-[16px] text-[0.6rem] flex items-center justify-center font-bold">
+                {{ \App\Models\Cart::where('user_id', Auth::id())->count() }}
+            </span>
+        </a>
+        @endauth
+        <button @click="mobileMenu = !mobileMenu" class="text-[1.3rem] text-[#333] bg-transparent border-none cursor-pointer p-1">
+            <i x-show="!mobileMenu" class="fas fa-bars"></i>
+            <i x-show="mobileMenu" class="fas fa-times" x-cloak></i>
+        </button>
+    </div>
+
+    {{-- Mobile Menu Dropdown --}}
+    <div x-show="mobileMenu" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+         @click.away="mobileMenu = false"
+         class="absolute top-full left-0 right-0 bg-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] border-t border-maroon-200 z-[200] lg:hidden" x-cloak>
+        <div class="flex flex-col px-5 py-4 gap-1">
+            <a href="{{ route('home') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('home') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
+                <i class="fas fa-home w-5 mr-2 text-maroon"></i> Home
+            </a>
+            <a href="{{ route('about') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('about') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
+                <i class="fas fa-info-circle w-5 mr-2 text-maroon"></i> About Us
+            </a>
+            <a href="{{ route('catalogue') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('catalogue') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
+                <i class="fas fa-utensils w-5 mr-2 text-maroon"></i> Catalogue
+            </a>
+            <a href="{{ route('contact') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('contact') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
+                <i class="fas fa-envelope w-5 mr-2 text-maroon"></i> Contact Us
+            </a>
+
+            <div class="h-px bg-maroon-200 my-2"></div>
+
+            @auth
+            <a href="{{ route('orders') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline text-[#333] hover:bg-maroon-50 hover:text-maroon transition-colors">
+                <i class="fas fa-box w-5 mr-2 text-maroon"></i> Pesanan Saya
+            </a>
+            <a href="{{ route('profile.user') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline text-[#333] hover:bg-maroon-50 hover:text-maroon transition-colors">
+                <i class="fas fa-user-edit w-5 mr-2 text-maroon"></i> Profile
+            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="w-full py-3 px-4 rounded-xl font-bold text-[0.95rem] text-[#333] hover:bg-maroon-50 hover:text-maroon transition-colors bg-transparent border-none cursor-pointer font-sans text-left">
+                    <i class="fas fa-sign-out-alt w-5 mr-2 text-maroon"></i> Logout
+                </button>
+            </form>
+            @else
+            <a href="{{ route('login') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] bg-maroon text-white text-center no-underline hover:bg-maroon-dark transition-colors mt-1">
+                <i class="fas fa-user mr-2"></i> Login
+            </a>
+            @endauth
+        </div>
+    </div>
 </nav>
 
 @yield('content')
 
 {{-- FOOTER --}}
-<footer class="bg-maroon-dark text-white pt-10 px-[60px] pb-5 mt-20">
-    <div class="grid grid-cols-[2fr_1fr_1fr] gap-10 mb-[30px]">
+<footer class="bg-maroon-dark text-white pt-10 px-5 md:px-10 lg:px-[60px] pb-5 mt-20">
+    <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-10 mb-[30px]">
         <div>
             <div class="font-playfair text-[1.6rem] font-bold text-white">
                 Ummilaa
@@ -97,7 +156,7 @@
 </footer>
 
 {{-- WA BUTTON --}}
-<a href="#" class="fixed bottom-6 right-6 bg-maroon text-white w-16 h-16 rounded-full flex items-center justify-center text-[1.9rem] shadow-[0_4px_14px_rgba(0,0,0,0.25)] z-[999] hover:scale-110 transition-transform duration-200 no-underline">
+<a href="#" class="fixed bottom-6 right-6 bg-maroon text-white w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-[1.6rem] lg:text-[1.9rem] shadow-[0_4px_14px_rgba(0,0,0,0.25)] z-[999] hover:scale-110 transition-transform duration-200 no-underline">
     <i class="fab fa-whatsapp"></i>
 </a>
 

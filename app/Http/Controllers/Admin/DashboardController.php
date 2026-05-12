@@ -9,6 +9,8 @@ use App\Models\User;
 
 class DashboardController extends Controller
 {
+    private array $activeStatuses = ['pending', 'diproses', 'dikirim'];
+
     public function index()
     {
         $totalProduk    = Product::count();
@@ -16,9 +18,10 @@ class DashboardController extends Controller
         $totalPengguna  = User::where('role', 'user')->count();
         $totalPenjualan = Order::where('status', '!=', 'dibatalkan')->sum('total');
 
-        $pesananTerbaru = Order::with('user')
+        $pesananAktif = Order::with('user')
+            ->whereIn('status', $this->activeStatuses)
             ->latest()
-            ->take(5)
+            ->take(10)
             ->get();
 
         return view('admin.dashboard', compact(
@@ -26,7 +29,28 @@ class DashboardController extends Controller
             'totalPesanan',
             'totalPengguna',
             'totalPenjualan',
-            'pesananTerbaru'
+            'pesananAktif'
         ));
+    }
+
+    public function pesananAktifApi()
+    {
+        $orders = Order::with('user')
+            ->whereIn('status', $this->activeStatuses)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return response()->json([
+            'badge_count' => Order::whereIn('status', $this->activeStatuses)->count(),
+            'orders' => $orders->map(fn($o) => [
+                'id'      => $o->id,
+                'nama'    => $o->user->name ?? $o->nama_penerima ?? '-',
+                'total'   => $o->total,
+                'metode'  => $o->metode_pembayaran,
+                'status'  => $o->status,
+                'tanggal' => $o->created_at->format('d M Y'),
+            ]),
+        ]);
     }
 }

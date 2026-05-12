@@ -2,11 +2,23 @@
 
 @section('content')
 
-<div class="grid grid-cols-[280px_1fr] gap-10 px-[80px] py-[60px] min-h-[80vh]">
+{{-- Mobile filter toggle --}}
+<div class="lg:hidden px-4 pt-6 pb-2 flex items-center justify-between">
+    <div>
+        <h2 class="font-playfair text-[1.5rem] text-[#1a1a1a]">Catalogue</h2>
+        <p class="text-[#999] text-[0.85rem]">Temukan produk favorit Anda</p>
+    </div>
+    <button id="filter-toggle"
+        class="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-xl text-sm font-bold border-none cursor-pointer">
+        <i class="fas fa-sliders-h text-xs"></i> Filter
+    </button>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-10 px-4 md:px-10 lg:px-[80px] py-6 lg:py-[60px] min-h-[80vh]">
 
     {{-- SIDEBAR --}}
-    <aside class="sticky top-[90px] h-fit">
-        <div class="mb-8">
+    <aside id="filter-sidebar" class="hidden lg:block lg:sticky lg:top-[90px] h-fit">
+        <div class="hidden lg:block mb-8">
             <h2 class="font-playfair text-[1.8rem] text-[#1a1a1a]">Catalogue</h2>
             <p class="text-[#999] text-[0.88rem] mt-1.5">Temukan produk favorit Anda</p>
         </div>
@@ -49,7 +61,7 @@
             </select>
         </div>
 
-        <div class="grid grid-cols-3 gap-6" id="productsGrid">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6" id="productsGrid">
             @foreach($products as $product)
             <div class="prod-card rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 transition-all duration-300 relative {{ $product->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]' }}"
                 data-cat="{{ $product->categoryRelation->slug ?? '' }}"
@@ -174,5 +186,14 @@
 
     searchInput.addEventListener('input', filterProducts);
     sortSelect.addEventListener('change', filterProducts);
+
+    // Mobile filter toggle
+    const filterToggle = document.getElementById('filter-toggle');
+    const filterSidebar = document.getElementById('filter-sidebar');
+    if (filterToggle) {
+        filterToggle.addEventListener('click', () => {
+            filterSidebar.classList.toggle('hidden');
+        });
+    }
 </script>
 @endpush

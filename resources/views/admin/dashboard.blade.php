@@ -63,7 +63,7 @@
 
 <div class="bg-white rounded-2xl shadow-sm p-6">
     <div class="flex items-center justify-between mb-6">
-        <h3 class="font-playfair text-xl font-bold text-gray-800">Pesanan Terbaru</h3>
+        <h3 class="font-playfair text-xl font-bold text-gray-800">Pesanan Aktif</h3>
         <a href="{{ route('admin.orders.index') }}" class="text-sm font-semibold hover:underline" style="color: #8B1A1A;">Lihat Semua →</a>
     </div>
     <div class="overflow-x-auto">
@@ -78,11 +78,11 @@
                     <th class="text-left py-3 px-4 text-gray-500 font-semibold">Tanggal</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse ($pesananTerbaru as $order)
+            <tbody id="tbody-pesanan-aktif">
+                @forelse ($pesananAktif as $order)
                 <tr class="border-b border-gray-50 hover:bg-gray-50">
                     <td class="py-3 px-4 font-semibold text-gray-700">#{{ $order->id }}</td>
-                    <td class="py-3 px-4 text-gray-600">{{ $order->user->name ?? '-' }}</td>
+                    <td class="py-3 px-4 text-gray-600">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</td>
                     <td class="py-3 px-4 font-semibold">Rp{{ number_format($order->total, 0, ',', '.') }}</td>
                     <td class="py-3 px-4 text-gray-600 uppercase">{{ $order->metode_pembayaran }}</td>
                     <td class="py-3 px-4">
@@ -101,7 +101,7 @@
                     <td class="py-3 px-4 text-gray-500">{{ $order->created_at->format('d M Y') }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="py-8 text-center text-gray-400">Belum ada pesanan</td></tr>
+                <tr><td colspan="6" class="py-8 text-center text-gray-400">Tidak ada pesanan aktif saat ini</td></tr>
                 @endforelse
             </tbody>
         </table>

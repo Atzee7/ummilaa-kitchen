@@ -19,12 +19,12 @@
 <section class="relative overflow-hidden bg-[linear-gradient(135deg,#8B1A1A_0%,#5a0e0e_60%,#3a0808_100%)] px-[80px] pt-[100px] pb-[80px] text-white">
     <div class="absolute -right-[150px] -top-[150px] w-[600px] h-[600px] rounded-full bg-white/[0.04] pointer-events-none"></div>
     <div class="absolute -left-[80px] -bottom-[120px] w-[400px] h-[400px] rounded-full bg-white/[0.03] pointer-events-none"></div>
-    <div class="grid grid-cols-2 gap-[60px] items-center relative z-[1] max-w-[1200px] mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[50px] items-center relative z-[1] max-w-[1200px] mx-auto">
         <div>
             <div class="inline-flex items-center gap-2 bg-white/[0.15] backdrop-blur-[6px] text-[#ffd9d9] px-5 py-2 rounded-[30px] text-[0.78rem] font-bold tracking-[1.8px] uppercase mb-6 border border-white/[0.15]">
                 <i class="fas fa-heart"></i> Tentang Kami
             </div>
-            <h1 class="font-playfair text-[3.2rem] leading-[1.2] mb-5 tracking-[-0.5px]">Dapur Penuh <em class="italic text-[#ffcccc]">Cinta</em>, Rasa yang Tak Terlupakan</h1>
+            <h1 class="font-playfair text-[2rem] md:text-[2.5rem] lg:text-[3rem] leading-[1.2] mb-5 tracking-[-0.5px]">Dapur Penuh <em class="italic text-[#ffcccc]">Cinta</em>, Rasa yang Tak Terlupakan</h1>
             <p class="opacity-85 text-[1rem] leading-[1.9] max-w-[480px] mb-9">Ummilaa Kitchen hadir untuk memudahkan Anda mendapatkan makanan lezat dan fresh. Dari camilan harian hingga catering acara spesial, semua kami siapkan dengan penuh dedikasi.</p>
             <a href="{{ route('catalogue') }}" class="inline-flex items-center gap-[10px] bg-white text-maroon px-7 py-[13px] rounded-[50px] font-extrabold text-[0.92rem] no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(0,0,0,0.25)] shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
                 <i class="fas fa-utensils"></i> Lihat Menu Kami
@@ -33,7 +33,7 @@
         <div class="flex justify-center">
             <div class="relative w-full max-w-[440px]">
                 <div class="absolute -top-5 -right-5 w-[120px] h-[120px] rounded-xl pointer-events-none" style="background-image: radial-gradient(rgba(255,255,255,0.3) 1.5px, transparent 1.5px); background-size: 12px 12px;"></div>
-                <img class="w-full h-[380px] object-cover rounded-[24px] shadow-[0_32px_80px_rgba(0,0,0,0.35)]" src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
+                <img class="w-full h-[260px] md:h-[340px] lg:h-[400px] object-cover rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)]" src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
                 <div class="absolute -bottom-5 -left-5 bg-white text-maroon px-[22px] py-4 rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex items-center gap-3">
                     <div class="w-11 h-11 bg-maroon-100 rounded-xl flex items-center justify-center text-[1.3rem] text-maroon flex-shrink-0">
                         <i class="fas fa-award"></i>
@@ -49,9 +49,9 @@
 </section>
 
 {{-- ========== STORY ========== --}}
-<section class="grid grid-cols-2 gap-[80px] items-center px-[80px] py-[100px] max-w-[1360px] mx-auto box-border">
+<section class="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-[60px] px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] min-h-0 lg:min-h-[90vh] bg-white relative overflow-hidden">
     <div class="relative">
-        <img class="w-full h-[500px] object-cover rounded-[28px] shadow-[0_32px_80px_rgba(139,26,26,0.15)]" src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
+        <img class="w-full h-[280px] md:h-[400px] lg:h-[500px] object-cover rounded-[24px] shadow-[0_30px_70px_rgba(139,26,26,0.2)]" src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
         <div class="absolute top-8 -left-6 bg-maroon text-white px-6 py-[18px] rounded-[20px] text-center shadow-[0_12px_32px_rgba(139,26,26,0.35)]">
             <strong class="block font-playfair text-[2rem]">2019</strong>
             <span class="text-[0.72rem] opacity-85 tracking-[1px] uppercase">Berdiri</span>
@@ -94,10 +94,10 @@
         <div class="flex items-center justify-center gap-2 text-[0.78rem] font-bold tracking-[2.5px] uppercase text-maroon mb-2">
             <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span> Arah & Tujuan
         </div>
-        <h2 class="font-playfair text-[2.4rem] text-[#1a1a1a] mt-2">Visi & Misi Kami</h2>
+        <h2 class="font-playfair text-[1.6rem] md:text-[2rem] lg:text-[2.2rem] text-[#1a1a1a]">Visi & <span class="text-maroon">Misi</span></h2>
         <p class="text-[#999] text-[0.95rem] mt-[10px]">Komitmen kami dalam menghadirkan yang terbaik untuk setiap pelanggan</p>
     </div>
-    <div class="grid grid-cols-2 gap-8 max-w-[1000px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1000px] mx-auto">
         <div class="visimisi-card bg-white rounded-[28px] p-11 shadow-[0_8px_40px_rgba(139,26,26,0.07)] border border-[#f5eded] transition-all duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(139,26,26,0.13)] relative overflow-hidden">
             <div class="w-16 h-16 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.6rem] mb-[26px] shadow-[0_4px_16px_rgba(139,26,26,0.1)]">
                 <i class="fas fa-eye"></i>
@@ -130,12 +130,12 @@
 </section>
 
 {{-- ========== TESTIMONI MARQUEE ========== --}}
-<section class="py-[100px] bg-[linear-gradient(180deg,#fdf5f5_0%,#fff_100%)] overflow-hidden">
+<section class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] bg-[linear-gradient(180deg,#fdf5f5_0%,#fff_100%)] overflow-hidden">
     <div class="text-center mb-14 px-[80px]">
         <div class="flex items-center justify-center gap-2 text-[0.78rem] font-bold tracking-[2.5px] uppercase text-maroon mb-2">
             <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span> Apa Kata Mereka
         </div>
-        <h2 class="font-playfair text-[2.4rem] text-[#1a1a1a] mt-2">Testimoni Pelanggan</h2>
+        <h2 class="font-playfair text-[1.6rem] md:text-[2rem] lg:text-[2.2rem] text-[#1a1a1a]">Cerita <span class="text-maroon">Kami</span></h2>
         <p class="text-[#999] mt-[10px] text-[0.95rem]">Kepuasan pelanggan adalah prioritas utama kami</p>
     </div>
 
@@ -152,6 +152,7 @@
                 @foreach([1,2] as $loop)
                     @foreach($testimonials as $t)
                     <div class="bg-white rounded-[24px] p-[34px] border-[1.5px] border-maroon-200 shadow-[0_6px_28px_rgba(139,26,26,0.07)] transition-all duration-300 relative w-[330px] flex-shrink-0 hover:-translate-y-2 hover:shadow-[0_20px_56px_rgba(139,26,26,0.13)] hover:border-[#e0cccc]">
+                        <div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-5 md:mx-10 lg:mx-[80px]"></div>
                         <div class="absolute top-4 right-4 bg-maroon-100 text-maroon rounded-[20px] px-[10px] py-1 text-[0.75rem] font-bold">{{ $t->rating }}/5</div>
                         <div class="flex justify-between items-start mb-[18px]">
                             <div class="text-[0.9rem] tracking-[2px]">

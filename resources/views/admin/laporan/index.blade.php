@@ -88,8 +88,8 @@
             <tr class="border-b border-gray-50 hover:bg-gray-50">
                 <td class="py-4 px-6 font-semibold text-gray-700">#{{ $order->id }}</td>
                 <td class="py-4 px-6">
-                    <p class="font-semibold text-gray-800">{{ $order->user->name ?? '-' }}</p>
-                    <p class="text-xs text-gray-400">{{ $order->user->email ?? '' }}</p>
+                    <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
+                    <p class="text-xs text-gray-400">{{ $order->user->email ?? 'Pembelian Langsung' }}</p>
                 </td>
                 <td class="py-4 px-6 text-gray-600">Rp{{ number_format($order->subtotal, 0, ',', '.') }}</td>
                 <td class="py-4 px-6 text-gray-600">Rp{{ number_format($order->ongkir, 0, ',', '.') }}</td>

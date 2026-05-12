@@ -22,7 +22,7 @@ class KasirController extends Controller
     {
         $request->validate([
             'nama_penerima'     => 'required|string|max:100',
-            'no_telepon'        => 'required|string|max:20',
+            'no_telepon'        => 'nullable|string|max:50',
             'metode_pembayaran' => 'required|string',
             'items'             => 'required|array|min:1',
             'items.*.product_id'=> 'required|exists:products,id',
@@ -40,7 +40,7 @@ class KasirController extends Controller
         $order = Order::create([
             'user_id'           => null,         // tidak ada akun, jadi null
             'nama_penerima'     => $request->nama_penerima,
-            'no_telepon'        => $request->no_telepon,
+            'no_telepon'        => $request->no_telepon ?? '-',
             'alamat'            => 'Pembelian Langsung di Outlet',
             'metode_pembayaran' => $request->metode_pembayaran,
             'metode_pengiriman' => 'pickup',      // selalu ambil sendiri

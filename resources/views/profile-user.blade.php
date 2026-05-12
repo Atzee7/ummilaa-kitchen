@@ -5,7 +5,7 @@
 @endpush
 
 @section('content')
-<div class="px-[80px] py-[60px]">
+<div class="px-4 md:px-10 lg:px-[80px] py-8 lg:py-[60px]">
 
     @if(session('success'))
     <div class="bg-green-100 text-green-800 px-5 py-[14px] rounded-xl text-[0.9rem] flex items-center gap-[10px] mb-6">
