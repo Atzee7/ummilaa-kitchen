@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Ummilaa Kitchen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans min-h-screen flex">
+
+{{-- KIRI --}}
+<div class="w-[45%] bg-[linear-gradient(160deg,#8B1A1A_0%,#4a0c0c_100%)] flex flex-col justify-between p-[50px] relative overflow-hidden">
+    <div class="absolute bottom-[-60px] left-[-40px] w-[500px] h-[300px] bg-white/[0.05] rounded-full rotate-[-10deg]"></div>
+    <div class="absolute bottom-[-100px] right-[-80px] w-[400px] h-[400px] bg-white/[0.04] rounded-full"></div>
+
+    <div class="font-playfair text-[1.6rem] text-white font-bold relative z-[1]">
+        Ummilaa
+        <span class="block text-[0.7rem] font-sans tracking-[3px] opacity-70 mt-0.5">KITCHEN</span>
+    </div>
+
+    <div class="text-white relative z-[1]">
+        <h1 class="font-playfair text-[2.4rem] leading-[1.3] mb-4">Makanan Lezat & Fresh Siap Dipesan</h1>
+        <p class="opacity-80 text-[0.95rem] leading-[1.7]">Masuk ke akun Anda dan nikmati kemudahan memesan produk Ummilaa Kitchen kapan saja.</p>
+        <div class="mt-8 flex flex-col gap-[14px]">
+            <div class="flex items-center gap-3 text-white text-[0.9rem]">
+                <div class="w-9 h-9 bg-white/15 rounded-full flex items-center justify-center text-[0.85rem] flex-shrink-0"><i class="fas fa-search"></i></div>
+                Cari produk dengan mudah & cepat
+            </div>
+            <div class="flex items-center gap-3 text-white text-[0.9rem]">
+                <div class="w-9 h-9 bg-white/15 rounded-full flex items-center justify-center text-[0.85rem] flex-shrink-0"><i class="fas fa-shopping-bag"></i></div>
+                Pesan langsung tanpa perlu DM
+            </div>
+            <div class="flex items-center gap-3 text-white text-[0.9rem]">
+                <div class="w-9 h-9 bg-white/15 rounded-full flex items-center justify-content-center text-[0.85rem] flex-shrink-0"><i class="fas fa-history"></i></div>
+                Lacak riwayat & status pesanan
+            </div>
+        </div>
+    </div>
+
+    <div class="text-white/40 text-[0.8rem] relative z-[1]">© 2025 Ummilaa Kitchen</div>
+</div>
+
+{{-- KANAN --}}
+<div class="w-[55%] bg-white flex items-center justify-center p-[60px]">
+    <div class="w-full max-w-[420px]">
+        <h2 class="font-playfair text-[2rem] text-[#1a1a1a] mb-1.5">Selamat Datang!</h2>
+        <p class="text-[#999] text-[0.9rem] mb-9">Masuk dengan akun Ummilaa Kitchen Anda</p>
+
+        @if($errors->any())
+        <div class="bg-[#fce4ec] text-[#c62828] px-4 py-3 rounded-[10px] text-[0.88rem] mb-5 flex items-center gap-2">
+            <i class="fas fa-exclamation-circle"></i> {{ $errors->first() }}
+        </div>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <div class="mb-5">
+                <label class="block font-bold text-[0.85rem] text-[#555] mb-2 tracking-[0.5px] uppercase">Email</label>
+                <div class="relative">
+                    <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-[#bbb] text-[0.9rem]"></i>
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="email@example.com" required autofocus
+                        class="w-full py-[14px] pr-4 pl-11 border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] font-sans text-[#333] bg-[#fafafa] transition-all duration-200 focus:outline-none focus:border-maroon focus:bg-white focus:shadow-[0_0_0_4px_rgba(139,26,26,0.06)]">
+                </div>
+            </div>
+            <div class="mb-5">
+                <label class="block font-bold text-[0.85rem] text-[#555] mb-2 tracking-[0.5px] uppercase">Password</label>
+                <div class="relative">
+                    <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-[#bbb] text-[0.9rem]"></i>
+                    <input type="password" name="password" placeholder="Masukkan password" required
+                        class="w-full py-[14px] pr-4 pl-11 border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] font-sans text-[#333] bg-[#fafafa] transition-all duration-200 focus:outline-none focus:border-maroon focus:bg-white focus:shadow-[0_0_0_4px_rgba(139,26,26,0.06)]">
+                </div>
+            </div>
+            <div class="flex justify-between items-center mb-7 text-[0.88rem]">
+                <label class="flex items-center gap-2 text-[#666] cursor-pointer">
+                    <input type="checkbox" name="remember" class="accent-maroon w-4 h-4"> Ingat saya
+                </label>
+            </div>
+            <button type="submit"
+                class="w-full py-[15px] bg-maroon text-white border-none rounded-xl text-base font-bold font-sans cursor-pointer transition-all duration-200 flex items-center justify-center gap-[10px] hover:bg-maroon-dark hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(139,26,26,0.3)]">
+                <i class="fas fa-sign-in-alt"></i> Masuk Sekarang
+            </button>
+        </form>
+
+        <div class="flex items-center gap-3 my-6 text-[#ccc] text-[0.85rem] before:flex-1 before:h-px before:bg-[#f0f0f0] after:flex-1 after:h-px after:bg-[#f0f0f0]">
+            atau
+        </div>
+
+        <div class="text-center text-[0.9rem] text-[#999]">
+            Belum punya akun? <a href="{{ route('register') }}" class="text-maroon font-bold no-underline">Daftar sekarang</a>
+        </div>
+    </div>
+</div>
+
+<a href="#" class="fixed bottom-6 right-6 bg-maroon text-white w-[52px] h-[52px] rounded-full flex items-center justify-center text-[1.4rem] shadow-[0_4px_14px_rgba(0,0,0,0.2)] no-underline hover:scale-110 transition-transform duration-200">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+</body>
+</html>

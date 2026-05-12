@@ -1,0 +1,116 @@
+<?php
+namespace App\Http\Controllers;
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class CheckoutController extends Controller
+{
+    // Koordinat outlet Ummilaa Kitchen
+    const OUTLET_LAT = -7.963536;
+    const OUTLET_LNG = 112.669380;
+    const MAX_DELIVERY_KM = 5; // maksimal jarak untuk delivery
+
+    /**
+     * Hitung jarak antara dua koordinat menggunakan rumus Haversine
+     * Haversine = rumus matematika untuk menghitung jarak dua titik di bola bumi
+     */
+    private function hitungJarak($lat1, $lng1, $lat2, $lng2)
+    {
+        $r = 6371; // radius bumi dalam km
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a = sin($dLat/2) * sin($dLat/2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLng/2) * sin($dLng/2);
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        return $r * $c; // hasil dalam km
+    }
+
+    public function index()
+    {
+        $carts = Cart::with('product')->where('user_id', Auth::id())->get();
+        if ($carts->isEmpty()) return redirect()->route('cart')->with('error', 'Keranjang kosong!');
+
+        $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
+
+        // Cek jarak user ke outlet
+        $user = Auth::user();
+        $jarakKm = null;
+        $bisaDelivery = false;
+
+        if ($user->lat && $user->lng) {
+            $jarakKm = $this->hitungJarak($user->lat, $user->lng, self::OUTLET_LAT, self::OUTLET_LNG);
+            $bisaDelivery = $jarakKm <= self::MAX_DELIVERY_KM;
+        }
+
+        // Ongkir default (akan diupdate via JS sesuai pilihan)
+        $ongkir = $bisaDelivery ? 15000 : 0;
+        $total = $subtotal + $ongkir;
+
+        return view('checkout', compact('carts', 'subtotal', 'ongkir', 'total', 'jarakKm', 'bisaDelivery'));
+    }
+
+    public function store(Request $request)
+{
+    $request->validate([
+        'metode_pembayaran'  => 'required|string',
+        'metode_pengiriman'  => 'required|in:delivery,pickup',
+        'catatan'            => 'nullable|string|max:500',
+    ]);
+
+    $carts = Cart::with('product')->where('user_id', Auth::id())->get();
+    if ($carts->isEmpty()) return redirect()->route('cart');
+
+    $user = Auth::user();
+
+    // Ambil data dari profil user
+    $nama_penerima = $user->name;
+    $no_telepon    = $user->no_telepon;
+    $alamat        = $user->alamat;
+
+    $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
+    $ongkir   = 0;
+
+    if ($request->metode_pengiriman === 'delivery') {
+        if ($user->lat && $user->lng) {
+            $jarakKm = $this->hitungJarak($user->lat, $user->lng, self::OUTLET_LAT, self::OUTLET_LNG);
+            if ($jarakKm > self::MAX_DELIVERY_KM) {
+                return back()->withErrors(['metode_pengiriman' => 'Maaf, jarak Anda terlalu jauh untuk delivery (maks. 5 km).']);
+            }
+        }
+        $ongkir = 15000;
+    }
+
+    $total = $subtotal + $ongkir;
+
+    $order = Order::create([
+        'user_id'            => Auth::id(),
+        'nama_penerima'      => $nama_penerima,
+        'alamat'             => $alamat,
+        'no_telepon'         => $no_telepon,
+        'metode_pembayaran'  => $request->metode_pembayaran,
+        'metode_pengiriman'  => $request->metode_pengiriman,
+        'catatan'            => $request->catatan,
+        'subtotal'           => $subtotal,
+        'ongkir'             => $ongkir,
+        'total'              => $total,
+        'status'             => 'pending',
+    ]);
+
+    foreach ($carts as $cart) {
+        OrderItem::create([
+            'order_id'   => $order->id,
+            'product_id' => $cart->product_id,
+            'quantity'   => $cart->quantity,
+            'price'      => $cart->product->price,
+        ]);
+    }
+
+    Cart::where('user_id', Auth::id())->delete();
+
+    return redirect()->route('order.success', $order->id);
+    }
+}
