@@ -63,7 +63,7 @@
                     <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
                     <p class="text-xs text-gray-400">{{ $order->user->email ?? '' }}</p>
                 </td>
-                <td class="py-4 px-6 font-bold" style="color:#8B1A1A;">
+                <td class="py-4 px-6 font-bold text-[#8B1A1A]">
                     Rp{{ number_format($order->total, 0, ',', '.') }}
                 </td>
                 <td class="py-4 px-6">

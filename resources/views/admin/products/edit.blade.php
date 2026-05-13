@@ -56,8 +56,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Stok <span class="text-red-500">*</span></label>
-                    <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" required min="0"
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Stok</label>
+                    <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" min="0"
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition">
                 </div>
             </div>
@@ -154,8 +154,7 @@
         {{-- Aksi --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <button type="submit"
-                class="w-full py-3 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition mb-3"
-                style="background-color: #8B1A1A;">
+                class="w-full py-3 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition mb-3 bg-[#8B1A1A]">
                 Perbarui Produk
             </button>
             <a href="{{ route('admin.products.index') }}"

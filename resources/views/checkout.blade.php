@@ -1,20 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-<style>
-    /* State classes dikontrol JS */
-    .delivery-option.selected { border-color: #8B1A1A; background: #fdf5f5; }
-    .delivery-option.selected .delivery-top-bar { transform: scaleX(1); }
-    .delivery-option.selected .delivery-icon-box { background: #8B1A1A; color: #fff; }
-    .delivery-option.selected .delivery-check-dot { border-color: #8B1A1A; background: #8B1A1A; }
-    .delivery-option.selected .delivery-check-dot::after { content: '✓'; color: #fff; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
-    .delivery-top-bar { transform: scaleX(0); transform-origin: left; transition: transform 0.2s; }
-    .payment-option.selected { border-color: #8B1A1A; background: #fdf5f5; }
-    .payment-option.selected .payment-dot { border-color: #8B1A1A; background: #8B1A1A; }
-    .payment-option.selected .payment-dot::after { content: ''; width: 7px; height: 7px; background: #fff; border-radius: 50%; display: block; margin: auto; }
-    .payment-card-invalid { border-color: #ef9a9a !important; box-shadow: 0 0 0 3px rgba(198,40,40,0.1) !important; }
-</style>
-@endpush
 
 @section('content')
 
@@ -68,21 +53,48 @@
                         </a>
                     </div>
                     <div class="bg-[#fdf9f9] border-[1.5px] border-maroon-200 rounded-[14px] px-[22px] py-5">
-                        <div class="font-extrabold text-[#1a1a1a] text-base mb-1">{{ Auth::user()->name }}</div>
-                        <div class="text-[0.85rem] text-[#888] mb-2.5">
-                            <i class="fas fa-phone text-[0.75rem] text-maroon mr-1"></i>
-                            {{ Auth::user()->no_telepon ?? 'Belum diisi' }}
+                        {{-- Nama & Telepon --}}
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-maroon-200">
+                            <div>
+                                <div class="font-extrabold text-[#1a1a1a] text-base">{{ Auth::user()->name }}</div>
+                                <div class="text-[0.83rem] text-[#888] mt-0.5">
+                                    <i class="fas fa-phone text-[0.7rem] text-maroon mr-1"></i>
+                                    {{ Auth::user()->no_telepon ?? 'Belum diisi' }}
+                                </div>
+                            </div>
+                            @if(Auth::user()->lat && Auth::user()->lng)
+                            <div data-permanent class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 text-[0.72rem] font-bold px-3 py-1.5 rounded-[20px] flex-shrink-0">
+                                <i class="fas fa-check-circle text-[0.65rem]"></i> GPS Tersimpan
+                            </div>
+                            @endif
                         </div>
-                        <div class="text-[0.88rem] text-[#555] leading-[1.7]">{{ Auth::user()->alamat ?? 'Alamat belum diisi. Silakan update profil.' }}</div>
-                        @if(Auth::user()->lat && Auth::user()->lng)
-                        <div class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 text-[0.75rem] font-bold px-3 py-1 rounded-[20px] mt-2.5">
-                            <i class="fas fa-check-circle text-[0.7rem]"></i> Lokasi GPS tersimpan
+                        {{-- Alamat dari Peta --}}
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-8 h-8 bg-maroon-100 rounded-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-map-marker-alt text-maroon text-[0.8rem]"></i>
+                            </div>
+                            <div>
+                                <p class="text-[0.72rem] font-bold text-[#bbb] uppercase tracking-[1px] mb-0.5">Alamat</p>
+                                <p class="text-[0.88rem] text-[#444] leading-[1.7]">{{ Auth::user()->alamat ?? 'Alamat belum diisi. Silakan update profil.' }}</p>
+                            </div>
+                        </div>
+                        {{-- Detail Alamat --}}
+                        @if(Auth::user()->detail_alamat)
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-maroon-100 rounded-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-sticky-note text-maroon text-[0.8rem]"></i>
+                            </div>
+                            <div>
+                                <p class="text-[0.72rem] font-bold text-[#bbb] uppercase tracking-[1px] mb-0.5">Detail Alamat</p>
+                                <p class="text-[0.88rem] text-[#444] leading-[1.7]">{{ Auth::user()->detail_alamat }}</p>
+                            </div>
                         </div>
                         @endif
                     </div>
                     <input type="hidden" name="nama_penerima" value="{{ Auth::user()->name }}">
                     <input type="hidden" name="no_telepon" value="{{ Auth::user()->no_telepon }}">
                     <input type="hidden" name="alamat" value="{{ Auth::user()->alamat }}">
+                    <input type="hidden" name="detail_alamat" value="{{ Auth::user()->detail_alamat }}">
                     @if(!Auth::user()->alamat)
                     <div class="bg-amber-50 border-[1.5px] border-amber-300 rounded-[14px] px-5 py-4 flex items-center gap-3 text-[0.85rem] text-orange-700 mt-[14px]">
                         <i class="fas fa-exclamation-triangle text-[1.1rem] flex-shrink-0"></i>
@@ -109,11 +121,11 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-[14px]">
                         <label class="delivery-option relative border-2 border-maroon-200 rounded-[16px] p-5 cursor-pointer transition-all duration-[250ms] overflow-hidden {{ !$bisaDelivery ? 'opacity-45 cursor-not-allowed bg-[#f9f9f9]' : 'hover:border-[#d4a0a0] hover:bg-[#fdf8f8]' }}" id="label-delivery">
-                            <div class="delivery-top-bar absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[16px]"></div>
+                            <div class="delivery-top-bar absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[16px] scale-x-0 origin-left transition-transform duration-200"></div>
                             <input type="radio" name="metode_pengiriman" value="delivery" id="radio-delivery" class="hidden" {{ $bisaDelivery ? 'checked' : 'disabled' }}>
                             <div class="flex items-start justify-between mb-[14px]">
                                 <div class="delivery-icon-box w-[46px] h-[46px] rounded-xl bg-maroon-100 text-maroon flex items-center justify-center text-[1.2rem] transition-all duration-200"><i class="fas fa-motorcycle"></i></div>
-                                <div class="delivery-check-dot w-[22px] h-[22px] rounded-full border-2 border-[#ddd] flex items-center justify-center transition-all duration-200"></div>
+                                <div class="delivery-check-dot w-[22px] h-[22px] rounded-full border-2 border-[#ddd] flex items-center justify-center transition-all duration-200"><span class="hidden text-white text-[0.7rem] font-extrabold leading-none">✓</span></div>
                             </div>
                             <h4 class="font-extrabold text-[0.92rem] text-[#1a1a1a] mb-1">Delivery</h4>
                             <p class="text-[0.78rem] text-[#aaa] leading-[1.5] mb-2.5">Diantar ke alamat Anda (maks. 5 km dari outlet)</p>
@@ -121,11 +133,11 @@
                         </label>
 
                         <label class="delivery-option relative border-2 border-maroon-200 rounded-[16px] p-5 cursor-pointer transition-all duration-[250ms] overflow-hidden hover:border-[#d4a0a0] hover:bg-[#fdf8f8]" id="label-pickup">
-                            <div class="delivery-top-bar absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[16px]"></div>
+                            <div class="delivery-top-bar absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[16px] scale-x-0 origin-left transition-transform duration-200"></div>
                             <input type="radio" name="metode_pengiriman" value="pickup" id="radio-pickup" class="hidden" {{ !$bisaDelivery ? 'checked' : '' }}>
                             <div class="flex items-start justify-between mb-[14px]">
                                 <div class="delivery-icon-box w-[46px] h-[46px] rounded-xl bg-maroon-100 text-maroon flex items-center justify-center text-[1.2rem] transition-all duration-200"><i class="fas fa-store"></i></div>
-                                <div class="delivery-check-dot w-[22px] h-[22px] rounded-full border-2 border-[#ddd] flex items-center justify-center transition-all duration-200"></div>
+                                <div class="delivery-check-dot w-[22px] h-[22px] rounded-full border-2 border-[#ddd] flex items-center justify-center transition-all duration-200"><span class="hidden text-white text-[0.7rem] font-extrabold leading-none">✓</span></div>
                             </div>
                             <h4 class="font-extrabold text-[0.92rem] text-[#1a1a1a] mb-1">Ambil Sendiri</h4>
                             <p class="text-[0.78rem] text-[#aaa] leading-[1.5] mb-2.5">Ambil langsung di outlet Ummilaa Kitchen</p>
@@ -135,7 +147,7 @@
 
                     @if($jarakKm !== null)
                         @if($bisaDelivery)
-                        <div class="mt-4 px-4 py-3 rounded-xl text-[0.83rem] flex items-center gap-[10px] bg-green-100 text-green-800">
+                        <div data-permanent class="mt-4 px-4 py-3 rounded-xl text-[0.83rem] flex items-center gap-[10px] bg-green-100 text-green-800">
                             <i class="fas fa-check-circle"></i>
                             Jarak Anda ke outlet: <strong>&nbsp;{{ number_format($jarakKm, 1) }} km</strong>&nbsp;— Delivery tersedia ✓
                         </div>
@@ -169,7 +181,7 @@
                                 <strong class="block text-[0.9rem] text-[#1a1a1a] font-bold">{{ $val }}</strong>
                                 <span class="text-[0.78rem] text-[#aaa]">{{ $desc }}</span>
                             </div>
-                            <div class="payment-dot w-5 h-5 rounded-full border-2 border-[#ddd] flex-shrink-0 flex items-center justify-center transition-all duration-200"></div>
+                            <div class="payment-dot w-5 h-5 rounded-full border-2 border-[#ddd] flex-shrink-0 flex items-center justify-center transition-all duration-200"><span class="hidden w-[7px] h-[7px] bg-white rounded-full"></span></div>
                         </label>
                         @endforeach
                     </div>
@@ -246,13 +258,42 @@
         return 'Rp' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
+    function setDeliverySelected(label, isSelected) {
+        label.classList.toggle('border-[#8B1A1A]', isSelected);
+        label.classList.toggle('bg-[#fdf5f5]', isSelected);
+        label.classList.toggle('border-maroon-200', !isSelected);
+
+        const topBar = label.querySelector('.delivery-top-bar');
+        if (topBar) {
+            topBar.classList.toggle('scale-x-100', isSelected);
+            topBar.classList.toggle('scale-x-0', !isSelected);
+        }
+
+        const iconBox = label.querySelector('.delivery-icon-box');
+        if (iconBox) {
+            iconBox.classList.toggle('bg-[#8B1A1A]', isSelected);
+            iconBox.classList.toggle('text-white', isSelected);
+            iconBox.classList.toggle('bg-maroon-100', !isSelected);
+            iconBox.classList.toggle('text-maroon', !isSelected);
+        }
+
+        const dot = label.querySelector('.delivery-check-dot');
+        if (dot) {
+            dot.classList.toggle('border-[#8B1A1A]', isSelected);
+            dot.classList.toggle('bg-[#8B1A1A]', isSelected);
+            dot.classList.toggle('border-[#ddd]', !isSelected);
+            const span = dot.querySelector('span');
+            if (span) span.classList.toggle('hidden', !isSelected);
+        }
+    }
+
     function updateSummary() {
         const isDelivery = radioDelivery && !radioDelivery.disabled && radioDelivery.checked;
         const ongkir = isDelivery ? 15000 : 0;
         ongkirDisplay.textContent = ongkir > 0 ? formatRp(ongkir) : 'Gratis';
         totalDisplay.textContent  = formatRp(subtotal + ongkir);
-        labelDelivery.classList.toggle('selected', isDelivery);
-        labelPickup.classList.toggle('selected', !isDelivery);
+        if (labelDelivery) setDeliverySelected(labelDelivery, isDelivery);
+        if (labelPickup)   setDeliverySelected(labelPickup, !isDelivery);
     }
 
     updateSummary();
@@ -261,13 +302,32 @@
 
     document.querySelectorAll('.payment-option input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', function() {
-            document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
-            this.closest('.payment-option').classList.add('selected');
+            document.querySelectorAll('.payment-option').forEach(el => {
+                el.classList.remove('border-[#8B1A1A]', 'bg-[#fdf5f5]');
+                el.classList.add('border-maroon-200');
+                const dot = el.querySelector('.payment-dot');
+                if (dot) {
+                    dot.classList.remove('border-[#8B1A1A]', 'bg-[#8B1A1A]');
+                    dot.classList.add('border-[#ddd]');
+                    const span = dot.querySelector('span');
+                    if (span) span.classList.add('hidden');
+                }
+            });
+            const selected = this.closest('.payment-option');
+            selected.classList.add('border-[#8B1A1A]', 'bg-[#fdf5f5]');
+            selected.classList.remove('border-maroon-200');
+            const dot = selected.querySelector('.payment-dot');
+            if (dot) {
+                dot.classList.add('border-[#8B1A1A]', 'bg-[#8B1A1A]');
+                dot.classList.remove('border-[#ddd]');
+                const span = dot.querySelector('span');
+                if (span) span.classList.remove('hidden');
+            }
             const errorMsg = document.getElementById('payment-error-msg');
             const payCard  = document.getElementById('payment-card');
             errorMsg.classList.add('hidden');
             errorMsg.classList.remove('flex');
-            payCard.classList.remove('payment-card-invalid');
+            payCard.classList.remove('border-[#ef9a9a]', 'ring-2', 'ring-[rgba(198,40,40,0.1)]');
         });
     });
 
@@ -279,7 +339,7 @@
             const payCard  = document.getElementById('payment-card');
             errorMsg.classList.remove('hidden');
             errorMsg.classList.add('flex');
-            payCard.classList.add('payment-card-invalid');
+            payCard.classList.add('border-[#ef9a9a]', 'ring-2', 'ring-[rgba(198,40,40,0.1)]');
             payCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });

@@ -20,12 +20,13 @@ class UserProfileController extends Controller
             'tanggal_lahir' => 'required|date',
             'kode_pos'      => 'required|string|max:10',
             'alamat'        => 'required|string',
+            'detail_alamat' => 'nullable|string|max:500',
             'lat'           => 'required|numeric',
             'lng'           => 'required|numeric',
         ]);
 
         Auth::user()->update($request->only([
-            'name', 'no_telepon', 'tanggal_lahir', 'kode_pos', 'alamat', 'lat', 'lng'
+            'name', 'no_telepon', 'tanggal_lahir', 'kode_pos', 'alamat', 'detail_alamat', 'lat', 'lng'
         ]));
 
         $redirect = session('redirect_after_profile');

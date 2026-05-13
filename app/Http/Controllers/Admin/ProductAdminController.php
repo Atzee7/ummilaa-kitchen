@@ -45,10 +45,10 @@ class ProductAdminController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price'       => 'required|numeric|min:0',
-            'stock'       => 'required|integer|min:0',
+            'stock'       => 'nullable|integer|min:0',
             'status'      => 'required|in:ready,habis',
             'badge'       => 'nullable|in:new,terlaris,unggulan',
-            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image'       => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         // Cek batas badge
@@ -99,7 +99,7 @@ class ProductAdminController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price'       => 'required|numeric|min:0',
-            'stock'       => 'required|integer|min:0',
+            'stock'       => 'nullable|integer|min:0',
             'status'      => 'required|in:ready,habis',
             'badge'       => 'nullable|in:new,terlaris,unggulan',
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',

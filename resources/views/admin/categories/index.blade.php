@@ -8,8 +8,7 @@
         <p class="text-gray-500 mt-1">Kelola kategori produk</p>
     </div>
     <button onclick="document.getElementById('modalTambah').classList.remove('hidden')"
-        class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition"
-        style="background-color: #8B1A1A;">
+        class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition bg-[#8B1A1A]">
         + Tambah Kategori
     </button>
 </div>
@@ -57,16 +56,18 @@
             @csrf
             <div class="mb-6">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Kategori</label>
-                <input type="text" name="name" required placeholder="contoh: Dimsum"
-                    class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800">
+                <input type="text" name="name" required placeholder="contoh: Dimsum" value="{{ old('name') }}"
+                    class="w-full px-4 py-2.5 rounded-xl border @error('name') border-red-500 @else border-gray-200 @enderror text-sm focus:outline-none focus:border-red-800">
+                @error('name')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div class="flex gap-3">
                 <button type="button" onclick="document.getElementById('modalTambah').classList.add('hidden')"
                     class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold hover:bg-gray-50">
                     Batal
                 </button>
-                <button type="submit" class="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90"
-                    style="background-color: #8B1A1A;">
+                <button type="submit" class="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 bg-[#8B1A1A]">
                     Simpan
                 </button>
             </div>
@@ -90,8 +91,7 @@
                     class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold hover:bg-gray-50">
                     Batal
                 </button>
-                <button type="submit" class="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90"
-                    style="background-color: #8B1A1A;">
+                <button type="submit" class="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 bg-[#8B1A1A]">
                     Perbarui
                 </button>
             </div>
@@ -105,5 +105,9 @@ function openEdit(id, name) {
     document.getElementById('formEdit').action = '/admin/categories/' + id;
     document.getElementById('modalEdit').classList.remove('hidden');
 }
+
+@if($errors->has('name'))
+    document.getElementById('modalTambah').classList.remove('hidden');
+@endif
 </script>
 @endsection

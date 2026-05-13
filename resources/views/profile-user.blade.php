@@ -95,10 +95,22 @@
                     </div>
 
                     <div class="mb-5">
-                        <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">Alamat Lengkap <span class="text-red-500 ml-0.5">*</span></label>
-                        <textarea name="alamat" id="alamatInput" rows="3"
-                            placeholder="Alamat akan terisi otomatis saat Anda klik titik di peta"
-                            class="w-full px-4 py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none resize-none h-[90px]">{{ old('alamat', $user->alamat) }}</textarea>
+                        <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">
+                            Alamat Lengkap <span class="text-red-500 ml-0.5">*</span>
+                            <span class="ml-2 text-[0.75rem] text-maroon font-semibold normal-case tracking-normal bg-maroon-100 px-2 py-0.5 rounded-lg">
+                                <i class="fas fa-lock text-[0.65rem]"></i> Diisi otomatis dari peta
+                            </span>
+                        </label>
+                        <textarea name="alamat" id="alamatInput" rows="3" readonly
+                            placeholder="Terisi otomatis saat Anda klik titik di peta"
+                            class="w-full px-4 py-[13px] border-2 border-[#e8e8e8] rounded-xl text-[0.95rem] text-[#666] bg-[#f5f5f5] resize-none h-[90px] cursor-default select-none focus:outline-none">{{ old('alamat', $user->alamat) }}</textarea>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">Detail Alamat <span class="text-[#aaa] font-normal normal-case ml-1">(Opsional)</span></label>
+                        <textarea name="detail_alamat" rows="2"
+                            placeholder="RT/RW, nomor rumah, lantai, patokan, dll. Contoh: RT 03/RW 05, depan masjid Al-Ikhlas"
+                            class="w-full px-4 py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none resize-none h-[80px]">{{ old('detail_alamat', $user->detail_alamat) }}</textarea>
                     </div>
 
                     <div class="text-[0.85rem] text-[#999] mb-3 flex items-start gap-2">

@@ -37,7 +37,7 @@
         </div>
 
         {{-- Category tabs --}}
-        <div class="flex-shrink-0 bg-white border-b border-gray-100 px-5 py-2.5 flex items-center gap-2 overflow-x-auto" style="scrollbar-width:none">
+        <div class="flex-shrink-0 bg-white border-b border-gray-100 px-5 py-2.5 flex items-center gap-2 overflow-x-auto [scrollbar-width:none]">
             <button class="cat-tab flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-[#8B1A1A] text-white shadow-sm" data-cat="semua">
                 <i class="fas fa-th-large mr-1 text-[10px]"></i> Semua
             </button>
@@ -126,7 +126,7 @@
         </div>
 
         {{-- Item Pesanan --}}
-        <div class="flex flex-col min-h-0 border-b border-gray-100" style="flex:1 1 auto;min-height:0">
+        <div class="flex flex-col min-h-0 border-b border-gray-100 flex-auto">
             <div class="flex-shrink-0 flex items-center justify-between px-5 pt-3 pb-1.5">
                 <div class="flex items-center gap-2 text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
                     <i class="fas fa-list-ul text-[#8B1A1A] text-[11px]"></i>
@@ -175,7 +175,7 @@
 {{-- ══════════════════════════════════════
      MODAL PEMBAYARAN (menggantikan pay-screen)
 ══════════════════════════════════════ --}}
-<div id="modal-pembayaran" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4" style="backdrop-filter:blur(2px)">
+<div id="modal-pembayaran" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 backdrop-blur-[2px]">
     <div class="bg-white rounded-2xl w-full max-w-[780px] max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
 
         {{-- Modal Header --}}
@@ -351,7 +351,7 @@
 {{-- ══════════════════════════════════════
      MODAL STRUK / TRANSAKSI SELESAI
 ══════════════════════════════════════ --}}
-<div id="modal-sukses" class="hidden fixed inset-0 bg-black/60 z-[60] items-center justify-center p-4" style="backdrop-filter:blur(2px)">
+<div id="modal-sukses" class="hidden fixed inset-0 bg-black/60 z-[60] items-center justify-center p-4 backdrop-blur-[2px]">
     <div class="bg-white rounded-2xl w-full max-w-[400px] overflow-hidden shadow-2xl">
 
         {{-- Header hijau --}}

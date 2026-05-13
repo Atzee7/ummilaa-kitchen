@@ -90,6 +90,7 @@ class CheckoutController extends Controller
         'user_id'            => Auth::id(),
         'nama_penerima'      => $nama_penerima,
         'alamat'             => $alamat,
+        'detail_alamat'      => $user->detail_alamat,
         'no_telepon'         => $no_telepon,
         'metode_pembayaran'  => $request->metode_pembayaran,
         'metode_pengiriman'  => $request->metode_pengiriman,

@@ -27,7 +27,7 @@
     <div class="flex items-start justify-between">
         <div>
             <h2 class="font-playfair text-3xl font-bold text-gray-800">
-                Detail Pesanan <span style="color:#8B1A1A;">#{{ $order->id }}</span>
+                Detail Pesanan <span class="text-[#8B1A1A]">#{{ $order->id }}</span>
             </h2>
             <p class="text-gray-400 text-sm mt-1">{{ $order->created_at->format('d M Y, H:i') }}</p>
         </div>
@@ -126,6 +126,12 @@
                     Alamat Pengiriman
                 </p>
                 <p class="font-semibold text-gray-700 leading-relaxed">{{ $order->alamat }}</p>
+                @if($order->detail_alamat)
+                <div class="mt-3 pt-3 border-t border-gray-100">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Detail Alamat</p>
+                    <p class="text-sm text-gray-600 leading-relaxed">{{ $order->detail_alamat }}</p>
+                </div>
+                @endif
             </div>
             @else
             <div class="bg-orange-50 rounded-xl p-4 text-sm border border-orange-100">
@@ -191,7 +197,7 @@
                 </div>
                 <div class="flex justify-between font-bold text-base pt-3 border-t border-gray-100">
                     <span class="text-gray-800">Total Pembayaran</span>
-                    <span style="color:#8B1A1A;">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
+                    <span class="text-[#8B1A1A]">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -221,8 +227,7 @@
                     </select>
                 </div>
                 <button type="submit"
-                    class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition"
-                    style="background-color: #8B1A1A;">
+                    class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-[#8B1A1A]">
                     Perbarui Status
                 </button>
             </form>
@@ -244,20 +249,18 @@
                 <div class="flex items-start gap-3 {{ !$loop->last ? 'mb-4' : '' }}">
                     <div class="flex flex-col items-center flex-shrink-0">
                         <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
-                            {{ $done ? 'text-white' : 'bg-gray-100 text-gray-400' }}"
-                            style="{{ $done ? 'background-color:#8B1A1A;' : '' }}">
+                            {{ $done ? 'bg-[#8B1A1A] text-white' : 'bg-gray-100 text-gray-400' }}">
                             {{ $done ? '✓' : ($i + 1) }}
                         </div>
                         @if(!$loop->last)
-                        <div class="w-0.5 h-6 mt-1 {{ $done && $currentIndex > $i ? 'opacity-100' : 'opacity-20' }}"
-                             style="{{ $done && $currentIndex > $i ? 'background:#8B1A1A;' : 'background:#ccc;' }}"></div>
+                        <div class="w-0.5 h-6 mt-1 {{ $done && $currentIndex > $i ? 'bg-[#8B1A1A] opacity-100' : 'bg-gray-300 opacity-20' }}"></div>
                         @endif
                     </div>
                     <div class="pt-1">
                         <p class="text-sm {{ $isCurrent ? 'font-bold text-gray-800' : ($done ? 'font-semibold text-gray-600' : 'text-gray-400') }}">
                             {{ ucfirst($step) }}
                             @if($isCurrent)
-                            <span class="ml-1 text-xs font-normal px-2 py-0.5 rounded-full" style="background:#fdf0f0; color:#8B1A1A;">sekarang</span>
+                            <span class="ml-1 text-xs font-normal px-2 py-0.5 rounded-full bg-[#fdf0f0] text-[#8B1A1A]">sekarang</span>
                             @endif
                         </p>
                     </div>
@@ -303,7 +306,7 @@
                 </div>
                 <div class="flex justify-between items-center py-2">
                     <span class="text-gray-400 font-semibold">Total</span>
-                    <span class="font-bold text-base" style="color:#8B1A1A;">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
+                    <span class="font-bold text-base text-[#8B1A1A]">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>

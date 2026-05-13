@@ -2,6 +2,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 @endpush
 
 @section('content')
@@ -10,14 +11,18 @@
 <section class="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-[60px] px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] min-h-0 lg:min-h-[90vh] bg-white relative overflow-hidden
     before:content-[''] before:absolute before:top-[-100px] before:right-[-100px] before:w-[600px] before:h-[600px] before:rounded-full before:bg-[radial-gradient(circle,#fdf0f0_0%,transparent_70%)] before:z-0">
     <div class="relative z-[1]">
-        <div class="inline-flex items-center gap-2 bg-maroon-100 text-maroon px-[18px] py-2 rounded-[30px] text-[0.82rem] font-bold tracking-[1px] uppercase mb-6">
+        <div data-aos="fade-down" data-aos-duration="600"
+            class="inline-flex items-center gap-2 bg-maroon-100 text-maroon px-[18px] py-2 rounded-[30px] text-[0.82rem] font-bold tracking-[1px] uppercase mb-6">
             <i class="fas fa-fire text-[0.75rem]"></i> Kuliner Favorit Malang
         </div>
-        <h1 class="font-playfair text-[2rem] md:text-[2.6rem] lg:text-[3.2rem] leading-[1.2] text-[#1a1a1a] mb-5">
+        <h1 data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
+            class="font-playfair text-[2rem] md:text-[2.6rem] lg:text-[3.2rem] leading-[1.2] text-[#1a1a1a] mb-5">
             Pesan <span class="text-maroon">Makanan Lezat</span> & Fresh Langsung ke Pintu Anda
         </h1>
-        <p class="text-base text-[#777] leading-[1.8] mb-9 max-w-[400px]">Aneka dimsum, risol, frozen food, dan catering berkualitas dari dapur Ummilaa Kitchen. Mudah dipesan, cepat dikirim.</p>
-        <div class="flex items-center gap-5">
+        <p data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
+            class="text-base text-[#777] leading-[1.8] mb-9 max-w-[400px]">Aneka dimsum, risol, frozen food, dan catering berkualitas dari dapur Ummilaa Kitchen. Mudah dipesan, cepat dikirim.</p>
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="300"
+            class="flex items-center gap-5">
             <a href="{{ route('catalogue') }}" class="inline-flex items-center gap-[10px] bg-maroon text-white px-8 py-[15px] rounded-xl font-bold text-[0.95rem] transition-all duration-200 shadow-[0_8px_24px_rgba(139,26,26,0.25)] hover:bg-maroon-dark hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(139,26,26,0.35)] no-underline">
                 <i class="fas fa-utensils"></i> Lihat Produk
             </a>
@@ -26,7 +31,7 @@
             </a>
         </div>
     </div>
-    <div class="relative z-[1]">
+    <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="200" class="relative z-[1]">
         <img class="w-full h-[280px] md:h-[400px] lg:h-[520px] object-cover rounded-[24px] shadow-[0_30px_70px_rgba(139,26,26,0.2)]"
              src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800" alt="Dimsum Ummilaa Kitchen">
         <div class="absolute top-[20px] right-[10px] lg:top-[30px] lg:right-[-20px] bg-maroon rounded-[16px] px-4 py-3 lg:px-5 lg:py-4 shadow-[0_10px_40px_rgba(139,26,26,0.3)] text-white text-center">
@@ -40,7 +45,7 @@
 
 {{-- CATALOGUE --}}
 <section class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px]" id="catalogue">
-    <div class="mb-[50px]">
+    <div data-aos="fade-up" data-aos-duration="700" class="mb-[50px]">
         <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-3">
             <div>
                 <div class="text-[0.78rem] font-bold tracking-[2px] uppercase text-maroon mb-2.5">Menu Pilihan</div>
@@ -59,7 +64,7 @@
         <p>Belum ada produk unggulan. Tambahkan badge produk di panel admin.</p>
     </div>
     @else
-    <div class="overflow-hidden">
+    <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="150" class="overflow-hidden">
         <div class="flex gap-7 will-change-transform" id="productCarousel">
             @foreach($featuredProducts as $product)
             <a href="{{ $product->status !== 'habis' ? route('product.show', $product->id) : '#' }}"
@@ -100,8 +105,8 @@
 <div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-[80px]"></div>
 
 {{-- AREA PENGIRIMAN --}}
-<section class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] bg-[#fdf9f9]">
-    <div class="text-center mb-9">
+<section class="px-5 md:px-10 lg:px-[80px] pt-10 lg:pt-[80px] pb-5 bg-[#fdf9f9]">
+    <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-9">
         <div class="text-[0.78rem] font-bold tracking-[2px] uppercase text-maroon mb-2.5">Jangkauan Layanan</div>
         <h2 class="font-playfair text-[1.6rem] md:text-[2rem] lg:text-[2.2rem] text-[#1a1a1a]">Area <span class="text-maroon">Pengiriman</span></h2>
         <p class="text-[#999] mt-2 text-[0.95rem]">
@@ -110,19 +115,22 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        <div class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
+            class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
             <div class="text-[2.2rem] mb-3">🛵</div>
             <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Delivery</div>
             <div class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-2.5">Radius hingga 5 km dari outlet kami</div>
             <div class="text-[0.88rem] font-extrabold text-maroon">Ongkir Rp15.000</div>
         </div>
-        <div class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
+            class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
             <div class="text-[2.2rem] mb-3">🏠</div>
             <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Ambil Sendiri</div>
             <div class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-2.5">Datang langsung ke outlet kami, tersedia untuk semua area</div>
             <div class="text-[0.88rem] font-extrabold text-green-700">Gratis</div>
         </div>
-        <div class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
+            class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
             <div class="text-[2.2rem] mb-3">📍</div>
             <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Lokasi Outlet</div>
             <div class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-2.5">Ummilaa Kitchen, Malang, Jawa Timur</div>
@@ -130,11 +138,12 @@
         </div>
     </div>
 
-    <div class="rounded-[20px] overflow-hidden shadow-[0_8px_32px_rgba(139,26,26,0.1)] border border-maroon-200">
+    <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="100"
+        class="rounded-[20px] overflow-hidden shadow-[0_8px_32px_rgba(139,26,26,0.1)] border border-maroon-200">
         <div id="mapCoverage" class="h-[280px] md:h-[350px] lg:h-[420px] w-full"></div>
     </div>
 
-    <p class="text-center text-[0.8rem] text-[#bbb] mt-[14px]">
+    <p data-aos="fade-up" data-aos-delay="50" class="text-center text-[0.8rem] text-[#bbb] mt-[14px]">
         <i class="fas fa-info-circle"></i>
         Area berwarna menunjukkan jangkauan delivery. Sistem akan otomatis mendeteksi jarak saat checkout.
     </p>
@@ -143,6 +152,15 @@
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 700,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 60,
+    });
+</script>
 <script>
     // Carousel
     const carousel = document.getElementById('productCarousel');

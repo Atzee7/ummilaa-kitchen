@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Kasir POS scrollbar styling */
+.kasir-scroll::-webkit-scrollbar { width: 4px; }
+.kasir-scroll::-webkit-scrollbar-track { background: transparent; }
+.kasir-scroll::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 99px; }
+.kasir-scroll::-webkit-scrollbar-thumb:hover { background: #d1d5db; }

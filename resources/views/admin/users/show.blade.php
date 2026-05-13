@@ -40,6 +40,12 @@
                     <span class="text-gray-500">Alamat</span>
                     <p class="font-semibold text-gray-700 mt-1">{{ $user->alamat ?? '-' }}</p>
                 </div>
+                @if($user->detail_alamat)
+                <div class="pt-2 border-t border-gray-100">
+                    <span class="text-gray-500">Detail Alamat</span>
+                    <p class="font-semibold text-gray-700 mt-1">{{ $user->detail_alamat }}</p>
+                </div>
+                @endif
                 <div class="pt-2 border-t border-gray-100">
                     <span class="text-gray-500">Terdaftar sejak</span>
                     <p class="font-semibold text-gray-700 mt-1">{{ $user->created_at->format('d M Y, H:i') }}</p>

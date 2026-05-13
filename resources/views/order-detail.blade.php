@@ -60,9 +60,14 @@
                 <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
                     <span class="text-[#999]">No. Telepon</span><strong class="text-[#1a1a1a] font-bold">{{ $order->no_telepon }}</strong>
                 </div>
-                <div class="flex justify-between py-[10px] text-[0.9rem]">
+                <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
                     <span class="text-[#999]">Alamat</span><strong class="text-[#1a1a1a] font-bold text-right max-w-[200px]">{{ $order->alamat }}</strong>
                 </div>
+                @if($order->detail_alamat)
+                <div class="flex justify-between py-[10px] text-[0.9rem]">
+                    <span class="text-[#999]">Detail Alamat</span><strong class="text-[#1a1a1a] font-bold text-right max-w-[200px]">{{ $order->detail_alamat }}</strong>
+                </div>
+                @endif
             </div>
         </div>
 

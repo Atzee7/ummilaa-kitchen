@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="px-[80px] py-[80px] text-center">
-    <div class="w-[90px] h-[90px] bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-[2.5rem] text-green-700">
+    <div data-permanent class="w-[90px] h-[90px] bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-[2.5rem] text-green-700">
         <i class="fas fa-check"></i>
     </div>
     <h1 class="font-playfair text-[2.2rem] text-[#1a1a1a] mb-3">Pesanan Berhasil!</h1>

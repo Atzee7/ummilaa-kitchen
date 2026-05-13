@@ -10,7 +10,7 @@
 <body class="min-h-screen flex">
 
     {{-- Kiri: Branding --}}
-    <div class="hidden lg:flex w-1/2 flex-col justify-center items-center text-white p-12" style="background-color: #8B1A1A;">
+    <div class="hidden lg:flex w-1/2 flex-col justify-center items-center text-white p-12 bg-[#8B1A1A]">
         <div class="text-center">
             <h1 class="font-playfair text-5xl font-bold mb-2">Ummilaa</h1>
             <p class="text-lg tracking-widest uppercase opacity-80 mb-10">Kitchen</p>
@@ -26,7 +26,7 @@
 
             {{-- Logo mobile --}}
             <div class="lg:hidden text-center mb-8">
-                <h1 class="font-playfair text-3xl font-bold" style="color: #8B1A1A;">Ummilaa Kitchen</h1>
+                <h1 class="font-playfair text-3xl font-bold text-[#8B1A1A]">Ummilaa Kitchen</h1>
                 <p class="text-gray-500 text-sm mt-1">Panel Admin</p>
             </div>
 
@@ -51,10 +51,7 @@
                         value="{{ old('email') }}"
                         placeholder="admin@ummilaakitchen.com"
                         required
-                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 text-sm"
-                        style="focus:ring-color: #8B1A1A;"
-                        onfocus="this.style.borderColor='#8B1A1A'; this.style.boxShadow='0 0 0 3px rgba(139,26,26,0.1)'"
-                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgba(139,26,26,0.1)] focus:border-[#8B1A1A] text-sm"
                     >
                 </div>
 
@@ -65,16 +62,13 @@
                         name="password"
                         placeholder="••••••••"
                         required
-                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none text-sm"
-                        onfocus="this.style.borderColor='#8B1A1A'; this.style.boxShadow='0 0 0 3px rgba(139,26,26,0.1)'"
-                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgba(139,26,26,0.1)] focus:border-[#8B1A1A] text-sm"
                     >
                 </div>
 
                 <button
                     type="submit"
-                    class="w-full py-3 rounded-xl text-white font-semibold text-sm tracking-wide transition hover:opacity-90"
-                    style="background-color: #8B1A1A;"
+                    class="w-full py-3 rounded-xl text-white font-semibold text-sm tracking-wide transition hover:opacity-90 bg-[#8B1A1A]"
                 >
                     Masuk ke Dashboard
                 </button>

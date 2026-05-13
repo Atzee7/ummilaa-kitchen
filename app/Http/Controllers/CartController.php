@@ -30,7 +30,7 @@ class CartController extends Controller
             return redirect()->route('checkout');
         }
 
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+        return redirect()->route('catalogue')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
     public function update(Request $request, $id)

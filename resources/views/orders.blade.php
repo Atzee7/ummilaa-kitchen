@@ -1,20 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-<style>
-/* Star rating sibling selectors — not expressible in Tailwind */
-.star-rating input { display: none; }
-.star-rating label { font-size: 1.8rem; color: #ddd; cursor: pointer; transition: color 0.15s; }
-.star-rating label:hover,
-.star-rating label:hover ~ label,
-.star-rating input:checked ~ label { color: #f59e0b; }
-/* JS-toggled form visibility */
-.testimoni-form-wrapper { display: none; }
-.testimoni-form-wrapper.open { display: block; }
-/* JS-toggled active tab */
-.status-tab.active { background: #8B1A1A; color: #fff; border-color: #8B1A1A; }
-</style>
-@endpush
 
 @section('content')
 <div class="px-[80px] py-[60px] min-h-[70vh]">
@@ -24,7 +9,7 @@
     </div>
 
     <div class="flex gap-2 mb-8 flex-wrap">
-        <button class="status-tab active px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="semua">Semua</button>
+        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all bg-[#8B1A1A] text-white border-[#8B1A1A]" data-status="semua">Semua</button>
         <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="pending">Menunggu</button>
         <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="diproses">Diproses</button>
         <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="dikirim">Dikirim</button>
@@ -123,7 +108,7 @@
 
             {{-- FORM TESTIMONI --}}
             @if($order->status === 'selesai' && !$order->testimonial)
-            <div class="testimoni-form-wrapper px-6 py-5 border-t border-maroon-200 bg-[#fffaf9]" id="form-{{ $order->id }}">
+            <div class="hidden px-6 py-5 border-t border-maroon-200 bg-[#fffaf9]" id="form-{{ $order->id }}">
                 @if(session('success') && session('order_id') == $order->id)
                     <div class="text-green-800 font-bold mb-[10px]">
                         <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -135,8 +120,8 @@
                     <p class="font-bold text-[#1a1a1a] mb-2">Beri Rating</p>
                     <div class="star-rating flex flex-row-reverse justify-end gap-1.5 mb-3">
                         @for($i = 5; $i >= 1; $i--)
-                            <input type="radio" name="rating" id="star{{ $i }}-{{ $order->id }}" value="{{ $i }}">
-                            <label for="star{{ $i }}-{{ $order->id }}">★</label>
+                            <input type="radio" name="rating" id="star{{ $i }}-{{ $order->id }}" value="{{ $i }}" class="sr-only">
+                            <label for="star{{ $i }}-{{ $order->id }}" class="text-[#ddd] text-[1.8rem] cursor-pointer transition-colors duration-150 select-none">★</label>
                         @endfor
                     </div>
                     <p class="font-bold text-[#1a1a1a] mb-2">Komentar</p>
@@ -165,20 +150,58 @@
 
 @push('scripts')
 <script>
+    // Status tab active state via Tailwind classes
+    function deactivateTab(t) {
+        t.classList.remove('bg-[#8B1A1A]', 'text-white', 'border-[#8B1A1A]');
+        t.classList.add('bg-white', 'text-[#777]', 'border-maroon-200');
+    }
+    function activateTab(t) {
+        t.classList.add('bg-[#8B1A1A]', 'text-white', 'border-[#8B1A1A]');
+        t.classList.remove('bg-white', 'text-[#777]', 'border-maroon-200');
+    }
+
     document.querySelectorAll('.status-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+            document.querySelectorAll('.status-tab').forEach(deactivateTab);
+            activateTab(tab);
             const status = tab.dataset.status;
             document.querySelectorAll('.order-card').forEach(card => {
-                card.style.display = (status === 'semua' || card.dataset.status === status) ? 'block' : 'none';
+                card.classList.toggle('hidden', !(status === 'semua' || card.dataset.status === status));
             });
         });
     });
 
+    // Testimoni form toggle via Tailwind hidden class
     function toggleForm(orderId) {
         const form = document.getElementById('form-' + orderId);
-        form.classList.toggle('open');
+        form.classList.toggle('hidden');
     }
+
+    // Star rating via JS (replaces CSS sibling selectors)
+    document.querySelectorAll('.star-rating').forEach(container => {
+        const labels = [...container.querySelectorAll('label')];
+        const inputs = [...container.querySelectorAll('input')];
+
+        function applyRating(idx) {
+            // DOM order: [label5, label4, label3, label2, label1]
+            // Highlight from selected (idx) to end (lower stars)
+            labels.forEach((lbl, i) => {
+                lbl.classList.toggle('text-amber-400', i >= idx);
+                lbl.classList.toggle('text-[#ddd]', i < idx);
+            });
+        }
+
+        function resetToChecked() {
+            const checkedIdx = inputs.findIndex(inp => inp.checked);
+            if (checkedIdx >= 0) applyRating(checkedIdx);
+            else labels.forEach(lbl => { lbl.classList.add('text-[#ddd]'); lbl.classList.remove('text-amber-400'); });
+        }
+
+        labels.forEach((lbl, idx) => {
+            lbl.addEventListener('click', () => { inputs[idx].checked = true; applyRating(idx); });
+            lbl.addEventListener('mouseenter', () => applyRating(idx));
+            lbl.addEventListener('mouseleave', resetToChecked);
+        });
+    });
 </script>
 @endpush

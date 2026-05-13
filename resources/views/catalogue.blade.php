@@ -1,9 +1,21 @@
 @extends('layouts.app')
 
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+@endpush
+
 @section('content')
 
+@if(session('success'))
+<div class="px-4 md:px-10 lg:px-[80px] pt-5">
+    <div class="bg-green-100 text-green-800 px-5 py-[14px] rounded-xl text-[0.9rem] flex items-center gap-[10px]">
+        <i class="fas fa-check-circle"></i> {{ session('success') }}
+    </div>
+</div>
+@endif
+
 {{-- Mobile filter toggle --}}
-<div class="lg:hidden px-4 pt-6 pb-2 flex items-center justify-between">
+<div data-aos="fade-down" data-aos-duration="600" class="lg:hidden px-4 pt-6 pb-2 flex items-center justify-between">
     <div>
         <h2 class="font-playfair text-[1.5rem] text-[#1a1a1a]">Catalogue</h2>
         <p class="text-[#999] text-[0.85rem]">Temukan produk favorit Anda</p>
@@ -17,7 +29,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-10 px-4 md:px-10 lg:px-[80px] py-6 lg:py-[60px] min-h-[80vh]">
 
     {{-- SIDEBAR --}}
-    <aside id="filter-sidebar" class="hidden lg:block lg:sticky lg:top-[90px] h-fit">
+    <aside data-aos="fade-right" data-aos-duration="700" id="filter-sidebar" class="hidden lg:block lg:sticky lg:top-[90px] h-fit">
         <div class="hidden lg:block mb-8">
             <h2 class="font-playfair text-[1.8rem] text-[#1a1a1a]">Catalogue</h2>
             <p class="text-[#999] text-[0.88rem] mt-1.5">Temukan produk favorit Anda</p>
@@ -48,7 +60,7 @@
 
     {{-- MAIN --}}
     <div class="catalogue-main">
-        <div class="flex justify-between items-center mb-8 pb-5 border-b-[1.5px] border-maroon-200">
+        <div data-aos="fade-up" data-aos-duration="700" class="flex justify-between items-center mb-8 pb-5 border-b-[1.5px] border-maroon-200">
             <div>
                 <h3 id="activeLabel" class="font-playfair text-[1.4rem] text-[#1a1a1a]">Semua Produk</h3>
                 <span id="productCount" class="text-[#999] text-[0.88rem]">{{ $products->count() }} produk ditemukan</span>
@@ -61,7 +73,7 @@
             </select>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6" id="productsGrid">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="100" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6" id="productsGrid">
             @foreach($products as $product)
             <div class="prod-card rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 transition-all duration-300 relative {{ $product->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]' }}"
                 data-cat="{{ $product->categoryRelation->slug ?? '' }}"
@@ -121,7 +133,21 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+    AOS.init({
+        duration: 700,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 60,
+    });
+</script>
+<script>
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     const cards = document.querySelectorAll('.prod-card');
     const catBtns = document.querySelectorAll('.cat-btn');
     const searchInput = document.getElementById('searchInput');
@@ -181,6 +207,7 @@
             btn.querySelector('span:last-child')?.classList.replace('bg-black/[0.08]', 'bg-white/25');
             currentCat = btn.dataset.cat;
             filterProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
 

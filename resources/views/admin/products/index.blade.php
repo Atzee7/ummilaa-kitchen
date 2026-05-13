@@ -8,8 +8,7 @@
         <p class="text-gray-500 mt-1">Kelola semua produk Ummilaa Kitchen</p>
     </div>
     <a href="{{ route('admin.products.create') }}"
-        class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition"
-        style="background-color: #8B1A1A;">
+        class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition bg-[#8B1A1A]">
         + Tambah Produk
     </a>
 </div>
@@ -35,8 +34,7 @@
         </select>
 
         <button type="submit"
-            class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition"
-            style="background-color: #8B1A1A;">
+            class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition bg-[#8B1A1A]">
             Cari
         </button>
     </form>

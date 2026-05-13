@@ -2,16 +2,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<style>
-/* Contact card animated left accent */
-.contact-card::before {
-    content: ''; position: absolute; left: 0; top: 16px; bottom: 16px;
-    width: 3px; background: linear-gradient(180deg, #8B1A1A, #c0392b);
-    border-radius: 0 3px 3px 0; transform: scaleY(0); transform-origin: center;
-    transition: transform 0.25s ease;
-}
-.contact-card:hover::before { transform: scaleY(1); }
-</style>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 @endpush
 
 @section('content')
@@ -26,15 +17,18 @@
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-[80px] items-center relative z-[1] max-w-[1200px] mx-auto">
         {{-- LEFT: Text --}}
         <div>
-            <div class="inline-flex items-center gap-2 bg-white/[0.15] backdrop-blur-[6px] text-[#ffd9d9] px-5 py-[9px] rounded-[30px] text-[0.78rem] font-bold tracking-[1.8px] uppercase mb-6 border border-white/[0.15]">
+            <div data-aos="fade-down" data-aos-duration="600"
+                class="inline-flex items-center gap-2 bg-white/[0.15] backdrop-blur-[6px] text-[#ffd9d9] px-5 py-[9px] rounded-[30px] text-[0.78rem] font-bold tracking-[1.8px] uppercase mb-6 border border-white/[0.15]">
                 <i class="fas fa-headset"></i> Hubungi Kami
             </div>
-            <h1 class="font-playfair text-[2rem] md:text-[2.5rem] lg:text-[3rem] leading-[1.2] mb-5 tracking-[-0.5px]">Kami Siap <em class="italic text-[#ffcccc]">Membantu</em> Anda</h1>
-            <p class="opacity-[0.82] text-[1rem] leading-[1.9] max-w-[520px] mb-8">Ada pertanyaan, pemesanan khusus, atau ingin tahu lebih lanjut tentang produk kami? Jangan ragu menghubungi kami — tim kami siap merespons dengan cepat dan ramah.</p>
+            <h1 data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
+                class="font-playfair text-[2rem] md:text-[2.5rem] lg:text-[3rem] leading-[1.2] mb-5 tracking-[-0.5px]">Kami Siap <em class="italic text-[#ffcccc]">Membantu</em> Anda</h1>
+            <p data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
+                class="opacity-[0.82] text-[1rem] leading-[1.9] max-w-[520px] mb-8">Ada pertanyaan, pemesanan khusus, atau ingin tahu lebih lanjut tentang produk kami? Jangan ragu menghubungi kami — tim kami siap merespons dengan cepat dan ramah.</p>
         </div>
 
         {{-- RIGHT: Floating stat cards --}}
-        <div class="hidden lg:flex flex-col gap-4 min-w-[220px]">
+        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="200" class="hidden lg:flex flex-col gap-4 min-w-[220px]">
             <div class="bg-white/[0.1] backdrop-blur-[8px] border border-white/[0.15] rounded-[20px] px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/[0.15] rounded-[14px] flex items-center justify-center text-[1.3rem] flex-shrink-0">
                     <i class="fas fa-bolt text-yellow-300"></i>
@@ -68,7 +62,7 @@
 
 {{-- ========== CONTACT INFO GRID ========== --}}
 <div class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[70px] bg-[linear-gradient(180deg,#fdf5f5_0%,#fff_50%)]">
-    <div class="text-center mb-12">
+    <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-12">
         <div class="inline-flex items-center gap-2 text-[0.78rem] font-bold tracking-[2.5px] uppercase text-maroon mb-3">
             <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span> Informasi Kontak <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span>
         </div>
@@ -78,7 +72,9 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-[1100px] mx-auto">
         {{-- Alamat --}}
-        <div class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
+            class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+            <div class="absolute left-0 top-4 bottom-4 w-[3px] bg-gradient-to-b from-[#8B1A1A] to-[#c0392b] rounded-r scale-y-0 origin-center transition-transform duration-[250ms] group-hover:scale-y-100 pointer-events-none"></div>
             <div class="w-14 h-14 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.4rem] mb-5 shadow-[0_4px_12px_rgba(139,26,26,0.1)] transition-all duration-200 group-hover:bg-maroon group-hover:text-white group-hover:shadow-[0_6px_20px_rgba(139,26,26,0.25)]">
                 <i class="fas fa-map-marker-alt"></i>
             </div>
@@ -87,7 +83,9 @@
         </div>
 
         {{-- Telepon --}}
-        <div class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
+            class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+            <div class="absolute left-0 top-4 bottom-4 w-[3px] bg-gradient-to-b from-[#8B1A1A] to-[#c0392b] rounded-r scale-y-0 origin-center transition-transform duration-[250ms] group-hover:scale-y-100 pointer-events-none"></div>
             <div class="w-14 h-14 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.4rem] mb-5 shadow-[0_4px_12px_rgba(139,26,26,0.1)] transition-all duration-200 group-hover:bg-maroon group-hover:text-white group-hover:shadow-[0_6px_20px_rgba(139,26,26,0.25)]">
                 <i class="fas fa-phone-alt"></i>
             </div>
@@ -99,7 +97,9 @@
         </div>
 
         {{-- Email --}}
-        <div class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
+            class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+            <div class="absolute left-0 top-4 bottom-4 w-[3px] bg-gradient-to-b from-[#8B1A1A] to-[#c0392b] rounded-r scale-y-0 origin-center transition-transform duration-[250ms] group-hover:scale-y-100 pointer-events-none"></div>
             <div class="w-14 h-14 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.4rem] mb-5 shadow-[0_4px_12px_rgba(139,26,26,0.1)] transition-all duration-200 group-hover:bg-maroon group-hover:text-white group-hover:shadow-[0_6px_20px_rgba(139,26,26,0.25)]">
                 <i class="fas fa-envelope"></i>
             </div>
@@ -108,7 +108,9 @@
         </div>
 
         {{-- Jam Operasional --}}
-        <div class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="300"
+            class="contact-card relative bg-white border-[1.5px] border-maroon-200 rounded-[22px] p-7 overflow-hidden transition-all duration-200 hover:shadow-[0_12px_40px_rgba(139,26,26,0.1)] hover:-translate-y-1 group">
+            <div class="absolute left-0 top-4 bottom-4 w-[3px] bg-gradient-to-b from-[#8B1A1A] to-[#c0392b] rounded-r scale-y-0 origin-center transition-transform duration-[250ms] group-hover:scale-y-100 pointer-events-none"></div>
             <div class="w-14 h-14 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.4rem] mb-5 shadow-[0_4px_12px_rgba(139,26,26,0.1)] transition-all duration-200 group-hover:bg-maroon group-hover:text-white group-hover:shadow-[0_6px_20px_rgba(139,26,26,0.25)]">
                 <i class="fas fa-clock"></i>
             </div>
@@ -122,7 +124,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 px-5 md:px-10 lg:px-[80px] pb-10 lg:pb-[80px] items-start">
 
     {{-- MAP --}}
-    <div class="bg-white border-[1.5px] border-maroon-200 rounded-[24px] overflow-hidden shadow-[0_8px_40px_rgba(139,26,26,0.07)]">
+    <div data-aos="fade-right" data-aos-duration="800" class="bg-white border-[1.5px] border-maroon-200 rounded-[24px] overflow-hidden shadow-[0_8px_40px_rgba(139,26,26,0.07)]">
         <div class="flex justify-between items-center px-7 py-5 border-b border-maroon-200">
             <div>
                 <div class="text-[0.72rem] font-extrabold tracking-[2px] uppercase text-maroon mb-1">Lokasi Kami</div>
@@ -148,7 +150,7 @@
     </div>
 
     {{-- KANAN: Sosmed + Quick Contact --}}
-    <div class="flex flex-col gap-5">
+    <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="100" class="flex flex-col gap-5">
 
         {{-- Quick Contact CTA --}}
         <div class="bg-[linear-gradient(135deg,#8B1A1A,#5a0e0e)] rounded-[22px] p-7 text-white">
@@ -169,7 +171,7 @@
             <div class="flex flex-col gap-3">
                 <a href="https://instagram.com/ummilaakitchen" target="_blank"
                     class="flex items-center gap-4 p-4 rounded-[16px] border-[1.5px] border-transparent bg-[#fdf5f5] no-underline transition-all duration-200 hover:border-maroon hover:shadow-[0_4px_16px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 group">
-                    <div class="w-11 h-11 rounded-[14px] flex items-center justify-center text-[1.1rem] text-white flex-shrink-0" style="background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)">
+                    <div class="w-11 h-11 rounded-[14px] flex items-center justify-center text-[1.1rem] text-white flex-shrink-0 bg-[linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)]">
                         <i class="fab fa-instagram"></i>
                     </div>
                     <div class="flex-1">
@@ -226,6 +228,15 @@
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 700,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 60,
+    });
+</script>
 <script>
     const lat = -7.963536;
     const lng = 112.669380;

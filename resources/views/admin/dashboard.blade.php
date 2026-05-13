@@ -11,8 +11,8 @@
     <div class="bg-white rounded-2xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
             <p class="text-sm font-semibold text-gray-500">Total Produk</p>
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: rgba(139,26,26,0.1);">
-                <svg class="w-5 h-5" style="color: #8B1A1A;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-[rgba(139,26,26,0.1)]">
+                <svg class="w-5 h-5 text-[#8B1A1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
             </div>
@@ -64,7 +64,7 @@
 <div class="bg-white rounded-2xl shadow-sm p-6">
     <div class="flex items-center justify-between mb-6">
         <h3 class="font-playfair text-xl font-bold text-gray-800">Pesanan Aktif</h3>
-        <a href="{{ route('admin.orders.index') }}" class="text-sm font-semibold hover:underline" style="color: #8B1A1A;">Lihat Semua →</a>
+        <a href="{{ route('admin.orders.index') }}" class="text-sm font-semibold hover:underline text-[#8B1A1A]">Lihat Semua →</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">

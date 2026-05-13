@@ -1,16 +1,7 @@
 @extends('layouts.app')
 
 @push('styles')
-<style>
-/* Visi/Misi card animated top-border on hover — requires ::before pseudo-element */
-.visimisi-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0;
-    height: 4px; background: linear-gradient(90deg, #8B1A1A, #c0392b);
-    border-radius: 28px 28px 0 0; transform: scaleX(0); transform-origin: left;
-    transition: transform 0.3s ease;
-}
-.visimisi-card:hover::before { transform: scaleX(1); }
-</style>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 @endpush
 
 @section('content')
@@ -21,18 +12,22 @@
     <div class="absolute -left-[80px] -bottom-[120px] w-[400px] h-[400px] rounded-full bg-white/[0.03] pointer-events-none"></div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[50px] items-center relative z-[1] max-w-[1200px] mx-auto">
         <div>
-            <div class="inline-flex items-center gap-2 bg-white/[0.15] backdrop-blur-[6px] text-[#ffd9d9] px-5 py-2 rounded-[30px] text-[0.78rem] font-bold tracking-[1.8px] uppercase mb-6 border border-white/[0.15]">
+            <div data-aos="fade-down" data-aos-duration="600"
+                class="inline-flex items-center gap-2 bg-white/[0.15] backdrop-blur-[6px] text-[#ffd9d9] px-5 py-2 rounded-[30px] text-[0.78rem] font-bold tracking-[1.8px] uppercase mb-6 border border-white/[0.15]">
                 <i class="fas fa-heart"></i> Tentang Kami
             </div>
-            <h1 class="font-playfair text-[2rem] md:text-[2.5rem] lg:text-[3rem] leading-[1.2] mb-5 tracking-[-0.5px]">Dapur Penuh <em class="italic text-[#ffcccc]">Cinta</em>, Rasa yang Tak Terlupakan</h1>
-            <p class="opacity-85 text-[1rem] leading-[1.9] max-w-[480px] mb-9">Ummilaa Kitchen hadir untuk memudahkan Anda mendapatkan makanan lezat dan fresh. Dari camilan harian hingga catering acara spesial, semua kami siapkan dengan penuh dedikasi.</p>
-            <a href="{{ route('catalogue') }}" class="inline-flex items-center gap-[10px] bg-white text-maroon px-7 py-[13px] rounded-[50px] font-extrabold text-[0.92rem] no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(0,0,0,0.25)] shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+            <h1 data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
+                class="font-playfair text-[2rem] md:text-[2.5rem] lg:text-[3rem] leading-[1.2] mb-5 tracking-[-0.5px]">Dapur Penuh <em class="italic text-[#ffcccc]">Cinta</em>, Rasa yang Tak Terlupakan</h1>
+            <p data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
+                class="opacity-85 text-[1rem] leading-[1.9] max-w-[480px] mb-9">Ummilaa Kitchen hadir untuk memudahkan Anda mendapatkan makanan lezat dan fresh. Dari camilan harian hingga catering acara spesial, semua kami siapkan dengan penuh dedikasi.</p>
+            <a data-aos="fade-up" data-aos-duration="700" data-aos-delay="300"
+                href="{{ route('catalogue') }}" class="inline-flex items-center gap-[10px] bg-white text-maroon px-7 py-[13px] rounded-[50px] font-extrabold text-[0.92rem] no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(0,0,0,0.25)] shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
                 <i class="fas fa-utensils"></i> Lihat Menu Kami
             </a>
         </div>
-        <div class="flex justify-center">
+        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="200" class="flex justify-center">
             <div class="relative w-full max-w-[440px]">
-                <div class="absolute -top-5 -right-5 w-[120px] h-[120px] rounded-xl pointer-events-none" style="background-image: radial-gradient(rgba(255,255,255,0.3) 1.5px, transparent 1.5px); background-size: 12px 12px;"></div>
+                <div class="absolute -top-5 -right-5 w-[120px] h-[120px] rounded-xl pointer-events-none bg-[radial-gradient(rgba(255,255,255,0.3)_1.5px,transparent_1.5px)] [background-size:12px_12px]"></div>
                 <img class="w-full h-[260px] md:h-[340px] lg:h-[400px] object-cover rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)]" src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
                 <div class="absolute -bottom-5 -left-5 bg-white text-maroon px-[22px] py-4 rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex items-center gap-3">
                     <div class="w-11 h-11 bg-maroon-100 rounded-xl flex items-center justify-center text-[1.3rem] text-maroon flex-shrink-0">
@@ -50,7 +45,7 @@
 
 {{-- ========== STORY ========== --}}
 <section class="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-[60px] px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] min-h-0 lg:min-h-[90vh] bg-white relative overflow-hidden">
-    <div class="relative">
+    <div data-aos="fade-right" data-aos-duration="800" class="relative">
         <img class="w-full h-[280px] md:h-[400px] lg:h-[500px] object-cover rounded-[24px] shadow-[0_30px_70px_rgba(139,26,26,0.2)]" src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
         <div class="absolute top-8 -left-6 bg-maroon text-white px-6 py-[18px] rounded-[20px] text-center shadow-[0_12px_32px_rgba(139,26,26,0.35)]">
             <strong class="block font-playfair text-[2rem]">2019</strong>
@@ -66,7 +61,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="150">
         <div class="flex items-center gap-2 text-[0.78rem] font-bold tracking-[2.5px] uppercase text-maroon mb-[14px]">
             <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span> Cerita Kami
         </div>
@@ -90,7 +85,7 @@
 
 {{-- ========== VISI MISI ========== --}}
 <section class="bg-[linear-gradient(135deg,#fdf5f5_0%,#fff5f0_100%)] px-[80px] py-[100px]">
-    <div class="text-center mb-16">
+    <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-16">
         <div class="flex items-center justify-center gap-2 text-[0.78rem] font-bold tracking-[2.5px] uppercase text-maroon mb-2">
             <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span> Arah & Tujuan
         </div>
@@ -98,14 +93,18 @@
         <p class="text-[#999] text-[0.95rem] mt-[10px]">Komitmen kami dalam menghadirkan yang terbaik untuk setiap pelanggan</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1000px] mx-auto">
-        <div class="visimisi-card bg-white rounded-[28px] p-11 shadow-[0_8px_40px_rgba(139,26,26,0.07)] border border-[#f5eded] transition-all duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(139,26,26,0.13)] relative overflow-hidden">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
+            class="visimisi-card bg-white rounded-[28px] p-11 shadow-[0_8px_40px_rgba(139,26,26,0.07)] border border-[#f5eded] transition-all duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(139,26,26,0.13)] relative overflow-hidden group">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8B1A1A] to-[#c0392b] rounded-t-[28px] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 pointer-events-none"></div>
             <div class="w-16 h-16 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.6rem] mb-[26px] shadow-[0_4px_16px_rgba(139,26,26,0.1)]">
                 <i class="fas fa-eye"></i>
             </div>
             <h3 class="font-playfair text-[1.6rem] text-[#1a1a1a] mb-4">Visi</h3>
             <p class="text-[#777] leading-[1.85] text-[0.97rem]">Menjadi usaha kuliner UMKM terpercaya di Malang yang dikenal atas kualitas rasa, kebersihan, dan pelayanan terbaik kepada setiap pelanggan.</p>
         </div>
-        <div class="visimisi-card bg-white rounded-[28px] p-11 shadow-[0_8px_40px_rgba(139,26,26,0.07)] border border-[#f5eded] transition-all duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(139,26,26,0.13)] relative overflow-hidden">
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="150"
+            class="visimisi-card bg-white rounded-[28px] p-11 shadow-[0_8px_40px_rgba(139,26,26,0.07)] border border-[#f5eded] transition-all duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(139,26,26,0.13)] relative overflow-hidden group">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8B1A1A] to-[#c0392b] rounded-t-[28px] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 pointer-events-none"></div>
             <div class="w-16 h-16 bg-[linear-gradient(135deg,#fdf0f0,#ffe8e8)] rounded-[18px] flex items-center justify-center text-maroon text-[1.6rem] mb-[26px] shadow-[0_4px_16px_rgba(139,26,26,0.1)]">
                 <i class="fas fa-bullseye"></i>
             </div>
@@ -131,7 +130,7 @@
 
 {{-- ========== TESTIMONI MARQUEE ========== --}}
 <section class="px-5 md:px-10 lg:px-[80px] py-10 lg:py-[80px] bg-[linear-gradient(180deg,#fdf5f5_0%,#fff_100%)] overflow-hidden">
-    <div class="text-center mb-14 px-[80px]">
+    <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-14 px-[80px]">
         <div class="flex items-center justify-center gap-2 text-[0.78rem] font-bold tracking-[2.5px] uppercase text-maroon mb-2">
             <span class="inline-block w-6 h-0.5 bg-maroon rounded-sm"></span> Apa Kata Mereka
         </div>
@@ -157,7 +156,7 @@
                         <div class="flex justify-between items-start mb-[18px]">
                             <div class="text-[0.9rem] tracking-[2px]">
                                 @for($i = 1; $i <= 5; $i++)
-                                    <span style="color: {{ $i <= $t->rating ? '#F5A623' : '#e0e0e0' }}">★</span>
+                                    <span class="{{ $i <= $t->rating ? 'text-[#F5A623]' : 'text-[#e0e0e0]' }}">★</span>
                                 @endfor
                             </div>
                             <div class="text-[2.8rem] text-[#f0e0e0] font-[Georgia,serif] leading-[0.8]">"</div>
@@ -181,3 +180,15 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 700,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 60,
+    });
+</script>
+@endpush
