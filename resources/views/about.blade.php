@@ -2,223 +2,289 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+<style>
+    .hero-line {
+        width: 0;
+        animation: expandLine 0.8s ease forwards 0.6s;
+    }
+    @keyframes expandLine {
+        to { width: 40px; }
+    }
+</style>
 @endpush
 
 @section('content')
 
-{{-- ========== HERO ========== --}}
-<section class="relative bg-white overflow-hidden border-b border-[#f0f0f0] flex flex-col justify-center" style="min-height: 85vh">
+{{-- ================================================================
+     HERO — 85vh, centered, elegant
+================================================================ --}}
+<section class="relative bg-white flex flex-col justify-center overflow-hidden border-b border-[#f0eeec]"
+    style="min-height: 85vh">
 
-    <div class="relative z-10 max-w-[800px] mx-auto text-center px-5 md:px-10">
+    {{-- Faint corner ornaments --}}
+    <div class="absolute top-10 left-10 w-24 h-24 border border-[#f0e8e8] rounded-full pointer-events-none opacity-60"></div>
+    <div class="absolute top-16 left-16 w-12 h-12 border border-[#f0e8e8] rounded-full pointer-events-none opacity-40"></div>
+    <div class="absolute bottom-14 right-12 w-20 h-20 border border-[#f0e8e8] rounded-full pointer-events-none opacity-50"></div>
+    <div class="absolute bottom-20 right-20 w-8 h-8 border border-[#f0e8e8] rounded-full pointer-events-none opacity-30"></div>
+
+    <div class="relative z-10 max-w-[720px] mx-auto text-center px-6">
+
+        {{-- Label --}}
         <div data-aos="fade-down" data-aos-duration="600"
-            class="inline-flex items-center gap-3 text-maroon text-[0.72rem] font-bold tracking-[2.5px] uppercase mb-7">
-            <span class="w-8 h-px bg-maroon inline-block"></span>
+            class="inline-flex items-center gap-3 text-maroon text-[0.7rem] font-bold tracking-[3px] uppercase mb-7">
+            <span class="hero-line h-px bg-maroon inline-block"></span>
             Tentang Kami
-            <span class="w-8 h-px bg-maroon inline-block"></span>
+            <span class="hero-line h-px bg-maroon inline-block"></span>
         </div>
 
-        <h1 data-aos="fade-up" data-aos-duration="800" data-aos-delay="80"
-            class="font-playfair text-[2.6rem] md:text-[3.4rem] lg:text-[4.2rem] leading-[1.15] text-[#1a1a1a] mb-7 tracking-[-1px]">
-            Dapur Penuh <em class="text-maroon not-italic">Cinta</em>,<br>Rasa yang Tak Terlupakan
+        {{-- Heading --}}
+        <h1 data-aos="fade-up" data-aos-duration="800" data-aos-delay="100"
+            class="font-playfair text-[2.8rem] md:text-[3.6rem] lg:text-[4.4rem] leading-[1.15] text-[#1a1a1a] mb-6 tracking-[-1.5px]">
+            Dapur Penuh <em class="text-maroon not-italic">Cinta</em>,<br>
+            Rasa yang Tak Terlupakan
         </h1>
 
-        <p data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
-            class="text-[#777] text-[1.05rem] leading-[1.9] max-w-[520px] mx-auto mb-10">
-            Ummilaa Kitchen hadir untuk memudahkan Anda mendapatkan makanan lezat dan fresh. Dari camilan harian hingga catering acara spesial, semua kami siapkan dengan penuh dedikasi.
+        {{-- Divider --}}
+        <div data-aos="fade-up" data-aos-duration="600" data-aos-delay="200"
+            class="flex items-center justify-center gap-3 mb-6">
+            <div class="h-px w-12 bg-gradient-to-r from-transparent to-maroon-200"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-maroon opacity-40"></div>
+            <div class="w-2 h-2 rounded-full bg-maroon opacity-70"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-maroon opacity-40"></div>
+            <div class="h-px w-12 bg-gradient-to-l from-transparent to-maroon-200"></div>
+        </div>
+
+        {{-- Sub --}}
+        <p data-aos="fade-up" data-aos-duration="700" data-aos-delay="250"
+            class="text-[#888] text-[1rem] leading-[1.9] max-w-[500px] mx-auto mb-10">
+            Ummilaa Kitchen hadir untuk memudahkan Anda mendapatkan makanan lezat dan <em>fresh</em>. Dari camilan harian hingga catering acara spesial, semua kami siapkan dengan penuh dedikasi.
         </p>
 
-        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="300"
-            class="flex flex-wrap gap-4 items-center justify-center mb-16">
+        {{-- CTA --}}
+        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="320"
+            class="flex flex-wrap gap-3 items-center justify-center mb-12">
             <a href="{{ route('catalogue') }}"
-                class="inline-flex items-center gap-[10px] bg-maroon text-white px-8 py-[15px] rounded-[50px] font-bold text-[0.92rem] no-underline transition-all duration-200 hover:-translate-y-1 hover:bg-maroon-dark hover:shadow-[0_16px_40px_rgba(139,26,26,0.3)] shadow-[0_6px_20px_rgba(139,26,26,0.2)]">
-                <i class="fas fa-utensils"></i> Lihat Menu Kami
+                class="inline-flex items-center gap-2 bg-maroon text-white px-8 py-[14px] rounded-full font-bold text-[0.88rem] tracking-wide no-underline transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_12px_36px_rgba(139,26,26,0.3)] shadow-[0_4px_18px_rgba(139,26,26,0.22)]">
+                <i class="fas fa-utensils text-[0.8rem]"></i> Lihat Menu Kami
+            </a>
+            <a href="#cerita-kami"
+                class="inline-flex items-center gap-2 border border-[#e8e0e0] text-[#666] px-7 py-[13px] rounded-full font-semibold text-[0.88rem] no-underline hover:border-maroon hover:text-maroon transition-all duration-200">
+                Cerita Kami <i class="fas fa-arrow-down text-[0.72rem]"></i>
             </a>
         </div>
 
-        {{-- 3 highlight pills --}}
-        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="400"
+        {{-- Pills --}}
+        <div data-aos="fade-up" data-aos-duration="600" data-aos-delay="400"
             class="flex flex-wrap items-center justify-center gap-3">
-            <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f5e8e3] text-[#555] px-5 py-2.5 rounded-full text-[0.82rem] font-semibold">
-                <i class="fas fa-leaf text-maroon text-[0.8rem]"></i> Bahan Segar Pilihan
+            @foreach([
+                ['icon' => 'fas fa-leaf', 'label' => 'Bahan Segar Pilihan'],
+                ['icon' => 'fas fa-shield-alt', 'label' => 'Higienis & Terjamin'],
+                ['icon' => 'fas fa-heart', 'label' => 'Dibuat dengan Cinta'],
+            ] as $pill)
+            <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f0e4df] text-[#666] px-5 py-2 rounded-full text-[0.8rem] font-medium">
+                <i class="{{ $pill['icon'] }} text-maroon text-[0.75rem]"></i>
+                {{ $pill['label'] }}
             </div>
-            <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f5e8e3] text-[#555] px-5 py-2.5 rounded-full text-[0.82rem] font-semibold">
-                <i class="fas fa-shield-alt text-maroon text-[0.8rem]"></i> Higienis & Terjamin
-            </div>
-            <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f5e8e3] text-[#555] px-5 py-2.5 rounded-full text-[0.82rem] font-semibold">
-                <i class="fas fa-truck text-maroon text-[0.8rem]"></i> Pengiriman Cepat
-            </div>
+            @endforeach
         </div>
-    </div>
 
+    </div>
 </section>
 
-{{-- ========== CERITA / STORY ========== --}}
-<section id="cerita-kami" class="bg-white px-5 md:px-10 lg:px-[80px] py-[80px] lg:py-[100px]">
-    <div class="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-        {{-- Kiri: Teks + Mini Cards --}}
+{{-- ================================================================
+     CERITA / STORY
+================================================================ --}}
+<section id="cerita-kami" class="bg-white px-5 md:px-12 lg:px-[80px] py-[90px] lg:py-[110px]">
+    <div class="max-w-[1160px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+
+        {{-- Kiri: Teks --}}
         <div data-aos="fade-right" data-aos-duration="800">
-            <div class="flex items-center gap-2 text-[0.72rem] font-bold tracking-[2.5px] uppercase text-maroon mb-4">
-                <span class="w-5 h-px bg-maroon inline-block"></span> Cerita Kami
+            <div class="flex items-center gap-2 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon mb-5">
+                <span class="w-6 h-px bg-maroon"></span> Cerita Kami
             </div>
-            <h2 class="font-playfair text-[2rem] md:text-[2.4rem] text-[#1a1a1a] leading-[1.25] mb-5">
-                Menghadirkan<br><span class="text-maroon">Kualitas Terbaik</span>
+            <h2 class="font-playfair text-[2.1rem] md:text-[2.6rem] text-[#1a1a1a] leading-[1.2] mb-6 tracking-[-0.5px]">
+                Berawal dari Dapur<br>Rumahan, Kini Melayani<br><span class="text-maroon">Ratusan Pelanggan</span>
             </h2>
-            <p class="text-[#666] leading-[1.85] text-[0.97rem] mb-4">
-                Ummilaa Kitchen lahir dari kecintaan terhadap kuliner dan semangat menghadirkan makanan berkualitas dengan harga terjangkau bagi masyarakat Malang dan sekitarnya.
+            <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-4">
+                Ummilaa Kitchen lahir dari kecintaan mendalam terhadap dunia kuliner dan tekad untuk menghadirkan makanan berkualitas dengan harga yang bersahabat bagi masyarakat Malang.
             </p>
-            <p class="text-[#666] leading-[1.85] text-[0.97rem] mb-8">
-                Berawal dari dapur kecil di rumah, kami terus berkembang dan kini menawarkan berbagai produk mulai dari dimsum, crunchy series, perpentolan, risol, hingga layanan catering untuk berbagai acara.
+            <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-10">
+                Berawal dari dapur kecil di rumah sejak 2019, kini kami menawarkan berbagai produk — dimsum, crunchy series, perpentolan, risol — hingga layanan catering untuk berbagai acara spesial.
             </p>
 
-            {{-- Mini Feature Cards --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="flex items-start gap-4 bg-[#fdf6f3] rounded-[16px] p-5 border border-[#f5e8e3]">
-                    <div class="w-10 h-10 bg-white rounded-[12px] flex items-center justify-center text-maroon flex-shrink-0 shadow-sm border border-[#f5e8e3]">
-                        <i class="fas fa-leaf text-[0.95rem]"></i>
+            {{-- Feature list --}}
+            <div class="space-y-4">
+                @foreach([
+                    ['icon' => 'fas fa-leaf', 'title' => 'Bahan Segar Setiap Hari', 'desc' => 'Dipilih langsung dari sumber terpercaya untuk menjaga kualitas rasa.'],
+                    ['icon' => 'fas fa-award', 'title' => 'Kualitas Terjaga Sejak 2019', 'desc' => 'Standar kebersihan dan cita rasa yang konsisten di setiap produk.'],
+                    ['icon' => 'fas fa-heart', 'title' => 'Dibuat dengan Sepenuh Hati', 'desc' => 'Setiap produk kami kerjakan dengan dedikasi dan penuh kasih sayang.'],
+                ] as $f)
+                <div class="flex items-start gap-4">
+                    <div class="w-9 h-9 rounded-xl bg-[#fdf6f3] border border-[#f0e4df] flex items-center justify-center text-maroon flex-shrink-0 mt-0.5">
+                        <i class="{{ $f['icon'] }} text-[0.82rem]"></i>
                     </div>
                     <div>
-                        <strong class="block text-[0.9rem] text-[#1a1a1a] mb-1">Bahan Segar</strong>
-                        <span class="text-[0.8rem] text-[#888] leading-relaxed">Dipilih setiap hari untuk hasil terbaik di setiap gigitan.</span>
+                        <strong class="block text-[0.9rem] text-[#1a1a1a] mb-0.5">{{ $f['title'] }}</strong>
+                        <span class="text-[0.82rem] text-[#999] leading-relaxed">{{ $f['desc'] }}</span>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 bg-[#fdf6f3] rounded-[16px] p-5 border border-[#f5e8e3]">
-                    <div class="w-10 h-10 bg-white rounded-[12px] flex items-center justify-center text-maroon flex-shrink-0 shadow-sm border border-[#f5e8e3]">
-                        <i class="fas fa-chart-line text-[0.95rem]"></i>
-                    </div>
-                    <div>
-                        <strong class="block text-[0.9rem] text-[#1a1a1a] mb-1">Inovasi Menu</strong>
-                        <span class="text-[0.8rem] text-[#888] leading-relaxed">Terus berkembang dengan varian baru yang mengikuti selera pasar.</span>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
 
-        {{-- Kanan: Gambar + Badge Metrik --}}
-        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="150" class="relative flex justify-center">
-            <div class="relative w-full max-w-[440px]">
-                <img class="w-full h-[380px] md:h-[460px] object-cover rounded-[24px] shadow-[0_24px_60px_rgba(0,0,0,0.12)]"
+        {{-- Kanan: Gambar --}}
+        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="120"
+            class="relative flex justify-center lg:justify-end">
+            <div class="relative w-full max-w-[420px]">
+
+                {{-- Decorative frame behind image --}}
+                <div class="absolute -bottom-4 -right-4 w-full h-full rounded-[28px] border-2 border-[#f0e4df] pointer-events-none"></div>
+
+                <img class="relative w-full h-[420px] md:h-[500px] object-cover rounded-[28px] shadow-[0_20px_60px_rgba(139,26,26,0.12)]"
                     src="{{ asset('images/dapur.jpeg') }}" alt="Dapur Ummilaa Kitchen">
 
-                {{-- Badge kiri atas --}}
-                <div class="absolute -top-5 -left-5 bg-white rounded-[16px] px-5 py-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)] flex items-center gap-3 border border-[#f0f0f0]">
-                    <div class="w-10 h-10 bg-maroon rounded-[10px] flex items-center justify-center text-white flex-shrink-0">
-                        <i class="fas fa-fire-alt"></i>
+                {{-- Badge atas kiri --}}
+                <div class="absolute -top-5 -left-5 bg-white rounded-2xl px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-[#f5f5f5]">
+                    <div class="w-9 h-9 bg-maroon rounded-[10px] flex items-center justify-center text-white flex-shrink-0">
+                        <i class="fas fa-fire-alt text-[0.8rem]"></i>
                     </div>
                     <div>
-                        <strong class="block font-playfair text-[1.5rem] text-[#1a1a1a] leading-none">100+</strong>
-                        <span class="text-[0.72rem] text-[#999]">Produk Tersedia</span>
+                        <strong class="block font-playfair text-[1.4rem] text-[#1a1a1a] leading-none">100+</strong>
+                        <span class="text-[0.68rem] text-[#aaa]">Produk Tersedia</span>
                     </div>
                 </div>
 
-                {{-- Badge kanan bawah --}}
-                <div class="absolute -bottom-5 -right-5 bg-white rounded-[16px] px-5 py-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-[#f0f0f0]">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse flex-shrink-0"></div>
-                        <span class="text-[0.72rem] text-[#888]">Kepuasan Pelanggan</span>
+                {{-- Badge bawah kanan --}}
+                <div class="absolute -bottom-5 -right-9 bg-white rounded-2xl px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] border border-[#f5f5f5]">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                        <span class="text-[0.68rem] text-[#aaa]">Kepuasan Pelanggan</span>
                     </div>
                     <div class="flex items-baseline gap-1">
-                        <strong class="font-playfair text-[1.8rem] text-maroon leading-none">95%</strong>
-                        <span class="text-[0.72rem] text-[#aaa]">rating bintang 5</span>
+                        <strong class="font-playfair text-[1.7rem] text-maroon leading-none">95%</strong>
+                        <span class="text-[0.68rem] text-[#bbb]">bintang 5</span>
                     </div>
                 </div>
+
             </div>
         </div>
 
     </div>
 </section>
 
-{{-- ========== VISI & MISI ========== --}}
-<section class="bg-[#fdf6f3] px-5 md:px-10 lg:px-[80px] py-[80px] lg:py-[100px] border-y border-[#f5e8e3]">
-    <div class="max-w-[1200px] mx-auto">
+
+
+{{-- ================================================================
+     VISI & MISI
+================================================================ --}}
+<section class="bg-white px-5 md:px-12 lg:px-[80px] py-[80px] lg:py-[100px]">
+    <div class="max-w-[1160px] mx-auto">
+
         <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-14">
-            <div class="flex items-center justify-center gap-2 text-[0.72rem] font-bold tracking-[2.5px] uppercase text-maroon mb-3">
-                <span class="w-5 h-px bg-maroon inline-block"></span> Arah & Tujuan
+            <div class="flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon mb-3">
+                <span class="w-6 h-px bg-maroon"></span> Arah & Tujuan <span class="w-6 h-px bg-maroon"></span>
             </div>
-            <h2 class="font-playfair text-[2rem] md:text-[2.3rem] text-[#1a1a1a]">Visi & <span class="text-maroon">Misi</span></h2>
-            <p class="text-[#999] text-[0.95rem] mt-3 max-w-[480px] mx-auto">Komitmen kami dalam menghadirkan yang terbaik untuk setiap pelanggan</p>
+            <h2 class="font-playfair text-[2rem] md:text-[2.4rem] text-[#1a1a1a] tracking-[-0.5px]">
+                Visi & <span class="text-maroon">Misi</span>
+            </h2>
+            <p class="text-[#aaa] text-[0.92rem] mt-3 max-w-[440px] mx-auto leading-relaxed">
+                Komitmen kami dalam menghadirkan yang terbaik untuk setiap pelanggan.
+            </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[960px] mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[900px] mx-auto">
+
             {{-- Visi --}}
             <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
-                class="bg-white rounded-[24px] p-9 shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[#f5e8e3] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:border-maroon-200 group relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[24px] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></div>
-                <div class="w-14 h-14 bg-[#fdf6f3] rounded-[16px] flex items-center justify-center text-maroon text-[1.4rem] mb-6 border border-[#f5e8e3]">
+                class="group relative bg-white rounded-[24px] p-10 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
+                <div class="w-12 h-12 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.1rem] mb-6">
                     <i class="fas fa-eye"></i>
                 </div>
-                <h3 class="font-playfair text-[1.5rem] text-[#1a1a1a] mb-4">Visi</h3>
-                <p class="text-[#666] leading-[1.85] text-[0.95rem]">Menjadi usaha kuliner UMKM terpercaya di Malang yang dikenal atas kualitas rasa, kebersihan, dan pelayanan terbaik kepada setiap pelanggan.</p>
+                <h3 class="font-playfair text-[1.4rem] text-[#1a1a1a] mb-4">Visi</h3>
+                <p class="text-[#777] leading-[1.9] text-[0.93rem]">
+                    Menjadi usaha kuliner UMKM terpercaya di Malang yang dikenal atas kualitas rasa, kebersihan, dan pelayanan terbaik kepada setiap pelanggan.
+                </p>
             </div>
 
             {{-- Misi --}}
             <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="120"
-                class="bg-white rounded-[24px] p-9 shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[#f5e8e3] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:border-maroon-200 group relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-[3px] bg-maroon rounded-t-[24px] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></div>
-                <div class="w-14 h-14 bg-[#fdf6f3] rounded-[16px] flex items-center justify-center text-maroon text-[1.4rem] mb-6 border border-[#f5e8e3]">
+                class="group relative bg-white rounded-[24px] p-10 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
+                <div class="w-12 h-12 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.1rem] mb-6">
                     <i class="fas fa-bullseye"></i>
                 </div>
-                <h3 class="font-playfair text-[1.5rem] text-[#1a1a1a] mb-4">Misi</h3>
-                <ul class="list-none m-0">
+                <h3 class="font-playfair text-[1.4rem] text-[#1a1a1a] mb-5">Misi</h3>
+                <ul class="space-y-3">
                     @foreach([
-                        'Menyajikan produk kuliner berkualitas dengan bahan-bahan pilihan yang segar dan higienis.',
-                        'Memberikan kemudahan akses informasi produk dan pemesanan melalui platform digital.',
-                        'Menghadirkan pelayanan yang ramah, cepat, dan memuaskan untuk setiap pelanggan.',
-                        'Terus berinovasi dalam menu dan layanan demi memenuhi kebutuhan pelanggan.',
+                        'Menyajikan produk kuliner berkualitas dengan bahan pilihan yang segar dan higienis.',
+                        'Memberikan kemudahan akses pemesanan melalui platform digital.',
+                        'Menghadirkan pelayanan yang ramah, cepat, dan memuaskan.',
+                        'Terus berinovasi dalam menu dan layanan demi kebutuhan pelanggan.',
                     ] as $misi)
-                    <li class="flex items-start gap-3 text-[#666] text-[0.93rem] leading-[1.75] mb-3 pb-3 border-b border-[#fdf0eb] last:mb-0 last:pb-0 last:border-0">
-                        <div class="w-5 h-5 bg-maroon rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-check text-white text-[0.6rem]"></i>
+                    <li class="flex items-start gap-3 text-[#777] text-[0.88rem] leading-[1.75]">
+                        <div class="w-[18px] h-[18px] rounded-full bg-maroon flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-white text-[0.55rem]"></i>
                         </div>
                         {{ $misi }}
                     </li>
                     @endforeach
                 </ul>
             </div>
+
         </div>
     </div>
 </section>
 
-{{-- ========== TESTIMONI MARQUEE ========== --}}
-<section class="bg-white px-5 md:px-10 lg:px-[80px] py-[80px] lg:py-[100px] overflow-hidden">
+
+{{-- ================================================================
+     TESTIMONI
+================================================================ --}}
+<section class="bg-white border-t border-[#f0eeec] px-5 md:px-12 lg:px-[80px] py-[80px] lg:py-[100px] overflow-hidden">
+
     <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-14">
-        <div class="flex items-center justify-center gap-2 text-[0.72rem] font-bold tracking-[2.5px] uppercase text-maroon mb-3">
-            <span class="w-5 h-px bg-maroon inline-block"></span> Apa Kata Mereka
+        <div class="flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon mb-3">
+            <span class="w-6 h-px bg-maroon"></span> Apa Kata Mereka <span class="w-6 h-px bg-maroon"></span>
         </div>
-        <h2 class="font-playfair text-[2rem] md:text-[2.3rem] text-[#1a1a1a]">Cerita <span class="text-maroon">Pelanggan</span></h2>
-        <p class="text-[#999] mt-3 text-[0.95rem]">Kepuasan pelanggan adalah prioritas utama kami</p>
+        <h2 class="font-playfair text-[2rem] md:text-[2.4rem] text-[#1a1a1a] tracking-[-0.5px]">
+            Cerita <span class="text-maroon">Pelanggan</span>
+        </h2>
+        <p class="text-[#aaa] text-[0.92rem] mt-3">Kepuasan pelanggan adalah prioritas utama kami</p>
     </div>
 
     @if($testimonials->isEmpty())
-        <div class="text-center px-10 py-[60px] text-[#bbb] text-[0.95rem]">
-            <i class="fas fa-comment-slash text-[2.5rem] mb-[14px] block text-[#ddd]"></i>
+        <div class="text-center py-16 text-[#ccc] text-[0.9rem]">
+            <i class="fas fa-comment-slash text-[2rem] block mb-3 text-[#e0e0e0]"></i>
             Belum ada testimoni yang disetujui.
         </div>
     @else
         <div class="relative overflow-hidden">
-            <div class="absolute left-0 top-0 bottom-0 w-[140px] z-[2] pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
-            <div class="absolute right-0 top-0 bottom-0 w-[140px] z-[2] pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
-            <div class="flex gap-6 w-max py-4 pb-8 animate-marquee hover:[animation-play-state:paused]">
+            <div class="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
+            <div class="flex gap-5 w-max py-4 pb-6 animate-marquee hover:[animation-play-state:paused]">
                 @foreach([1,2] as $loop)
                     @foreach($testimonials as $t)
-                    <div class="bg-white rounded-[20px] p-7 border border-[#ebebeb] shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300 relative w-[320px] flex-shrink-0 hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:border-maroon-200">
-                        <div class="absolute top-4 right-4 bg-[#fdf6f3] text-maroon rounded-full px-3 py-1 text-[0.72rem] font-bold border border-[#f5e8e3]">{{ $t->rating }}/5</div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="text-[0.9rem] tracking-[2px]">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <span class="{{ $i <= $t->rating ? 'text-[#F5A623]' : 'text-[#e0e0e0]' }}">★</span>
-                                @endfor
-                            </div>
-                            <div class="text-[2.4rem] text-[#f0e0e0] font-[Georgia,serif] leading-[0.8]">"</div>
+                    <div class="bg-white rounded-[20px] p-7 border border-[#f0e4df] shadow-[0_2px_20px_rgba(139,26,26,0.05)] w-[300px] flex-shrink-0 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] transition-all duration-300">
+                        {{-- Stars --}}
+                        <div class="flex gap-0.5 mb-4">
+                            @for($i = 1; $i <= 5; $i++)
+                                <span class="text-[0.85rem] {{ $i <= $t->rating ? 'text-amber-400' : 'text-[#e8e8e8]' }}">★</span>
+                            @endfor
                         </div>
-                        <q class="text-[#555] text-[0.92rem] leading-[1.85] italic block mb-6 [quotes:none]">{{ $t->komentar }}</q>
-                        <div class="flex items-center gap-3 pt-4 border-t border-[#f0f0f0]">
-                            <div class="w-11 h-11 rounded-full bg-maroon flex items-center justify-center text-white font-extrabold text-[1rem] flex-shrink-0 shadow-[0_4px_12px_rgba(139,26,26,0.2)]">
+                        {{-- Quote --}}
+                        <q class="text-[#555] text-[0.9rem] leading-[1.85] italic block mb-6 [quotes:none]">{{ $t->komentar }}</q>
+                        {{-- Author --}}
+                        <div class="flex items-center gap-3 pt-4 border-t border-[#f8f0ee]">
+                            <div class="w-10 h-10 rounded-full bg-maroon flex items-center justify-center text-white font-bold text-[0.95rem] flex-shrink-0 shadow-[0_3px_10px_rgba(139,26,26,0.2)]">
                                 {{ strtoupper(substr($t->nama, 0, 1)) }}
                             </div>
                             <div>
-                                <strong class="block text-[#1a1a1a] text-[0.88rem]">{{ $t->nama }}</strong>
-                                <span class="text-[#bbb] text-[0.75rem]">Pelanggan Setia</span>
+                                <strong class="block text-[#1a1a1a] text-[0.85rem]">{{ $t->nama }}</strong>
+                                <span class="text-[#bbb] text-[0.74rem]">Pelanggan Setia</span>
+                            </div>
+                            <div class="ml-auto bg-[#fdf6f3] text-maroon text-[0.7rem] font-bold px-2.5 py-1 rounded-full border border-[#f0e4df]">
+                                {{ $t->rating }}/5
                             </div>
                         </div>
                     </div>
@@ -227,6 +293,7 @@
             </div>
         </div>
     @endif
+
 </section>
 
 @endsection
@@ -234,11 +301,6 @@
 @push('scripts')
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({
-        duration: 700,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 60,
-    });
+    AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 60 });
 </script>
 @endpush
