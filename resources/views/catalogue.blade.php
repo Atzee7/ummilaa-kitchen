@@ -90,9 +90,17 @@
                         <img src="{{ $product->image }}" alt="{{ $product->name }}"
                              class="w-full h-full object-cover transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'hover:scale-[1.06]' }}">
                     @endif
-                    <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-maroon text-[0.72rem] font-extrabold px-3 py-1 rounded-[20px] tracking-[0.5px]">
-                        {{ $product->categoryRelation->name ?? $product->category }}
-                    </span>
+                    <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
+                        <span class="bg-white/90 backdrop-blur-sm text-maroon text-[0.72rem] font-extrabold px-3 py-1 rounded-[20px] tracking-[0.5px]">
+                            {{ $product->categoryRelation->name ?? $product->category }}
+                        </span>
+                        @if($product->badge)
+                        <span class="px-[12px] py-[5px] rounded-[20px] text-[0.72rem] font-extrabold tracking-[1px] uppercase text-white backdrop-blur-sm
+                            {{ $product->badge == 'new' ? 'bg-blue-700/90' : ($product->badge == 'terlaris' ? 'bg-orange-700/90' : 'bg-maroon/90') }}">
+                            {{ $product->badge == 'new' ? 'New' : ($product->badge == 'terlaris' ? 'Terlaris' : 'Unggulan') }}
+                        </span>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="p-[18px]">
