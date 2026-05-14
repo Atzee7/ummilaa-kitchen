@@ -105,48 +105,95 @@
 <div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-[80px]"></div>
 
 {{-- AREA PENGIRIMAN --}}
-<section class="px-5 md:px-10 lg:px-[80px] pt-10 lg:pt-[80px] pb-5 bg-[#fdf9f9]">
-    <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-9">
-        <div class="text-[0.78rem] font-bold tracking-[2px] uppercase text-maroon mb-2.5">Jangkauan Layanan</div>
-        <h2 class="font-playfair text-[1.6rem] md:text-[2rem] lg:text-[2.2rem] text-[#1a1a1a]">Area <span class="text-maroon">Pengiriman</span></h2>
-        <p class="text-[#999] mt-2 text-[0.95rem]">
-            Kami melayani delivery dalam radius <strong class="text-maroon">5 km</strong> dari outlet. Di luar area? Kamu tetap bisa ambil sendiri!
-        </p>
-    </div>
+<section class="bg-white px-5 md:px-10 lg:px-[80px] py-[80px] lg:py-[100px] border-t border-[#f0eeec]">
+    <div class="max-w-[1160px] mx-auto">
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
-            class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
-            <div class="text-[2.2rem] mb-3">🛵</div>
-            <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Delivery</div>
-            <div class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-2.5">Radius hingga 5 km dari outlet kami</div>
-            <div class="text-[0.88rem] font-extrabold text-maroon">Ongkir Rp15.000</div>
+        <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-14">
+            <div class="flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon mb-3">
+                <span class="w-6 h-px bg-maroon"></span> Jangkauan Layanan <span class="w-6 h-px bg-maroon"></span>
+            </div>
+            <h2 class="font-playfair text-[2rem] md:text-[2.4rem] text-[#1a1a1a] tracking-[-0.5px]">
+                Area <span class="text-maroon">Pengiriman</span>
+            </h2>
+            <div class="flex items-center justify-center gap-3 my-4">
+                <div class="h-px w-10 bg-gradient-to-r from-transparent to-maroon-200"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-maroon opacity-40"></div>
+                <div class="w-2 h-2 rounded-full bg-maroon opacity-70"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-maroon opacity-40"></div>
+                <div class="h-px w-10 bg-gradient-to-l from-transparent to-maroon-200"></div>
+            </div>
+            <p class="text-[#aaa] text-[0.92rem] max-w-[460px] mx-auto leading-relaxed">
+                Kami melayani delivery dalam radius <strong class="text-maroon font-bold">5 km</strong> dari outlet. Di luar area? Kamu tetap bisa ambil sendiri!
+            </p>
         </div>
-        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
-            class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
-            <div class="text-[2.2rem] mb-3">🏠</div>
-            <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Ambil Sendiri</div>
-            <div class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-2.5">Datang langsung ke outlet kami, tersedia untuk semua area</div>
-            <div class="text-[0.88rem] font-extrabold text-green-700">Gratis</div>
-        </div>
-        <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
-            class="bg-white border border-maroon-200 rounded-[20px] p-[28px_24px] text-center shadow-[0_4px_16px_rgba(139,26,26,0.06)]">
-            <div class="text-[2.2rem] mb-3">📍</div>
-            <div class="font-bold text-[#1a1a1a] text-[0.95rem] mb-1.5">Lokasi Outlet</div>
-            <div class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-2.5">Ummilaa Kitchen, Malang, Jawa Timur</div>
-            <div class="text-[0.88rem] font-extrabold text-blue-800">Kota Malang</div>
-        </div>
-    </div>
 
-    <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="100"
-        class="rounded-[20px] overflow-hidden shadow-[0_8px_32px_rgba(139,26,26,0.1)] border border-maroon-200">
-        <div id="mapCoverage" class="h-[280px] md:h-[350px] lg:h-[420px] w-full"></div>
-    </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
-    <p data-aos="fade-up" data-aos-delay="50" class="text-center text-[0.8rem] text-[#bbb] mt-[14px]">
-        <i class="fas fa-info-circle"></i>
-        Area berwarna menunjukkan jangkauan delivery. Sistem akan otomatis mendeteksi jarak saat checkout.
-    </p>
+            {{-- Delivery --}}
+            <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
+                class="group relative bg-white rounded-[24px] p-8 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden text-center">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
+                <div class="w-14 h-14 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.3rem] mx-auto mb-5">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-2">Delivery</h4>
+                <p class="text-[#999] text-[0.85rem] leading-[1.7] mb-4">Radius hingga 5 km dari outlet kami</p>
+                <span class="inline-flex items-center gap-1.5 bg-[#fdf6f3] text-maroon text-[0.82rem] font-bold px-4 py-1.5 rounded-full border border-[#f0e4df]">
+                    Ongkir Rp15.000
+                </span>
+            </div>
+
+            {{-- Ambil Sendiri --}}
+            <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="100"
+                class="group relative bg-white rounded-[24px] p-8 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden text-center">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
+                <div class="w-14 h-14 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.3rem] mx-auto mb-5">
+                    <i class="fas fa-store"></i>
+                </div>
+                <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-2">Ambil Sendiri</h4>
+                <p class="text-[#999] text-[0.85rem] leading-[1.7] mb-4">Datang langsung ke outlet kami, tersedia untuk semua area</p>
+                <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-[0.82rem] font-bold px-4 py-1.5 rounded-full border border-green-100">
+                    <i class="fas fa-check text-[0.7rem]"></i> Gratis
+                </span>
+            </div>
+
+            {{-- Lokasi Outlet --}}
+            <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
+                class="group relative bg-white rounded-[24px] p-8 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden text-center">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
+                <div class="w-14 h-14 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.3rem] mx-auto mb-5">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-2">Lokasi Outlet</h4>
+                <p class="text-[#999] text-[0.85rem] leading-[1.7] mb-4">Ummilaa Kitchen, Malang, Jawa Timur</p>
+                <span class="inline-flex items-center gap-1.5 bg-[#fdf6f3] text-maroon text-[0.82rem] font-bold px-4 py-1.5 rounded-full border border-[#f0e4df]">
+                    <i class="fas fa-location-dot text-[0.7rem]"></i> Kota Malang
+                </span>
+            </div>
+
+        </div>
+
+        {{-- Map --}}
+        <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="100"
+            class="bg-white rounded-[24px] border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] overflow-hidden">
+            <div class="flex items-center justify-between px-7 py-5 border-b border-[#f0eeec]">
+                <div>
+                    <div class="text-[0.7rem] font-bold tracking-[2.5px] uppercase text-maroon mb-1">Peta Jangkauan</div>
+                    <h3 class="font-playfair text-[1.3rem] text-[#1a1a1a]">Area Delivery Kami</h3>
+                </div>
+                <a href="{{ route('contact') }}"
+                    class="inline-flex items-center gap-2 border border-[#e8e0e0] text-[#666] px-5 py-[9px] rounded-full font-semibold text-[0.82rem] no-underline hover:border-maroon hover:text-maroon transition-all duration-200">
+                    <i class="fas fa-map-marker-alt text-maroon text-[0.75rem]"></i> Lihat Lokasi
+                </a>
+            </div>
+            <div id="mapCoverage" class="h-[280px] md:h-[350px] lg:h-[400px] w-full"></div>
+            <div class="flex items-center gap-2 px-7 py-4 bg-[#fdf6f3] border-t border-[#f0eeec]">
+                <i class="fas fa-info-circle text-maroon text-[0.82rem]"></i>
+                <p class="text-[0.8rem] text-[#999]">Area berwarna menunjukkan jangkauan delivery. Sistem akan otomatis mendeteksi jarak saat checkout.</p>
+            </div>
+        </div>
+
+    </div>
 </section>
 @endsection
 
