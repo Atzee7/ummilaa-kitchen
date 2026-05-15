@@ -95,7 +95,7 @@
 {{-- ================================================================
      CERITA / STORY
 ================================================================ --}}
-<section id="cerita-kami" class="bg-white px-5 md:px-12 lg:px-[80px] py-[90px] lg:py-[110px]">
+<section id="cerita-kami" class="scroll-mt-20 bg-white px-5 md:px-12 lg:px-[80px] py-[90px] lg:py-[110px]">
     <div class="max-w-[1160px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
 
         {{-- Kiri: Teks --}}
