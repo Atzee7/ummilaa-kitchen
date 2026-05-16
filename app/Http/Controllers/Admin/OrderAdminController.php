@@ -98,9 +98,10 @@ class OrderAdminController extends Controller
         $total = 'Rp ' . number_format($order->total, 0, ',', '.');
 
         if ($order->status === 'dikirim') {
-            return "Halo {$order->nama_penerima}!\n\nPesanan Anda dari Ummila Kitchen (#{$order->id}) sedang dalam perjalanan menuju:\n{$order->alamat}\n\nTotal: {$total}\n\nTerima kasih sudah berbelanja! 🙏";
+            $detail = $order->detail_alamat ? "\n🏠 Detail: {$order->detail_alamat}" : '';
+            return "🛵 *Pesanan #{$order->id} sedang diantar!*\n\nHalo {$order->nama_penerima}, makananmu dari *Ummila Kitchen* sudah dalam perjalanan ya!\n\n📍 Alamat: {$order->alamat}{$detail}\n⏱️ Estimasi: 15–30 menit\n💰 Total: {$total}\n\nKami akan info kembali jika kurir sudah tiba di lokasimu. 🔔\n\nTerima kasih sudah berbelanja! Selamat menikmati 🍽️";
         }
 
-        return "Halo {$order->nama_penerima}!\n\nPesanan Anda dari Ummila Kitchen (#{$order->id}) sudah siap diambil di toko kami.\n\nTotal: {$total}\n\nTerima kasih sudah berbelanja! 🙏";
+        return "✅ *Pesanan #{$order->id} siap diambil!*\n\nHalo {$order->nama_penerima}, makananmu dari *Ummila Kitchen* sudah siap ya!\n\n🏪 Alamat Toko: Jalan Kapi Anala 1 Blok 15N No. 18, Sawojajar 2, Kota Malang, Jawa Timur\n🕐 Jam Operasional: 08.00 – 20.00\n💰 Total: {$total}\n\nSegera ambil pesananmu sebelum 30 menit ya, agar tetap hangat! 🔥\n\nTerima kasih sudah berbelanja! Selamat menikmati 🍽️";
     }
 }

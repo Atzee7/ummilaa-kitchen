@@ -17,6 +17,11 @@
     $statusLabel = $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status);
 @endphp
 
+{{-- NOTIFIKASI WA --}}
+<div id="wa-toast-show" class="hidden mb-5 px-4 py-3 rounded-xl text-sm flex items-center gap-2.5 relative overflow-hidden" style="transition: opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;">
+    <span id="wa-toast-show-msg"></span>
+</div>
+
 {{-- HEADER --}}
 <div class="mb-8">
     <a href="{{ route('admin.orders.index') }}"
@@ -353,6 +358,52 @@
 const CSRF_TOKEN_SHOW = '{{ csrf_token() }}';
 const WA_ORDER_ID = {{ session('wa_prompt') ?? 'null' }};
 
+function showWaToastShow(success, message) {
+    const toast = document.getElementById('wa-toast-show');
+    toast.classList.remove(
+        'hidden', 'bg-green-50', 'border-green-200', 'text-green-800',
+        'bg-red-50', 'border-red-200', 'text-red-800', 'border'
+    );
+    const oldBtn = toast.querySelector('button');
+    if (oldBtn) oldBtn.remove();
+
+    if (success) {
+        toast.classList.add('bg-green-50', 'border', 'border-green-200', 'text-green-800');
+        document.getElementById('wa-toast-show-msg').textContent = '✅ ' + message;
+    } else {
+        toast.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-800');
+        document.getElementById('wa-toast-show-msg').textContent = '❌ ' + message;
+    }
+
+    const btn = document.createElement('button');
+    btn.innerHTML = '&times;';
+    btn.style.cssText = 'position:absolute;top:50%;right:14px;transform:translateY(-50%);background:none;border:none;font-size:1.2rem;line-height:1;cursor:pointer;opacity:0.5;padding:0;';
+    btn.addEventListener('click', hideWaToastShow);
+    toast.appendChild(btn);
+
+    toast.style.opacity = '1';
+    toast.style.maxHeight = '';
+    clearTimeout(window._waToastShowTimer);
+    window._waToastShowTimer = setTimeout(hideWaToastShow, 3000);
+}
+
+function hideWaToastShow() {
+    const toast = document.getElementById('wa-toast-show');
+    toast.style.opacity = '0';
+    toast.style.maxHeight = '0';
+    toast.style.paddingTop = '0';
+    toast.style.paddingBottom = '0';
+    toast.style.marginBottom = '0';
+    setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.style.maxHeight = '';
+        toast.style.paddingTop = '';
+        toast.style.paddingBottom = '';
+        toast.style.marginBottom = '';
+        toast.style.opacity = '';
+    }, 500);
+}
+
 function sendWhatsapp(orderId) {
     fetch(`/admin/orders/${orderId}/send-whatsapp`, {
         method: 'POST',
@@ -363,9 +414,9 @@ function sendWhatsapp(orderId) {
     })
     .then(r => r.json())
     .then(data => {
-        alert(data.success ? '✅ Pesan WhatsApp berhasil dikirim!' : '❌ ' + data.message);
+        showWaToastShow(data.success, data.success ? 'Pesan WhatsApp berhasil dikirim!' : data.message);
     })
-    .catch(() => alert('❌ Terjadi kesalahan saat mengirim pesan.'));
+    .catch(() => showWaToastShow(false, 'Terjadi kesalahan saat mengirim pesan.'));
 }
 
 document.addEventListener('DOMContentLoaded', () => {

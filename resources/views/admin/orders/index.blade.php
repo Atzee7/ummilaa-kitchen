@@ -2,6 +2,10 @@
 @section('title', 'Pesanan')
 
 @section('content')
+<div id="wa-toast" class="hidden mb-5 px-4 py-3 rounded-xl text-sm flex items-center gap-2.5 relative overflow-hidden" style="transition: opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;">
+    <span id="wa-toast-msg"></span>
+</div>
+
 <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
     <div>
         <h2 class="font-playfair text-3xl font-bold text-gray-800">Pesanan</h2>
@@ -417,6 +421,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function showWaToast(success, message) {
+    const toast = document.getElementById('wa-toast');
+    toast.classList.remove(
+        'hidden', 'bg-green-50', 'border-green-200', 'text-green-800',
+        'bg-red-50', 'border-red-200', 'text-red-800', 'border'
+    );
+    // Hapus tombol tutup lama jika ada
+    const oldBtn = toast.querySelector('button');
+    if (oldBtn) oldBtn.remove();
+
+    if (success) {
+        toast.classList.add('bg-green-50', 'border', 'border-green-200', 'text-green-800');
+        document.getElementById('wa-toast-msg').textContent = '✅ ' + message;
+    } else {
+        toast.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-800');
+        document.getElementById('wa-toast-msg').textContent = '❌ ' + message;
+    }
+
+    const btn = document.createElement('button');
+    btn.innerHTML = '&times;';
+    btn.style.cssText = 'position:absolute;top:50%;right:14px;transform:translateY(-50%);background:none;border:none;font-size:1.2rem;line-height:1;cursor:pointer;opacity:0.5;padding:0;';
+    btn.addEventListener('click', hideWaToast);
+    toast.appendChild(btn);
+
+    toast.style.opacity = '1';
+    toast.style.maxHeight = '';
+    clearTimeout(window._waToastTimer);
+    window._waToastTimer = setTimeout(hideWaToast, 3000);
+}
+
+function hideWaToast() {
+    const toast = document.getElementById('wa-toast');
+    toast.style.opacity = '0';
+    toast.style.maxHeight = '0';
+    toast.style.paddingTop = '0';
+    toast.style.paddingBottom = '0';
+    toast.style.marginBottom = '0';
+    setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.style.maxHeight = '';
+        toast.style.paddingTop = '';
+        toast.style.paddingBottom = '';
+        toast.style.marginBottom = '';
+        toast.style.opacity = '';
+    }, 500);
+}
+
 // Kirim konfirmasi WhatsApp via Fonnte
 function sendWhatsapp(orderId) {
     const yesBtn = document.getElementById('wa-confirm-yes');
@@ -431,9 +482,9 @@ function sendWhatsapp(orderId) {
     })
     .then(r => r.json())
     .then(data => {
-        alert(data.success ? '✅ Pesan WhatsApp berhasil dikirim!' : '❌ ' + data.message);
+        showWaToast(data.success, data.success ? 'Pesan WhatsApp berhasil dikirim!' : data.message);
     })
-    .catch(() => alert('❌ Terjadi kesalahan saat mengirim pesan.'))
+    .catch(() => showWaToast(false, 'Terjadi kesalahan saat mengirim pesan.'))
     .finally(() => {
         if (yesBtn) { yesBtn.disabled = false; yesBtn.style.opacity = '1'; }
     });
