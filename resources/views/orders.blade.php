@@ -17,6 +17,17 @@
         <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="dibatalkan">Dibatalkan</button>
     </div>
 
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 px-5 py-[14px] rounded-xl text-[0.9rem] flex items-center gap-[10px] mb-6">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-pink-100 text-red-700 px-5 py-[14px] rounded-xl text-[0.9rem] flex items-center gap-[10px] mb-6">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
+    @endif
+
     @if($orders->isEmpty())
     <div class="text-center py-[80px] px-10 text-[#bbb]">
         <i class="fas fa-box-open text-[3.5rem] mb-5 block"></i>
@@ -108,7 +119,7 @@
 
             {{-- FORM TESTIMONI --}}
             @if($order->status === 'selesai' && !$order->testimonial)
-            <div class="hidden px-6 py-5 border-t border-maroon-200 bg-[#fffaf9]" id="form-{{ $order->id }}">
+            <div class="{{ $errors->any() && old('order_id') == $order->id ? '' : 'hidden' }} px-6 py-5 border-t border-maroon-200 bg-[#fffaf9]" id="form-{{ $order->id }}">
                 @if(session('success') && session('order_id') == $order->id)
                     <div class="text-green-800 font-bold mb-[10px]">
                         <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -124,10 +135,16 @@
                             <label for="star{{ $i }}-{{ $order->id }}" class="text-[#ddd] text-[1.8rem] cursor-pointer transition-colors duration-150 select-none">★</label>
                         @endfor
                     </div>
+                    @error('rating')
+                        <p class="text-red-600 text-[0.82rem] mb-2 -mt-1"><i class="fas fa-exclamation-circle"></i> Silakan pilih rating bintang terlebih dahulu.</p>
+                    @enderror
                     <p class="font-bold text-[#1a1a1a] mb-2">Komentar</p>
-                    <textarea name="komentar" rows="3" required
+                    <textarea name="komentar" rows="3"
                         class="w-full border-[1.5px] border-maroon-200 rounded-[10px] p-3 font-sans text-[0.88rem] resize-y outline-none focus:border-maroon transition-colors box-border"
                         placeholder="Ceritakan pengalaman kamu memesan di Ummilaa Kitchen..."></textarea>
+                    @error('komentar')
+                        <p class="text-red-600 text-[0.82rem] mt-1"><i class="fas fa-exclamation-circle"></i> Komentar tidak boleh kosong.</p>
+                    @enderror
                     <div class="mt-[10px]">
                         <button type="submit" class="bg-maroon text-white border-none px-6 py-[10px] rounded-[10px] font-bold text-[0.85rem] cursor-pointer">
                             <i class="fas fa-paper-plane"></i> Kirim Ulasan
@@ -176,6 +193,38 @@
         const form = document.getElementById('form-' + orderId);
         form.classList.toggle('hidden');
     }
+
+    // Validasi form ulasan sebelum submit
+    document.querySelectorAll('form[action*="testimonial"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            this.querySelectorAll('.field-error').forEach(el => el.remove());
+
+            const ratingInputs = this.querySelectorAll('input[name="rating"]');
+            const hasRating = [...ratingInputs].some(inp => inp.checked);
+            const komentar = this.querySelector('textarea[name="komentar"]');
+            const hasKomentar = komentar.value.trim() !== '';
+
+            let hasError = false;
+
+            if (!hasRating) {
+                hasError = true;
+                const errEl = document.createElement('p');
+                errEl.className = 'field-error text-red-600 text-[0.82rem] mb-2';
+                errEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Silakan pilih rating bintang terlebih dahulu.';
+                this.querySelector('.star-rating').insertAdjacentElement('afterend', errEl);
+            }
+
+            if (!hasKomentar) {
+                hasError = true;
+                const errEl = document.createElement('p');
+                errEl.className = 'field-error text-red-600 text-[0.82rem] mt-1';
+                errEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Komentar tidak boleh kosong.';
+                komentar.insertAdjacentElement('afterend', errEl);
+            }
+
+            if (hasError) e.preventDefault();
+        });
+    });
 
     // Star rating via JS (replaces CSS sibling selectors)
     document.querySelectorAll('.star-rating').forEach(container => {

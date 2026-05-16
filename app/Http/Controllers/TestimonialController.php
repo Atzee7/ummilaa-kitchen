@@ -35,6 +35,6 @@ class TestimonialController extends Controller
     'status'   => 'approved', // langsung approved
 ]);
 
-        return back()->with('success', 'Ulasan berhasil dikirim! Menunggu persetujuan admin.');
+        return back()->with('success', 'Ulasan berhasil dikirim!');
     }
 }
