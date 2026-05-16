@@ -188,7 +188,7 @@
     {{-- Page content --}}
     <div class="p-4 md:p-6 lg:p-8">
         @if(session('success'))
-            <div class="mb-5 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm flex items-center gap-2.5">
+            <div id="flash-success" class="mb-5 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm flex items-center gap-2.5 relative overflow-hidden" style="transition: opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;">
                 ✅ {{ session('success') }}
             </div>
         @endif
@@ -261,6 +261,28 @@
         sidebar.classList.add('-translate-x-full');
         backdrop.classList.add('hidden');
     });
+
+    (function () {
+        const el = document.getElementById('flash-success');
+        if (!el) return;
+
+        const btn = document.createElement('button');
+        btn.innerHTML = '&times;';
+        btn.style.cssText = 'position:absolute;top:50%;right:14px;transform:translateY(-50%);background:none;border:none;font-size:1.2rem;line-height:1;cursor:pointer;opacity:0.5;padding:0;';
+        btn.addEventListener('click', function () { dismiss(el); });
+        el.appendChild(btn);
+
+        setTimeout(function () { dismiss(el); }, 3000);
+
+        function dismiss(el) {
+            el.style.opacity = '0';
+            el.style.maxHeight = '0';
+            el.style.paddingTop = '0';
+            el.style.paddingBottom = '0';
+            el.style.marginBottom = '0';
+            setTimeout(function () { el.remove(); }, 500);
+        }
+    })();
 </script>
 </body>
 </html>
