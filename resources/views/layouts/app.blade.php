@@ -12,8 +12,11 @@
 </head>
 <body class="font-sans text-[#333] bg-white">
 
+{{-- STICKY TOP WRAPPER (navbar + banner toko tutup + notif order aktif) --}}
+<div class="sticky top-0 z-[100]">
+
 {{-- NAVBAR --}}
-<nav x-data="{ mobileMenu: false }" class="flex items-center justify-between px-5 md:px-10 lg:px-[60px] py-4 bg-white shadow-sm sticky top-0 z-[100]">
+<nav x-data="{ mobileMenu: false }" class="flex items-center justify-between px-5 md:px-10 lg:px-[60px] py-4 bg-white shadow-sm">
     <a href="{{ route('home') }}" class="font-playfair text-[1.4rem] lg:text-[1.6rem] font-bold text-maroon no-underline">
         Ummilaa
         <span class="text-[0.75rem] block text-[#666] font-sans font-medium tracking-[2px]">KITCHEN</span>
@@ -127,6 +130,14 @@
     </div>
 </nav>
 
+@php $storeOpen = \App\Models\Setting::get('store_open', '1'); @endphp
+@if($storeOpen !== '1')
+    <div class="w-full bg-red-600 text-white px-5 md:px-10 lg:px-[60px] py-3 flex items-center justify-center gap-3 text-sm font-semibold">
+        <i class="fas fa-store-slash text-lg shrink-0"></i>
+        <span>Maaf, toko kami sedang <strong>tutup</strong>. Anda tidak dapat melakukan pemesanan saat ini. Silakan kembali lagi nanti.</span>
+    </div>
+@endif
+
 @auth
     @php
         $activeOrders = \App\Models\Order::where('user_id', Auth::id())
@@ -158,6 +169,8 @@
         @endif
     @endforeach
 @endauth
+
+</div>{{-- end sticky top wrapper --}}
 
 @yield('content')
 

@@ -60,10 +60,17 @@
                             class="w-full py-[13px] bg-white text-maroon border-2 border-maroon rounded-xl text-[0.95rem] font-bold font-sans cursor-pointer transition-all duration-200 mb-[10px] flex items-center justify-center gap-2 hover:bg-maroon-100">
                             <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
                         </button>
+                        @if(\App\Models\Setting::get('store_open', '1') === '1')
                         <button type="submit" onclick="document.getElementById('formAction').value='buy_now'"
                             class="w-full py-[13px] bg-maroon text-white border-none rounded-xl text-[0.95rem] font-bold font-sans cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-maroon-dark hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(139,26,26,0.25)]">
                             <i class="fas fa-bolt"></i> Beli Sekarang
                         </button>
+                        @else
+                        <button type="button" disabled
+                            class="w-full py-[13px] bg-maroon text-white border-none rounded-xl text-[0.95rem] font-bold font-sans opacity-50 cursor-not-allowed pointer-events-none flex items-center justify-center gap-2">
+                            <i class="fas fa-store-slash"></i> Toko Sedang Tutup
+                        </button>
+                        @endif
                     </form>
                 @else
                     <button class="w-full py-[13px] bg-white text-maroon border-2 border-maroon rounded-xl text-[0.95rem] font-bold font-sans opacity-50 cursor-not-allowed pointer-events-none flex items-center justify-center gap-2">

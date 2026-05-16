@@ -82,10 +82,16 @@
             <p class="text-[0.78rem] text-[#999] mb-6 text-center">
                 <i class="fas fa-info-circle"></i> Ongkos kirim dihitung saat checkout
             </p>
+            @if(\App\Models\Setting::get('store_open', '1') === '1')
             <a href="{{ route('checkout') }}"
                 class="w-full py-[15px] bg-maroon text-white border-none rounded-xl text-base font-bold font-sans cursor-pointer transition-all duration-200 flex items-center justify-center gap-[10px] hover:bg-maroon-dark hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(139,26,26,0.25)] no-underline">
                 <i class="fas fa-credit-card"></i> Lanjut ke Checkout
             </a>
+            @else
+            <div class="w-full py-[15px] bg-gray-200 text-gray-400 rounded-xl text-base font-bold font-sans flex items-center justify-center gap-[10px] cursor-not-allowed select-none pointer-events-none">
+                <i class="fas fa-store-slash"></i> Toko Sedang Tutup
+            </div>
+            @endif
             <a href="{{ route('catalogue') }}"
                 class="w-full py-3 mt-[10px] bg-white text-maroon border-[1.5px] border-maroon rounded-xl text-[0.9rem] font-bold font-sans cursor-pointer transition-all duration-200 text-center block no-underline hover:bg-maroon-100">
                 Lanjut Belanja

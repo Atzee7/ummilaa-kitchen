@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,6 +32,10 @@ class CheckoutController extends Controller
 
     public function index()
     {
+        if (Setting::get('store_open', '1') !== '1') {
+            return redirect()->route('home')->with('error', 'Maaf, toko sedang tutup. Anda tidak dapat melakukan checkout saat ini.');
+        }
+
         $carts = Cart::with('product')->where('user_id', Auth::id())->get();
         if ($carts->isEmpty()) return redirect()->route('cart')->with('error', 'Keranjang kosong!');
 
@@ -55,6 +60,10 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
 {
+    if (Setting::get('store_open', '1') !== '1') {
+        return redirect()->route('home')->with('error', 'Maaf, toko sedang tutup. Anda tidak dapat melakukan checkout saat ini.');
+    }
+
     $request->validate([
         'metode_pembayaran'  => 'required|string',
         'metode_pengiriman'  => 'required|in:delivery,pickup',

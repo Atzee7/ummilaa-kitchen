@@ -100,6 +100,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/testimonials', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'index'])->name('testimonials.index');
         Route::delete('/testimonials/{id}', [App\Http\Controllers\Admin\TestimonialAdminController::class, 'destroy'])->name('testimonials.destroy');
 
+        // Pengaturan Toko
+        Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
         // API polling pesanan aktif
         Route::get('/api/pesanan-aktif', [App\Http\Controllers\Admin\DashboardController::class, 'pesananAktifApi'])->name('api.pesanan-aktif');
     });
