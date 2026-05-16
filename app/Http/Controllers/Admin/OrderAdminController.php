@@ -47,6 +47,16 @@ class OrderAdminController extends Controller
         $order = Order::findOrFail($id);
         $order->update(['status' => $request->status]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => $order->status]);
+        }
+
         return back()->with('success', 'Status pesanan berhasil diperbarui.');
+    }
+
+    public function modalContent($id)
+    {
+        $order = Order::with(['user', 'items.product'])->findOrFail($id);
+        return view('admin.orders._modal_content', compact('order'));
     }
 }

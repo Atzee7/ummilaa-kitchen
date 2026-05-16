@@ -82,6 +82,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/orders', [App\Http\Controllers\Admin\OrderAdminController::class, 'index'])->name('orders.index');
         Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderAdminController::class, 'show'])->name('orders.show');
+        Route::get('/orders/{id}/modal', [App\Http\Controllers\Admin\OrderAdminController::class, 'modalContent'])->name('orders.modalContent');
         Route::patch('/orders/{id}/status', [App\Http\Controllers\Admin\OrderAdminController::class, 'updateStatus'])->name('orders.updateStatus');
 
         Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
