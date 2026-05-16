@@ -77,7 +77,7 @@
                 </div>
                 <img id="previewImg" src="#" alt="preview" class="hidden mx-auto max-h-48 rounded-xl object-cover">
             </div>
-            <input type="file" name="image" accept="image/*" id="inputGambar" class="hidden" onchange="previewGambar(event)">
+            <input type="file" name="image" accept="image/*" id="inputGambar" class="hidden" onchange="bukaModalCrop(event)">
         </div>
 
     </div>
@@ -157,13 +157,103 @@
 </div>
 </form>
 
+{{-- Modal Crop Gambar --}}
+<div id="modalCrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl mx-4">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Crop Gambar Produk</h3>
+        <div class="overflow-hidden max-h-[60vh] rounded-lg bg-gray-100">
+            <img id="cropperImage" src="" alt="Crop" class="block max-w-full">
+        </div>
+        <div class="flex justify-end gap-3 mt-5">
+            <button type="button" onclick="batalCrop()"
+                class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition text-sm font-semibold">
+                Batal
+            </button>
+            <button type="button" onclick="cropDanSimpan()"
+                class="px-5 py-2 rounded-lg bg-[#8B1A1A] text-white hover:bg-[#6e1414] transition text-sm font-semibold">
+                Crop & Simpan
+            </button>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script>
-function previewGambar(event) {
-    const img = document.getElementById('previewImg');
-    const placeholder = document.getElementById('dropzonePlaceholder');
-    img.src = URL.createObjectURL(event.target.files[0]);
-    img.classList.remove('hidden');
-    placeholder.classList.add('hidden');
+let cropperInstance = null;
+
+function bukaModalCrop(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const cropperImg = document.getElementById('cropperImage');
+        cropperImg.src = e.target.result;
+
+        const modal = document.getElementById('modalCrop');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        if (cropperInstance) {
+            cropperInstance.destroy();
+            cropperInstance = null;
+        }
+
+        cropperInstance = new Cropper(cropperImg, {
+            aspectRatio: 16 / 9,
+            viewMode: 1,
+            dragMode: 'move',
+            autoCropArea: 1,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+        });
+    };
+    reader.readAsDataURL(file);
+}
+
+function cropDanSimpan() {
+    if (!cropperInstance) return;
+
+    cropperInstance.getCroppedCanvas({ imageSmoothingQuality: 'high' })
+        .toBlob(function(blob) {
+            const namaFile = document.getElementById('inputGambar').files[0]?.name || 'gambar.jpg';
+            const file = new File([blob], namaFile, { type: 'image/jpeg' });
+
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('inputGambar').files = dt.files;
+
+            const img = document.getElementById('previewImg');
+            const placeholder = document.getElementById('dropzonePlaceholder');
+            img.src = URL.createObjectURL(blob);
+            img.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+
+            tutupModal();
+        }, 'image/jpeg', 0.9);
+}
+
+function batalCrop() {
+    document.getElementById('inputGambar').value = '';
+    tutupModal();
+}
+
+function tutupModal() {
+    const modal = document.getElementById('modalCrop');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    if (cropperInstance) {
+        cropperInstance.destroy();
+        cropperInstance = null;
+    }
 }
 </script>
+@endpush
 @endsection
