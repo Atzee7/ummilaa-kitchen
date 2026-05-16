@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\FonnteService;
 use Illuminate\Http\Request;
 
 class OrderAdminController extends Controller
@@ -48,9 +49,19 @@ class OrderAdminController extends Controller
 
         $order = Order::findOrFail($id);
         $order->update(['status' => $request->status]);
+        $order->load('user');
+
+        $hasPhone = !empty(optional($order->user)->no_telepon);
 
         if ($request->expectsJson()) {
-            return response()->json(['status' => $order->status]);
+            return response()->json([
+                'status'    => $order->status,
+                'has_phone' => $hasPhone,
+            ]);
+        }
+
+        if (in_array($request->status, ['dikirim', 'siap_diambil']) && $hasPhone) {
+            session(['wa_prompt' => $order->id]);
         }
 
         return back()->with('success', 'Status pesanan berhasil diperbarui.');
@@ -60,5 +71,36 @@ class OrderAdminController extends Controller
     {
         $order = Order::with(['user', 'items.product'])->findOrFail($id);
         return view('admin.orders._modal_content', compact('order'));
+    }
+
+    public function sendWhatsapp($id)
+    {
+        $order = Order::with('user')->findOrFail($id);
+
+        if (!in_array($order->status, ['dikirim', 'siap_diambil'])) {
+            return response()->json(['success' => false, 'message' => 'Status pesanan tidak memerlukan konfirmasi WA.'], 422);
+        }
+
+        $phone = optional($order->user)->no_telepon;
+        if (!$phone) {
+            return response()->json(['success' => false, 'message' => 'Nomor telepon pembeli tidak tersedia di profil.'], 422);
+        }
+
+        $message = $this->buildWhatsappMessage($order);
+        $fonnte  = new FonnteService();
+        $result  = $fonnte->send($phone, $message);
+
+        return response()->json($result);
+    }
+
+    private function buildWhatsappMessage(Order $order): string
+    {
+        $total = 'Rp ' . number_format($order->total, 0, ',', '.');
+
+        if ($order->status === 'dikirim') {
+            return "Halo {$order->nama_penerima}!\n\nPesanan Anda dari Ummila Kitchen (#{$order->id}) sedang dalam perjalanan menuju:\n{$order->alamat}\n\nTotal: {$total}\n\nTerima kasih sudah berbelanja! 🙏";
+        }
+
+        return "Halo {$order->nama_penerima}!\n\nPesanan Anda dari Ummila Kitchen (#{$order->id}) sudah siap diambil di toko kami.\n\nTotal: {$total}\n\nTerima kasih sudah berbelanja! 🙏";
     }
 }
