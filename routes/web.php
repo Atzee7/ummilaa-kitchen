@@ -89,6 +89,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/users/{id}', [UserAdminController::class, 'show'])->name('users.show');
 
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
         // Kasir / Pembelian Langsung
         Route::get('/kasir', [App\Http\Controllers\Admin\KasirController::class, 'index'])->name('kasir.index');
         Route::post('/kasir', [App\Http\Controllers\Admin\KasirController::class, 'store'])->name('kasir.store');

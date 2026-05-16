@@ -10,35 +10,31 @@ use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
-    public function index(Request $request)
+    private function getDateRange(string $periode, ?string $tanggalMulai, ?string $tanggalSelesai): array
     {
-        $periode = $request->get('periode', 'bulan_ini');
-        $tanggalMulai = $request->get('tanggal_mulai');
-        $tanggalSelesai = $request->get('tanggal_selesai');
-
-        // Tentukan rentang tanggal berdasarkan periode
         switch ($periode) {
             case 'hari_ini':
-                $start = Carbon::today();
-                $end   = Carbon::today()->endOfDay();
-                break;
+                return [Carbon::today(), Carbon::today()->endOfDay()];
             case 'minggu_ini':
-                $start = Carbon::now()->startOfWeek();
-                $end   = Carbon::now()->endOfWeek();
-                break;
+                return [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()];
             case 'tahun_ini':
-                $start = Carbon::now()->startOfYear();
-                $end   = Carbon::now()->endOfYear();
-                break;
+                return [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()];
             case 'custom':
                 $start = $tanggalMulai ? Carbon::parse($tanggalMulai)->startOfDay() : Carbon::now()->startOfMonth();
                 $end   = $tanggalSelesai ? Carbon::parse($tanggalSelesai)->endOfDay() : Carbon::now()->endOfDay();
-                break;
-            default: // bulan_ini
-                $start = Carbon::now()->startOfMonth();
-                $end   = Carbon::now()->endOfMonth();
-                break;
+                return [$start, $end];
+            default:
+                return [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()];
         }
+    }
+
+    public function index(Request $request)
+    {
+        $periode        = $request->get('periode', 'hari_ini');
+        $tanggalMulai   = $request->get('tanggal_mulai');
+        $tanggalSelesai = $request->get('tanggal_selesai');
+
+        [$start, $end] = $this->getDateRange($periode, $tanggalMulai, $tanggalSelesai);
 
         // Query pesanan selesai dalam periode
         $orders = Order::with('user')
@@ -47,22 +43,135 @@ class LaporanController extends Controller
             ->latest()
             ->get();
 
+        // Kelompokkan untuk tampilan tabel
+        $ordersGrouped = $orders->groupBy(function ($order) use ($periode) {
+            if ($periode === 'hari_ini')  return $order->created_at->format('H');
+            if ($periode === 'tahun_ini') return $order->created_at->format('Y-m');
+            return $order->created_at->format('Y-m-d');
+        });
+
         // Statistik ringkasan
         $totalPendapatan = $orders->sum('total');
         $totalTransaksi  = $orders->count();
         $rataRata        = $totalTransaksi > 0 ? $totalPendapatan / $totalTransaksi : 0;
 
-        // Data grafik — pendapatan per hari dalam periode
-        $grafikData = Order::where('status', 'selesai')
+        // Total item terjual
+        $totalItemTerjual = OrderItem::whereHas('order', fn($q) =>
+            $q->where('status', 'selesai')->whereBetween('created_at', [$start, $end])
+        )->sum('quantity');
+
+        // Jumlah pesanan per status dalam periode
+        $statusCount = Order::whereBetween('created_at', [$start, $end])
+            ->selectRaw('status, COUNT(*) as jumlah')
+            ->groupBy('status')
+            ->pluck('jumlah', 'status');
+
+        // Data grafik — granularitas menyesuaikan periode
+        // created_at tersimpan dalam WIB, tidak perlu CONVERT_TZ
+        $grafikBase = Order::where('status', 'selesai')->whereBetween('created_at', [$start, $end]);
+        if ($periode === 'hari_ini') {
+            $rawJam = (clone $grafikBase)
+                ->selectRaw("DATE_FORMAT(created_at, '%H') as tanggal, SUM(total) as pendapatan, COUNT(*) as jumlah")
+                ->groupBy('tanggal')->orderBy('tanggal')->get()
+                ->keyBy('tanggal');
+
+            // Tampilkan semua jam operasional toko 08:00–20:00
+            $grafikData = collect();
+            for ($h = 8; $h <= 20; $h++) {
+                $key = str_pad($h, 2, '0', STR_PAD_LEFT);
+                $grafikData->push((object)[
+                    'tanggal'    => $key,
+                    'pendapatan' => $rawJam->get($key)->pendapatan ?? 0,
+                    'jumlah'     => $rawJam->get($key)->jumlah     ?? 0,
+                ]);
+            }
+        } elseif ($periode === 'tahun_ini') {
+            $grafikData = (clone $grafikBase)
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as tanggal, SUM(total) as pendapatan, COUNT(*) as jumlah")
+                ->groupBy('tanggal')->orderBy('tanggal')->get();
+        } else {
+            $grafikData = (clone $grafikBase)
+                ->selectRaw("DATE(created_at) as tanggal, SUM(total) as pendapatan, COUNT(*) as jumlah")
+                ->groupBy('tanggal')->orderBy('tanggal')->get();
+        }
+
+        // Top 5 produk terlaris (berdasarkan quantity)
+        $topProduk = OrderItem::selectRaw('product_id, SUM(quantity) as total_terjual')
+            ->whereHas('order', fn($q) =>
+                $q->where('status', 'selesai')->whereBetween('created_at', [$start, $end])
+            )
+            ->with('product:id,name')
+            ->groupBy('product_id')
+            ->orderByDesc('total_terjual')
+            ->limit(5)
+            ->get();
+
+        // Distribusi metode pembayaran
+        $metodePembayaran = Order::where('status', 'selesai')
             ->whereBetween('created_at', [$start, $end])
-            ->selectRaw('DATE(created_at) as tanggal, SUM(total) as pendapatan, COUNT(*) as jumlah')
-            ->groupBy('tanggal')
-            ->orderBy('tanggal')
+            ->selectRaw('metode_pembayaran, COUNT(*) as jumlah')
+            ->groupBy('metode_pembayaran')
+            ->get();
+
+        // Distribusi metode pengiriman
+        $metodePengiriman = Order::where('status', 'selesai')
+            ->whereBetween('created_at', [$start, $end])
+            ->selectRaw('metode_pengiriman, COUNT(*) as jumlah')
+            ->groupBy('metode_pengiriman')
             ->get();
 
         return view('admin.laporan.index', compact(
-            'orders', 'periode', 'tanggalMulai', 'tanggalSelesai',
-            'totalPendapatan', 'totalTransaksi', 'rataRata', 'grafikData', 'start', 'end'
+            'orders', 'ordersGrouped', 'periode', 'tanggalMulai', 'tanggalSelesai',
+            'totalPendapatan', 'totalTransaksi', 'rataRata', 'grafikData',
+            'totalItemTerjual', 'statusCount', 'topProduk',
+            'metodePembayaran', 'metodePengiriman', 'start', 'end'
         ));
+    }
+
+    public function export(Request $request)
+    {
+        $periode        = $request->get('periode', 'bulan_ini');
+        $tanggalMulai   = $request->get('tanggal_mulai');
+        $tanggalSelesai = $request->get('tanggal_selesai');
+
+        [$start, $end] = $this->getDateRange($periode, $tanggalMulai, $tanggalSelesai);
+
+        $orders = Order::with(['user', 'items.product'])
+            ->where('status', 'selesai')
+            ->whereBetween('created_at', [$start, $end])
+            ->latest()
+            ->get();
+
+        $filename = 'laporan-penjualan-' . $start->format('Y-m-d') . '-sd-' . $end->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($orders) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF)); // UTF-8 BOM untuk Excel
+
+            fputcsv($file, ['ID', 'Pelanggan', 'Email', 'Subtotal', 'Ongkir', 'Total', 'Metode Bayar', 'Metode Kirim', 'Tanggal']);
+
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    '#' . $order->id,
+                    $order->user->name ?? $order->nama_penerima ?? '-',
+                    $order->user->email ?? 'Pembelian Langsung',
+                    $order->subtotal,
+                    $order->ongkir,
+                    $order->total,
+                    $order->metode_pembayaran,
+                    $order->metode_pengiriman,
+                    $order->created_at->format('d/m/Y H:i'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
