@@ -127,6 +127,38 @@
     </div>
 </nav>
 
+@auth
+    @php
+        $activeOrders = \App\Models\Order::where('user_id', Auth::id())
+            ->whereIn('status', ['dikirim', 'siap_diambil'])
+            ->latest()
+            ->get();
+    @endphp
+    @foreach ($activeOrders as $notifOrder)
+        @if ($notifOrder->status === 'dikirim')
+            <div class="w-full bg-blue-600 text-white px-5 md:px-10 lg:px-[60px] py-3 flex items-center justify-between gap-4 text-sm font-semibold">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-truck text-lg"></i>
+                    <span>Pesanan <span class="font-bold">#{{ $notifOrder->id }}</span> sedang dalam perjalanan ke alamat Anda!</span>
+                </div>
+                <a href="{{ route('orders.show', $notifOrder->id) }}" class="shrink-0 bg-white text-blue-600 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-50 transition-colors no-underline">
+                    Lihat Detail
+                </a>
+            </div>
+        @elseif ($notifOrder->status === 'siap_diambil')
+            <div class="w-full bg-orange-500 text-white px-5 md:px-10 lg:px-[60px] py-3 flex items-center justify-between gap-4 text-sm font-semibold">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-store text-lg"></i>
+                    <span>Pesanan <span class="font-bold">#{{ $notifOrder->id }}</span> sudah siap diambil! Silahkan datang ke toko.</span>
+                </div>
+                <a href="{{ route('orders.show', $notifOrder->id) }}" class="shrink-0 bg-white text-orange-500 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-orange-50 transition-colors no-underline">
+                    Lihat Detail
+                </a>
+            </div>
+        @endif
+    @endforeach
+@endauth
+
 @yield('content')
 
 {{-- FOOTER --}}
