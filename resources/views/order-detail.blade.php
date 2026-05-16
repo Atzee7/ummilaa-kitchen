@@ -15,11 +15,13 @@
             @if($order->status === 'pending') bg-amber-50 text-orange-700
             @elseif($order->status === 'diproses') bg-blue-50 text-blue-800
             @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
+            @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
             @elseif($order->status === 'selesai') bg-green-100 text-green-800
             @else bg-pink-100 text-red-700 @endif">
             @if($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu Konfirmasi
             @elseif($order->status === 'diproses') <i class="fas fa-cog fa-spin"></i> Sedang Diproses
             @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
+            @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
             @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai
             @else <i class="fas fa-times-circle"></i> Dibatalkan @endif
         </span>

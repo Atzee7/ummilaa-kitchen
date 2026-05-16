@@ -1,24 +1,30 @@
 @php
     $sc = match($order->status) {
-        'pending'    => 'bg-yellow-100 text-yellow-700',
-        'diproses'   => 'bg-blue-100 text-blue-700',
-        'dikirim'    => 'bg-purple-100 text-purple-700',
-        'selesai'    => 'bg-green-100 text-green-700',
-        'dibatalkan' => 'bg-red-100 text-red-700',
-        default      => 'bg-gray-100 text-gray-700',
+        'pending'      => 'bg-yellow-100 text-yellow-700',
+        'diproses'     => 'bg-blue-100 text-blue-700',
+        'dikirim'      => 'bg-purple-100 text-purple-700',
+        'siap_diambil' => 'bg-orange-100 text-orange-700',
+        'selesai'      => 'bg-green-100 text-green-700',
+        'dibatalkan'   => 'bg-red-100 text-red-700',
+        default        => 'bg-gray-100 text-gray-700',
     };
     $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
-    $nextStatus = match($order->status) {
-        'pending'  => 'diproses',
-        'diproses' => 'dikirim',
-        'dikirim'  => 'selesai',
-        default    => null,
+    $statusLabel = $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status);
+    $nextStatus = match(true) {
+        $order->status === 'pending'                  => 'diproses',
+        $order->status === 'diproses' && $isDelivery  => 'dikirim',
+        $order->status === 'diproses' && !$isDelivery => 'siap_diambil',
+        $order->status === 'dikirim'                  => 'selesai',
+        $order->status === 'siap_diambil'             => 'selesai',
+        default                                       => null,
     };
-    $nextLabel = match($order->status) {
-        'pending'  => 'Proses Pesanan',
-        'diproses' => 'Tandai Dikirim',
-        'dikirim'  => 'Tandai Selesai',
-        default    => null,
+    $nextLabel = match(true) {
+        $order->status === 'pending'                  => 'Proses Pesanan',
+        $order->status === 'diproses' && $isDelivery  => 'Tandai Dikirim',
+        $order->status === 'diproses' && !$isDelivery => 'Tandai Siap Diambil',
+        $order->status === 'dikirim'                  => 'Tandai Selesai',
+        $order->status === 'siap_diambil'             => 'Tandai Selesai',
+        default                                       => null,
     };
     $canCancel = in_array($order->status, ['pending', 'diproses']);
 @endphp
@@ -32,7 +38,7 @@
         <p class="text-xs text-gray-400 mt-0.5">{{ $order->created_at->format('d M Y, H:i') }}</p>
     </div>
     <div class="flex items-center gap-2">
-        <span class="px-3 py-1 rounded-full text-xs font-bold {{ $sc }}">{{ ucfirst($order->status) }}</span>
+        <span class="px-3 py-1 rounded-full text-xs font-bold {{ $sc }}">{{ $statusLabel }}</span>
         <button onclick="closeOrderModal()" class="w-8 h-8 rounded-lg hover:bg-gray-100 transition flex items-center justify-center text-gray-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>

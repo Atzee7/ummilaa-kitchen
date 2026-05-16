@@ -5,14 +5,16 @@
 
 @php
     $sc = match($order->status) {
-        'pending'    => 'bg-yellow-100 text-yellow-700',
-        'diproses'   => 'bg-blue-100 text-blue-700',
-        'dikirim'    => 'bg-purple-100 text-purple-700',
-        'selesai'    => 'bg-green-100 text-green-700',
-        'dibatalkan' => 'bg-red-100 text-red-700',
-        default      => 'bg-gray-100 text-gray-700',
+        'pending'      => 'bg-yellow-100 text-yellow-700',
+        'diproses'     => 'bg-blue-100 text-blue-700',
+        'dikirim'      => 'bg-purple-100 text-purple-700',
+        'siap_diambil' => 'bg-orange-100 text-orange-700',
+        'selesai'      => 'bg-green-100 text-green-700',
+        'dibatalkan'   => 'bg-red-100 text-red-700',
+        default        => 'bg-gray-100 text-gray-700',
     };
     $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
+    $statusLabel = $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status);
 @endphp
 
 {{-- HEADER --}}
@@ -49,7 +51,7 @@
                 </span>
             @endif
             {{-- Badge status --}}
-            <span class="px-4 py-2 rounded-xl text-sm font-bold {{ $sc }}">{{ ucfirst($order->status) }}</span>
+            <span class="px-4 py-2 rounded-xl text-sm font-bold {{ $sc }}">{{ $statusLabel }}</span>
         </div>
     </div>
 </div>
@@ -212,18 +214,22 @@
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Status Pesanan</h3>
             <div class="mb-4">
                 <p class="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Status saat ini</p>
-                <span class="px-3 py-1.5 rounded-full text-sm font-bold {{ $sc }}">{{ ucfirst($order->status) }}</span>
+                <span class="px-3 py-1.5 rounded-full text-sm font-bold {{ $sc }}">{{ $statusLabel }}</span>
             </div>
             <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
                 @csrf @method('PATCH')
                 <div class="mb-4">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Ubah Status</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 bg-white">
-                        <option value="pending"    {{ $order->status === 'pending'    ? 'selected' : '' }}>Pending</option>
-                        <option value="diproses"   {{ $order->status === 'diproses'   ? 'selected' : '' }}>Diproses</option>
-                        <option value="dikirim"    {{ $order->status === 'dikirim'    ? 'selected' : '' }}>Dikirim</option>
-                        <option value="selesai"    {{ $order->status === 'selesai'    ? 'selected' : '' }}>Selesai</option>
-                        <option value="dibatalkan" {{ $order->status === 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                        <option value="pending"      {{ $order->status === 'pending'      ? 'selected' : '' }}>Pending</option>
+                        <option value="diproses"     {{ $order->status === 'diproses'     ? 'selected' : '' }}>Diproses</option>
+                        @if($isDelivery)
+                        <option value="dikirim"      {{ $order->status === 'dikirim'      ? 'selected' : '' }}>Dikirim</option>
+                        @else
+                        <option value="siap_diambil" {{ $order->status === 'siap_diambil' ? 'selected' : '' }}>Siap Diambil</option>
+                        @endif
+                        <option value="selesai"      {{ $order->status === 'selesai'      ? 'selected' : '' }}>Selesai</option>
+                        <option value="dibatalkan"   {{ $order->status === 'dibatalkan'   ? 'selected' : '' }}>Dibatalkan</option>
                     </select>
                 </div>
                 <button type="submit"
@@ -237,14 +243,17 @@
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Alur Status</h3>
             @php
-                $steps = ['pending','diproses','dikirim','selesai'];
-                $currentIndex = array_search($order->status, $steps);
+                $steps = $isDelivery
+                    ? [['key' => 'pending', 'label' => 'Pending'], ['key' => 'diproses', 'label' => 'Diproses'], ['key' => 'dikirim', 'label' => 'Dikirim'], ['key' => 'selesai', 'label' => 'Selesai']]
+                    : [['key' => 'pending', 'label' => 'Pending'], ['key' => 'diproses', 'label' => 'Diproses'], ['key' => 'siap_diambil', 'label' => 'Siap Diambil'], ['key' => 'selesai', 'label' => 'Selesai']];
+                $stepKeys = array_column($steps, 'key');
+                $currentIndex = array_search($order->status, $stepKeys);
             @endphp
             <div class="relative">
                 @foreach($steps as $i => $step)
                 @php
                     $done = $currentIndex !== false && $i <= $currentIndex;
-                    $isCurrent = $order->status === $step;
+                    $isCurrent = $order->status === $step['key'];
                 @endphp
                 <div class="flex items-start gap-3 {{ !$loop->last ? 'mb-4' : '' }}">
                     <div class="flex flex-col items-center flex-shrink-0">
@@ -258,7 +267,7 @@
                     </div>
                     <div class="pt-1">
                         <p class="text-sm {{ $isCurrent ? 'font-bold text-gray-800' : ($done ? 'font-semibold text-gray-600' : 'text-gray-400') }}">
-                            {{ ucfirst($step) }}
+                            {{ $step['label'] }}
                             @if($isCurrent)
                             <span class="ml-1 text-xs font-normal px-2 py-0.5 rounded-full bg-[#fdf0f0] text-[#8B1A1A]">sekarang</span>
                             @endif

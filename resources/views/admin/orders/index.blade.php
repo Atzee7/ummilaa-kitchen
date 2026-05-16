@@ -2,29 +2,46 @@
 @section('title', 'Pesanan')
 
 @section('content')
-<div class="mb-8">
-    <h2 class="font-playfair text-3xl font-bold text-gray-800">Pesanan</h2>
-    <p class="text-gray-500 mt-1">Kelola semua pesanan pelanggan</p>
+<div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
+    <div>
+        <h2 class="font-playfair text-3xl font-bold text-gray-800">Pesanan</h2>
+        <p class="text-gray-500 mt-1">
+            @if($date === today()->format('Y-m-d'))
+                Pesanan hari ini
+            @else
+                Pesanan — {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}
+            @endif
+        </p>
+    </div>
+    {{-- Filter Tanggal --}}
+    <form method="GET" action="{{ route('admin.orders.index') }}" class="flex items-center gap-2">
+        <input type="hidden" name="status" value="{{ $status }}">
+        <label class="text-sm font-semibold text-gray-500">Tanggal:</label>
+        <input type="date" name="date" value="{{ $date }}"
+               onchange="this.form.submit()"
+               class="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 bg-white cursor-pointer">
+    </form>
 </div>
 
 @php
-    $tabs = ['semua','pending','diproses','dikirim','selesai','dibatalkan'];
+    $tabs = ['semua','pending','diproses','dikirim','siap_diambil','selesai','dibatalkan'];
     $tabColor = [
-        'semua'      => 'bg-gray-100 text-gray-700',
-        'pending'    => 'bg-yellow-100 text-yellow-700',
-        'diproses'   => 'bg-blue-100 text-blue-700',
-        'dikirim'    => 'bg-purple-100 text-purple-700',
-        'selesai'    => 'bg-green-100 text-green-700',
-        'dibatalkan' => 'bg-red-100 text-red-700',
+        'semua'        => 'bg-gray-100 text-gray-700',
+        'pending'      => 'bg-yellow-100 text-yellow-700',
+        'diproses'     => 'bg-blue-100 text-blue-700',
+        'dikirim'      => 'bg-purple-100 text-purple-700',
+        'siap_diambil' => 'bg-orange-100 text-orange-700',
+        'selesai'      => 'bg-green-100 text-green-700',
+        'dibatalkan'   => 'bg-red-100 text-red-700',
     ];
 @endphp
 
 <div class="flex flex-wrap gap-2 mb-6">
     @foreach($tabs as $tab)
-    <a href="{{ route('admin.orders.index', ['status' => $tab]) }}"
+    <a href="{{ route('admin.orders.index', ['status' => $tab, 'date' => $date]) }}"
        class="px-4 py-2 rounded-xl text-sm font-semibold transition
               {{ $status === $tab ? $tabColor[$tab] . ' ring-2 ring-offset-1 ring-gray-300' : 'bg-white text-gray-500 hover:bg-gray-50' }}">
-        {{ ucfirst($tab) }}
+        {{ $tab === 'siap_diambil' ? 'Siap Diambil' : ucfirst($tab) }}
         <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-black bg-opacity-10">{{ $counts[$tab] }}</span>
     </a>
     @endforeach
@@ -48,35 +65,42 @@
             @forelse($orders as $order)
             @php
                 $sc = match($order->status) {
-                    'pending'    => 'bg-yellow-100 text-yellow-700',
-                    'diproses'   => 'bg-blue-100 text-blue-700',
-                    'dikirim'    => 'bg-purple-100 text-purple-700',
-                    'selesai'    => 'bg-green-100 text-green-700',
-                    'dibatalkan' => 'bg-red-100 text-red-700',
-                    default      => 'bg-gray-100 text-gray-700',
+                    'pending'      => 'bg-yellow-100 text-yellow-700',
+                    'diproses'     => 'bg-blue-100 text-blue-700',
+                    'dikirim'      => 'bg-purple-100 text-purple-700',
+                    'siap_diambil' => 'bg-orange-100 text-orange-700',
+                    'selesai'      => 'bg-green-100 text-green-700',
+                    'dibatalkan'   => 'bg-red-100 text-red-700',
+                    default        => 'bg-gray-100 text-gray-700',
                 };
                 $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
-                $nextStatus = match($order->status) {
-                    'pending'  => 'diproses',
-                    'diproses' => 'dikirim',
-                    'dikirim'  => 'selesai',
-                    default    => null,
+                $nextStatus = match(true) {
+                    $order->status === 'pending'                          => 'diproses',
+                    $order->status === 'diproses' && $isDelivery          => 'dikirim',
+                    $order->status === 'diproses' && !$isDelivery         => 'siap_diambil',
+                    $order->status === 'dikirim'                          => 'selesai',
+                    $order->status === 'siap_diambil'                     => 'selesai',
+                    default                                               => null,
                 };
-                $nextLabel = match($order->status) {
-                    'pending'  => '→ Proses',
-                    'diproses' => '→ Kirim',
-                    'dikirim'  => '→ Selesai',
-                    default    => null,
+                $nextLabel = match(true) {
+                    $order->status === 'pending'                          => '→ Proses',
+                    $order->status === 'diproses' && $isDelivery          => '→ Kirim',
+                    $order->status === 'diproses' && !$isDelivery         => '→ Siap Diambil',
+                    $order->status === 'dikirim'                          => '→ Selesai',
+                    $order->status === 'siap_diambil'                     => '→ Selesai',
+                    default                                               => null,
                 };
-                $nextColor = match($order->status) {
-                    'pending'  => 'bg-blue-600 hover:bg-blue-700 text-white',
-                    'diproses' => 'bg-purple-600 hover:bg-purple-700 text-white',
-                    'dikirim'  => 'bg-green-600 hover:bg-green-700 text-white',
-                    default    => '',
+                $nextColor = match(true) {
+                    $order->status === 'pending'                          => 'bg-blue-600 hover:bg-blue-700 text-white',
+                    $order->status === 'diproses' && $isDelivery          => 'bg-purple-600 hover:bg-purple-700 text-white',
+                    $order->status === 'diproses' && !$isDelivery         => 'bg-orange-500 hover:bg-orange-600 text-white',
+                    $order->status === 'dikirim'                          => 'bg-green-600 hover:bg-green-700 text-white',
+                    $order->status === 'siap_diambil'                     => 'bg-green-600 hover:bg-green-700 text-white',
+                    default                                               => '',
                 };
                 $canCancel = in_array($order->status, ['pending', 'diproses']);
             @endphp
-            <tr id="order-row-{{ $order->id }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
+            <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery ? '1' : '0' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
                 <td class="py-4 px-6 font-bold text-gray-700">#{{ $order->id }}</td>
                 <td class="py-4 px-6">
                     <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
@@ -104,7 +128,7 @@
                 </td>
                 <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->metode_pembayaran }}</td>
                 <td class="py-4 px-6">
-                    <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ ucfirst($order->status) }}</span>
+                    <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status) }}</span>
                 </td>
                 <td class="py-4 px-6 text-gray-400 text-xs">{{ $order->created_at->format('d M Y, H:i') }}</td>
                 <td class="py-4 px-6">
@@ -146,7 +170,7 @@
             @endforelse
         </tbody>
     </table>
-    <div class="p-4">{{ $orders->appends(['status' => $status])->links() }}</div>
+    <div class="p-4">{{ $orders->appends(['status' => $status, 'date' => $date])->links() }}</div>
 </div>
 
 {{-- MODAL OVERLAY --}}
@@ -171,18 +195,32 @@
 const CSRF_TOKEN = '{{ csrf_token() }}';
 
 const STATUS_BADGE = {
-    pending:    'bg-yellow-100 text-yellow-700',
-    diproses:   'bg-blue-100 text-blue-700',
-    dikirim:    'bg-purple-100 text-purple-700',
-    selesai:    'bg-green-100 text-green-700',
-    dibatalkan: 'bg-red-100 text-red-700',
+    pending:      'bg-yellow-100 text-yellow-700',
+    diproses:     'bg-blue-100 text-blue-700',
+    dikirim:      'bg-purple-100 text-purple-700',
+    siap_diambil: 'bg-orange-100 text-orange-700',
+    selesai:      'bg-green-100 text-green-700',
+    dibatalkan:   'bg-red-100 text-red-700',
 };
 
-const NEXT_STATUS = {
-    pending:  { status: 'diproses', label: '→ Proses',  color: 'bg-blue-600 hover:bg-blue-700 text-white' },
-    diproses: { status: 'dikirim',  label: '→ Kirim',   color: 'bg-purple-600 hover:bg-purple-700 text-white' },
-    dikirim:  { status: 'selesai',  label: '→ Selesai', color: 'bg-green-600 hover:bg-green-700 text-white' },
+const STATUS_LABEL = {
+    pending:      'Pending',
+    diproses:     'Diproses',
+    dikirim:      'Dikirim',
+    siap_diambil: 'Siap Diambil',
+    selesai:      'Selesai',
+    dibatalkan:   'Dibatalkan',
 };
+
+function getNextStatus(currentStatus, isDelivery) {
+    if (currentStatus === 'pending')      return { status: 'diproses',     label: '→ Proses',       color: 'bg-blue-600 hover:bg-blue-700 text-white' };
+    if (currentStatus === 'diproses')     return isDelivery
+        ? { status: 'dikirim',      label: '→ Kirim',        color: 'bg-purple-600 hover:bg-purple-700 text-white' }
+        : { status: 'siap_diambil', label: '→ Siap Diambil', color: 'bg-orange-500 hover:bg-orange-600 text-white' };
+    if (currentStatus === 'dikirim')      return { status: 'selesai',      label: '→ Selesai',      color: 'bg-green-600 hover:bg-green-700 text-white' };
+    if (currentStatus === 'siap_diambil') return { status: 'selesai',      label: '→ Selesai',      color: 'bg-green-600 hover:bg-green-700 text-white' };
+    return null;
+}
 
 function quickUpdateStatus(orderId, newStatus, triggerEl) {
     triggerEl.disabled = true;
@@ -213,7 +251,7 @@ function updateRowUI(orderId, newStatus) {
     const badge = document.getElementById(`status-badge-${orderId}`);
     if (badge) {
         badge.className = `px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[newStatus] || 'bg-gray-100 text-gray-700'}`;
-        badge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+        badge.textContent = STATUS_LABEL[newStatus] || newStatus;
     }
 
     // Rebuild tombol aksi
@@ -222,7 +260,8 @@ function updateRowUI(orderId, newStatus) {
     const aksiCell = row.querySelector('td:last-child');
     if (!aksiCell) return;
 
-    const next = NEXT_STATUS[newStatus];
+    const isDelivery = row.dataset.delivery === '1';
+    const next = getNextStatus(newStatus, isDelivery);
     const canCancel = ['pending', 'diproses'].includes(newStatus);
 
     let buttonsHtml = '';

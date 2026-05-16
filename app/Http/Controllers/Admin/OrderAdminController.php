@@ -11,8 +11,9 @@ class OrderAdminController extends Controller
     public function index(Request $request)
     {
         $status = $request->get('status', 'semua');
+        $date   = $request->get('date', today()->format('Y-m-d'));
 
-        $query = Order::with('user')->latest();
+        $query = Order::with('user')->latest()->whereDate('created_at', $date);
 
         if ($status !== 'semua') {
             $query->where('status', $status);
@@ -21,15 +22,16 @@ class OrderAdminController extends Controller
         $orders = $query->paginate(15);
 
         $counts = [
-            'semua'      => Order::count(),
-            'pending'    => Order::where('status', 'pending')->count(),
-            'diproses'   => Order::where('status', 'diproses')->count(),
-            'dikirim'    => Order::where('status', 'dikirim')->count(),
-            'selesai'    => Order::where('status', 'selesai')->count(),
-            'dibatalkan' => Order::where('status', 'dibatalkan')->count(),
+            'semua'        => Order::whereDate('created_at', $date)->count(),
+            'pending'      => Order::whereDate('created_at', $date)->where('status', 'pending')->count(),
+            'diproses'     => Order::whereDate('created_at', $date)->where('status', 'diproses')->count(),
+            'dikirim'      => Order::whereDate('created_at', $date)->where('status', 'dikirim')->count(),
+            'siap_diambil' => Order::whereDate('created_at', $date)->where('status', 'siap_diambil')->count(),
+            'selesai'      => Order::whereDate('created_at', $date)->where('status', 'selesai')->count(),
+            'dibatalkan'   => Order::whereDate('created_at', $date)->where('status', 'dibatalkan')->count(),
         ];
 
-        return view('admin.orders.index', compact('orders', 'status', 'counts'));
+        return view('admin.orders.index', compact('orders', 'status', 'counts', 'date'));
     }
 
     public function show($id)
@@ -41,7 +43,7 @@ class OrderAdminController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,diproses,dikirim,selesai,dibatalkan',
+            'status' => 'required|in:pending,diproses,dikirim,siap_diambil,selesai,dibatalkan',
         ]);
 
         $order = Order::findOrFail($id);

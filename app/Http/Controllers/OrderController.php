@@ -7,10 +7,16 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('items.product', 'testimonial') // tambah 'testimonial'
+        $groupedOrders = Order::with('items.product', 'testimonial')
             ->where('user_id', Auth::id())
-            ->latest()->get();
-        return view('orders', compact('orders'));
+            ->latest()
+            ->get()
+            ->groupBy(fn($order) => $order->created_at->format('Y-m-d'));
+
+        $today     = now()->format('Y-m-d');
+        $yesterday = now()->subDay()->format('Y-m-d');
+
+        return view('orders', compact('groupedOrders', 'today', 'yesterday'));
     }
 
     public function show($id)
