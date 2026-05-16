@@ -27,4 +27,11 @@ class UserAdminController extends Controller
 
         return view('admin.users.show', compact('user', 'orders', 'totalBelanja'));
     }
+
+    public function destroy($id)
+    {
+        $user = User::where('role', 'user')->findOrFail($id);
+        $user->delete();
+        return redirect()->route('admin.users.index')->with('success', 'Akun pengguna berhasil dihapus.');
+    }
 }

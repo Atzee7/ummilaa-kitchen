@@ -2,13 +2,21 @@
 @section('title', 'Detail Pengguna')
 
 @section('content')
-<div class="mb-6">
+<div class="mb-6 flex items-center justify-between">
     <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
         Kembali ke Pengguna
     </a>
+    <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
+          onsubmit="return confirm('Yakin ingin menghapus akun {{ addslashes($user->name) }}? Tindakan ini tidak dapat dibatalkan.')">
+        @csrf @method('DELETE')
+        <button type="submit"
+            class="px-4 py-2 text-sm font-semibold rounded-lg bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition">
+            Hapus Akun
+        </button>
+    </form>
 </div>
 
 <div class="grid grid-cols-3 gap-6">

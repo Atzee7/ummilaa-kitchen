@@ -87,6 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
         Route::get('/users/{id}', [UserAdminController::class, 'show'])->name('users.show');
+        Route::delete('/users/{id}', [UserAdminController::class, 'destroy'])->name('users.destroy');
 
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');

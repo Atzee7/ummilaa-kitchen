@@ -45,10 +45,20 @@
                 </td>
                 <td class="py-4 px-6 text-gray-500 text-xs">{{ $user->created_at->format('d M Y') }}</td>
                 <td class="py-4 px-6">
-                    <a href="{{ route('admin.users.show', $user->id) }}"
-                       class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50">
-                        Detail
-                    </a>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('admin.users.show', $user->id) }}"
+                           class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50">
+                            Detail
+                        </a>
+                        <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
+                              onsubmit="return confirm('Yakin ingin menghapus akun {{ addslashes($user->name) }}?')">
+                            @csrf @method('DELETE')
+                            <button type="submit"
+                                class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @empty
