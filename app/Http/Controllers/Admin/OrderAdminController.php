@@ -99,7 +99,15 @@ class OrderAdminController extends Controller
 
         if ($order->status === 'dikirim') {
             $detail = $order->detail_alamat ? "\n🏠 Detail: {$order->detail_alamat}" : '';
-            return "🛵 *Pesanan #{$order->id} sedang diantar!*\n\nHalo {$order->nama_penerima}, makananmu dari *Ummila Kitchen* sudah dalam perjalanan ya!\n\n📍 Alamat: {$order->alamat}{$detail}\n⏱️ Estimasi: 15–30 menit\n💰 Total: {$total}\n\nKami akan info kembali jika kurir sudah tiba di lokasimu. 🔔\n\nTerima kasih sudah berbelanja! Selamat menikmati 🍽️";
+
+            $user = $order->user;
+            if ($user && $user->lat && $user->lng) {
+                $mapsLink = "https://www.google.com/maps?q={$user->lat},{$user->lng}";
+            } else {
+                $mapsLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($order->alamat);
+            }
+
+            return "🛵 *Pesanan #{$order->id} sedang diantar!*\n\nHalo {$order->nama_penerima}, makananmu dari *Ummila Kitchen* sudah dalam perjalanan ya!\n\n📍 Alamat: {$order->alamat}{$detail}\n🗺️ Link Google Maps: {$mapsLink}\n⏱️ Estimasi: 15–30 menit\n💰 Total: {$total}\n\nKami akan info kembali jika kurir sudah tiba di lokasimu. 🔔\n\nTerima kasih sudah berbelanja! Selamat menikmati 🍽️";
         }
 
         return "✅ *Pesanan #{$order->id} siap diambil!*\n\nHalo {$order->nama_penerima}, makananmu dari *Ummila Kitchen* sudah siap ya!\n\n🏪 Alamat Toko: Jalan Kapi Anala 1 Blok 15N No. 18, Sawojajar 2, Kota Malang, Jawa Timur\n🕐 Jam Operasional: 08.00 – 20.00\n💰 Total: {$total}\n\nSegera ambil pesananmu sebelum 30 menit ya, agar tetap hangat! 🔥\n\nTerima kasih sudah berbelanja! Selamat menikmati 🍽️";
