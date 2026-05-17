@@ -115,7 +115,7 @@
 
                     <div class="text-[0.85rem] text-[#999] mb-3 flex items-start gap-2">
                         <i class="fas fa-info-circle text-maroon mt-0.5 flex-shrink-0"></i>
-                        <span>Gunakan tombol <strong class="text-blue-600">Lokasi Saya</strong> untuk deteksi otomatis via GPS, cari lokasi, atau klik langsung pada peta untuk menentukan titik alamat Anda.
+                        <span>Gunakan tombol <strong class="text-maroon">Lokasi Saya</strong> untuk deteksi otomatis via GPS, cari lokasi, atau klik langsung pada peta untuk menentukan titik alamat Anda.
                         <strong class="text-red-700">(Wajib tentukan lokasi sebelum menyimpan)</strong></span>
                     </div>
 
@@ -127,7 +127,7 @@
                             <i class="fas fa-search"></i> Cari
                         </button>
                         <button type="button" id="gpsBtn" onclick="detectGPS()"
-                            class="px-4 py-3 bg-blue-600 text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            class="px-4 py-3 bg-maroon text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-maroon-dark transition-colors flex items-center gap-2">
                             <i class="fas fa-location-arrow"></i> Lokasi Saya
                         </button>
                         <button type="button" onclick="resetMap()"
