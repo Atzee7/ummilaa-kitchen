@@ -35,12 +35,21 @@ class CartController extends Controller
 
     public function update(Request $request, $id)
     {
-        $cart = Cart::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
-        if ($request->quantity < 1) {
-            $cart->delete();
-        } else {
-            $cart->update(['quantity' => $request->quantity]);
+        $cart = Cart::with('product')->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        $quantity = max(1, (int) $request->quantity);
+        $cart->update(['quantity' => $quantity]);
+
+        if ($request->ajax()) {
+            $carts = Cart::with('product')->where('user_id', Auth::id())->get();
+            $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
+            return response()->json([
+                'quantity'   => $quantity,
+                'item_total' => $cart->product->price * $quantity,
+                'subtotal'   => $subtotal,
+                'cart_count' => $carts->count(),
+            ]);
         }
+
         return redirect()->back();
     }
 
