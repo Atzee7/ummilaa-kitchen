@@ -130,6 +130,6 @@ class CheckoutController extends Controller
 
     Cart::where('user_id', Auth::id())->delete();
 
-    return redirect()->route('order.success', $order->id);
+    return redirect()->route('order.payment', $order->id);
     }
 }

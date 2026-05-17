@@ -71,6 +71,15 @@
                 </div>
                 @endif
             </div>
+
+            @if($order->status === 'dibatalkan' && $order->alasan_pembatalan)
+            <div class="bg-red-50 border-[1.5px] border-red-200 rounded-[20px] p-7 mt-6">
+                <div class="font-extrabold text-red-700 text-[0.97rem] mb-3 flex items-center gap-[10px]">
+                    <i class="fas fa-times-circle"></i> Alasan Pembatalan
+                </div>
+                <p class="text-[0.9rem] text-red-800 leading-relaxed">{{ $order->alasan_pembatalan }}</p>
+            </div>
+            @endif
         </div>
 
         {{-- SUMMARY --}}

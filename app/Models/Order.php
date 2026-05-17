@@ -7,7 +7,7 @@ class Order extends Model
     protected $fillable = [
         'user_id', 'nama_penerima', 'alamat', 'detail_alamat', 'no_telepon',
         'metode_pembayaran', 'metode_pengiriman', 'catatan',
-        'subtotal', 'ongkir', 'total', 'status'
+        'subtotal', 'ongkir', 'total', 'status', 'alasan_pembatalan'
     ];
 
     public function items() { return $this->hasMany(OrderItem::class); }

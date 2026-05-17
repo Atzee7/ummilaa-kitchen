@@ -490,6 +490,34 @@ function sendWhatsapp(orderId) {
     });
 }
 
+function toggleCancelForm(orderId) {
+    const form = document.getElementById('cancel-form-' + orderId);
+    const btn  = document.getElementById('btn-batalkan-' + orderId);
+    if (!form) return;
+    form.classList.toggle('hidden');
+    btn.classList.toggle('bg-red-50', !form.classList.contains('hidden'));
+}
+
+function submitCancelWithReason(orderId) {
+    const alasan = document.getElementById('alasan-input-' + orderId)?.value.trim() ?? '';
+    fetch(`/admin/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+            'X-CSRF-TOKEN': CSRF_TOKEN,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ status: 'dibatalkan', alasan_pembatalan: alasan }),
+    })
+    .then(r => r.json())
+    .then(() => {
+        fetch(`/admin/orders/${orderId}/modal`)
+            .then(r => r.text())
+            .then(html => { document.getElementById('order-modal-content').innerHTML = html; });
+    })
+    .catch(() => alert('Gagal membatalkan pesanan. Coba lagi.'));
+}
+
 // Tutup modal dengan tombol Escape
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeOrderModal();

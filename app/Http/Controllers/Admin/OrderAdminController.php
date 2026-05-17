@@ -44,11 +44,18 @@ class OrderAdminController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,diproses,dikirim,siap_diambil,selesai,dibatalkan',
+            'status'            => 'required|in:pending,diproses,dikirim,siap_diambil,selesai,dibatalkan',
+            'alasan_pembatalan' => 'nullable|string|max:1000',
         ]);
 
         $order = Order::findOrFail($id);
-        $order->update(['status' => $request->status]);
+
+        $updateData = ['status' => $request->status];
+        if ($request->status === 'dibatalkan') {
+            $updateData['alasan_pembatalan'] = $request->alasan_pembatalan ?? null;
+        }
+
+        $order->update($updateData);
         $order->load('user');
 
         $hasPhone = !empty(optional($order->user)->no_telepon);

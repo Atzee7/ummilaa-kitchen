@@ -268,10 +268,74 @@
     </form>
 </div>
 
+{{-- MODAL KONFIRMASI PESANAN --}}
+<div id="checkout-confirm-modal"
+     class="fixed inset-0 z-50 flex items-center justify-center hidden"
+     style="background:rgba(0,0,0,0.5);backdrop-filter:blur(3px);">
+    <div class="bg-white rounded-[24px] shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        {{-- HEADER --}}
+        <div class="px-7 py-5 bg-[linear-gradient(135deg,#8B1A1A,#6B1414)] text-white">
+            <h3 class="font-playfair text-[1.2rem] font-bold">Konfirmasi Pesanan</h3>
+            <p class="text-[0.78rem] opacity-75 mt-0.5">Pastikan detail pesanan sudah benar</p>
+        </div>
+        {{-- BODY --}}
+        <div class="px-7 py-5 max-h-[55vh] overflow-y-auto">
+            <div id="modal-items" class="mb-4 space-y-3"></div>
+            <div class="h-px bg-[#f0eaea] mb-4"></div>
+            <div class="space-y-2 text-[0.88rem] text-[#555]">
+                <div class="flex justify-between"><span>Penerima</span><strong class="text-[#1a1a1a]" id="modal-nama"></strong></div>
+                <div class="flex justify-between"><span>Telepon</span><strong class="text-[#1a1a1a]" id="modal-telepon"></strong></div>
+                <div class="flex justify-between"><span>Pengiriman</span><strong class="text-[#1a1a1a]" id="modal-pengiriman"></strong></div>
+                <div class="flex justify-between"><span>Pembayaran</span><strong class="text-[#1a1a1a]" id="modal-pembayaran"></strong></div>
+                <div class="h-px bg-[#f0eaea] my-2"></div>
+                <div class="flex justify-between"><span class="text-[#888]">Subtotal</span><strong id="modal-subtotal"></strong></div>
+                <div class="flex justify-between"><span class="text-[#888]">Ongkos Kirim</span><strong id="modal-ongkir"></strong></div>
+                <div class="flex justify-between items-center pt-2 border-t border-[#f0eaea]">
+                    <span class="font-extrabold text-[#1a1a1a]">Total</span>
+                    <span class="font-extrabold text-maroon text-[1.15rem]" id="modal-total"></span>
+                </div>
+            </div>
+        </div>
+        {{-- FOOTER --}}
+        <div class="px-7 py-5 border-t border-[#f0eaea]">
+            <div class="text-center mb-4">
+                <p class="text-[0.82rem] text-[#888]">Pesanan otomatis dikonfirmasi dalam</p>
+                <p class="font-extrabold text-maroon text-[2rem] leading-none" id="countdown-display">10</p>
+                <p class="text-[0.75rem] text-[#bbb]">detik</p>
+            </div>
+            <div class="flex gap-3">
+                <button type="button" id="btn-modal-batal"
+                    class="flex-1 py-[13px] rounded-xl font-bold text-[0.9rem] border-[1.5px] border-gray-300 text-gray-600 hover:bg-gray-50 transition-all">
+                    <i class="fas fa-times mr-1"></i> Batalkan
+                </button>
+                <button type="button" id="btn-modal-confirm"
+                    class="flex-1 py-[13px] rounded-xl font-bold text-[0.9rem] bg-maroon text-white hover:bg-maroon-dark transition-all">
+                    <i class="fas fa-check mr-1"></i> Konfirmasi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
+@php
+    $checkoutItems = $carts->map(fn($c) => [
+        'name'  => $c->product->name,
+        'qty'   => $c->quantity,
+        'price' => $c->product->price,
+    ]);
+@endphp
 <script>
+    const checkoutData = {
+        items   : @json($checkoutItems),
+        nama    : @json(Auth::user()->name),
+        telepon : @json(Auth::user()->no_telepon ?? '-'),
+        subtotal: {{ $subtotal }},
+        ongkir  : {{ $ongkir }},
+    };
+
     const subtotal = {{ $subtotal }};
     const bisaDelivery = {{ $bisaDelivery ? 'true' : 'false' }};
     const ongkirDelivery = {{ $ongkir }};
@@ -360,17 +424,75 @@
         });
     });
 
-    document.getElementById('checkout-form').addEventListener('submit', function(e) {
-        const pembayaranDipilih = document.querySelector('input[name="metode_pembayaran"]:checked');
-        if (!pembayaranDipilih) {
-            e.preventDefault();
-            const errorMsg = document.getElementById('payment-error-msg');
-            const payCard  = document.getElementById('payment-card');
-            errorMsg.classList.remove('hidden');
-            errorMsg.classList.add('flex');
-            payCard.classList.add('border-[#ef9a9a]', 'ring-2', 'ring-[rgba(198,40,40,0.1)]');
-            payCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Intercept tombol Konfirmasi Pesanan untuk menampilkan modal
+    (function () {
+        function fmt(n) {
+            return 'Rp' + Number(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
-    });
+        let timer = null;
+
+        function openModal() {
+            const delivery = document.getElementById('radio-delivery')?.checked ?? true;
+            const bayar    = document.querySelector('input[name="metode_pembayaran"]:checked')?.value ?? '-';
+            const ongkir   = delivery ? checkoutData.ongkir : 0;
+            const total    = checkoutData.subtotal + ongkir;
+
+            document.getElementById('modal-items').innerHTML = checkoutData.items.map(item => `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-[0.88rem] text-[#1a1a1a]">${item.name}</p>
+                        <p class="text-[0.78rem] text-[#aaa]">${item.qty}x &middot; ${fmt(item.price)}</p>
+                    </div>
+                    <span class="font-bold text-maroon text-[0.88rem]">${fmt(item.price * item.qty)}</span>
+                </div>`).join('');
+
+            document.getElementById('modal-nama').textContent       = checkoutData.nama;
+            document.getElementById('modal-telepon').textContent    = checkoutData.telepon;
+            document.getElementById('modal-pengiriman').textContent = delivery ? 'Delivery' : 'Ambil Sendiri';
+            document.getElementById('modal-pembayaran').textContent = bayar;
+            document.getElementById('modal-subtotal').textContent   = fmt(checkoutData.subtotal);
+            document.getElementById('modal-ongkir').textContent     = ongkir > 0 ? fmt(ongkir) : 'Gratis';
+            document.getElementById('modal-total').textContent      = fmt(total);
+
+            document.getElementById('checkout-confirm-modal').classList.remove('hidden');
+            let sisa = 10;
+            document.getElementById('countdown-display').textContent = sisa;
+            timer = setInterval(() => {
+                sisa--;
+                document.getElementById('countdown-display').textContent = sisa;
+                if (sisa <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('checkout-form').submit();
+                }
+            }, 1000);
+        }
+
+        function closeModal() {
+            document.getElementById('checkout-confirm-modal').classList.add('hidden');
+            clearInterval(timer);
+            document.getElementById('countdown-display').textContent = '10';
+        }
+
+        document.getElementById('btn-place-order').addEventListener('click', function (e) {
+            e.preventDefault();
+            const hasPembayaran = document.querySelector('input[name="metode_pembayaran"]:checked');
+            if (!hasPembayaran) {
+                const errorMsg = document.getElementById('payment-error-msg');
+                const payCard  = document.getElementById('payment-card');
+                errorMsg.classList.remove('hidden');
+                errorMsg.classList.add('flex');
+                payCard.classList.add('border-[#ef9a9a]', 'ring-2', 'ring-[rgba(198,40,40,0.1)]');
+                payCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            openModal();
+        });
+
+        document.getElementById('btn-modal-batal').addEventListener('click', closeModal);
+        document.getElementById('btn-modal-confirm').addEventListener('click', function () {
+            clearInterval(timer);
+            document.getElementById('checkout-form').submit();
+        });
+    })();
 </script>
 @endpush

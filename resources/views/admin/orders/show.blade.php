@@ -162,6 +162,19 @@
         </div>
         @endif
 
+        {{-- ALASAN PEMBATALAN --}}
+        @if($order->status === 'dibatalkan' && $order->alasan_pembatalan)
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h3 class="font-playfair text-lg font-bold text-red-700 mb-4 pb-3 border-b border-red-100">
+                Alasan Pembatalan
+            </h3>
+            <div class="bg-red-50 border border-red-100 rounded-xl p-4 flex gap-3">
+                <span class="text-xl flex-shrink-0">❌</span>
+                <p class="text-sm text-red-800 leading-relaxed">{{ $order->alasan_pembatalan }}</p>
+            </div>
+        </div>
+        @endif
+
         {{-- PRODUK --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4 pb-3 border-b border-gray-100">
@@ -236,6 +249,14 @@
                         <option value="selesai"      {{ $order->status === 'selesai'      ? 'selected' : '' }}>Selesai</option>
                         <option value="dibatalkan"   {{ $order->status === 'dibatalkan'   ? 'selected' : '' }}>Dibatalkan</option>
                     </select>
+                </div>
+                <div id="alasan-section" class="{{ $order->status === 'dibatalkan' ? '' : 'hidden' }} mb-4">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Alasan Pembatalan <span class="font-normal text-gray-400">(opsional)</span>
+                    </label>
+                    <textarea name="alasan_pembatalan" rows="3"
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 resize-none"
+                        placeholder="Masukkan alasan pembatalan...">{{ old('alasan_pembatalan', $order->alasan_pembatalan) }}</textarea>
                 </div>
                 <button type="submit"
                     class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-[#8B1A1A]">
@@ -420,6 +441,15 @@ function sendWhatsapp(orderId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Show/hide textarea alasan saat dropdown status berubah
+    const statusSelect = document.querySelector('select[name="status"]');
+    const alasanSection = document.getElementById('alasan-section');
+    if (statusSelect && alasanSection) {
+        statusSelect.addEventListener('change', function () {
+            alasanSection.classList.toggle('hidden', this.value !== 'dibatalkan');
+        });
+    }
+
     const modal = document.getElementById('wa-confirm-modal-show');
     const noBtn  = document.getElementById('wa-show-no');
     const yesBtn = document.getElementById('wa-show-yes');

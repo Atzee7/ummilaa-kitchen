@@ -43,6 +43,10 @@ Route::middleware('auth')->group(function () {
         $order = \App\Models\Order::with('items.product')->findOrFail($id);
         return view('order-success', compact('order'));
     })->name('order.success');
+    Route::get('/order/payment/{id}', function($id) {
+        $order = \App\Models\Order::with('items.product')->findOrFail($id);
+        return view('order-payment', compact('order'));
+    })->name('order.payment');
 });
 
 // Checkout — wajib login + profile lengkap
