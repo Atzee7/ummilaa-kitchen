@@ -145,6 +145,34 @@
                         </label>
                     </div>
 
+                    {{-- Tarif ongkir info --}}
+                    <div class="mt-4 border-[1.5px] border-maroon-200 rounded-xl overflow-hidden">
+                        <div class="px-4 py-[10px] bg-maroon-50 flex items-center gap-2 text-[0.78rem] font-extrabold text-maroon border-b border-maroon-200">
+                            <i class="fas fa-info-circle"></i> Tarif Ongkos Kirim
+                        </div>
+                        <div class="grid grid-cols-2 divide-x divide-maroon-200">
+                            <div class="px-4 py-[9px] flex items-center justify-between text-[0.8rem]">
+                                <span class="text-[#666]">1 – 2 km</span>
+                                <span class="font-extrabold text-[#1a1a1a]">Rp 5.000</span>
+                            </div>
+                            <div class="px-4 py-[9px] flex items-center justify-between text-[0.8rem]">
+                                <span class="text-[#666]">3 – 4 km</span>
+                                <span class="font-extrabold text-[#1a1a1a]">Rp 8.000</span>
+                            </div>
+                            <div class="px-4 py-[9px] flex items-center justify-between text-[0.8rem] border-t border-maroon-200">
+                                <span class="text-[#666]">5 km</span>
+                                <span class="font-extrabold text-[#1a1a1a]">Rp 10.000</span>
+                            </div>
+                            <div class="px-4 py-[9px] flex items-center justify-between text-[0.8rem] border-t border-maroon-200">
+                                <span class="text-[#666]">> 5 km</span>
+                                <span class="font-extrabold text-red-600">Tidak tersedia</span>
+                            </div>
+                        </div>
+                        <div class="px-4 py-[8px] bg-[#fdf8f8] border-t border-maroon-200 text-[0.73rem] text-[#aaa]">
+                            <i class="fas fa-circle-info text-[0.65rem]"></i> Jarak dibulatkan ke atas ke km terdekat dari lokasi GPS Anda
+                        </div>
+                    </div>
+
                     @if($jarakKm !== null)
                         @if($bisaDelivery)
                         <div data-permanent class="mt-4 px-4 py-3 rounded-xl text-[0.83rem] flex items-center gap-[10px] bg-green-100 text-green-800">
