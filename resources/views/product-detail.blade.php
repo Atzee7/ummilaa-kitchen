@@ -41,7 +41,7 @@
             <div class="font-extrabold text-[#1a1a1a] text-[0.95rem] mb-5">Pesan Sekarang</div>
             <div class="flex items-center border-[1.5px] border-maroon-200 rounded-xl overflow-hidden mb-5">
                 <button class="w-11 h-11 bg-[#fafafa] border-none text-[1.1rem] font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors" onclick="changeQty(-1)">−</button>
-                <input class="flex-1 text-center border-none text-base font-bold font-sans outline-none text-[#1a1a1a]" type="number" id="qty" value="1" min="1" max="{{ $product->stock }}">
+                <input class="flex-1 text-center border-none text-base font-bold font-sans outline-none text-[#1a1a1a] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" type="number" id="qty" value="1" min="1" max="{{ $product->stock }}">
                 <button class="w-11 h-11 bg-[#fafafa] border-none text-[1.1rem] font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors" onclick="changeQty(1)">+</button>
             </div>
             <div class="bg-maroon-50 rounded-xl px-4 py-[14px] mb-5">
@@ -130,6 +130,10 @@ function changeQty(delta) {
     if (hiddenQty) hiddenQty.value = val;
     document.getElementById('subtotalText').textContent = 'Rp' + (price * val).toLocaleString('id-ID');
 }
+
+document.getElementById('qty')?.addEventListener('focus', function() {
+    this.select();
+});
 
 document.getElementById('qty')?.addEventListener('input', function() {
     let val = parseInt(this.value);
