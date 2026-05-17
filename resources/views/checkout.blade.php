@@ -129,7 +129,7 @@
                             </div>
                             <h4 class="font-extrabold text-[0.92rem] text-[#1a1a1a] mb-1">Delivery</h4>
                             <p class="text-[0.78rem] text-[#aaa] leading-[1.5] mb-2.5">Diantar ke alamat Anda (maks. 5 km dari outlet)</p>
-                            <span class="inline-flex items-center px-3 py-1 rounded-[20px] text-[0.8rem] font-extrabold {{ !$bisaDelivery ? 'bg-[#eee] text-[#bbb]' : 'bg-pink-100 text-red-700' }}">+ Rp15.000</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-[20px] text-[0.8rem] font-extrabold {{ !$bisaDelivery ? 'bg-[#eee] text-[#bbb]' : 'bg-pink-100 text-red-700' }}">+ Rp{{ number_format($ongkir, 0, ',', '.') }}</span>
                         </label>
 
                         <label class="delivery-option relative border-2 border-maroon-200 rounded-[16px] p-5 cursor-pointer transition-all duration-[250ms] overflow-hidden hover:border-[#d4a0a0] hover:bg-[#fdf8f8]" id="label-pickup">
@@ -220,7 +220,7 @@
                     </div>
                     <div class="flex justify-between text-[0.88rem] mb-[10px]">
                         <span class="text-[#888]">Ongkos Kirim</span>
-                        <strong class="text-[#1a1a1a] font-bold" id="ongkir-display">{{ $bisaDelivery ? 'Rp15.000' : 'Gratis' }}</strong>
+                        <strong class="text-[#1a1a1a] font-bold" id="ongkir-display">{{ $bisaDelivery ? 'Rp' . number_format($ongkir, 0, ',', '.') : 'Gratis' }}</strong>
                     </div>
                     <div class="flex justify-between items-center mt-4 mb-[22px] px-[18px] py-[14px] bg-maroon-50 rounded-xl">
                         <span class="font-extrabold text-[#1a1a1a] text-[0.92rem]">Total Pembayaran</span>
@@ -246,6 +246,7 @@
 <script>
     const subtotal = {{ $subtotal }};
     const bisaDelivery = {{ $bisaDelivery ? 'true' : 'false' }};
+    const ongkirDelivery = {{ $ongkir }};
 
     const radioDelivery = document.getElementById('radio-delivery');
     const radioPickup   = document.getElementById('radio-pickup');
@@ -289,7 +290,7 @@
 
     function updateSummary() {
         const isDelivery = radioDelivery && !radioDelivery.disabled && radioDelivery.checked;
-        const ongkir = isDelivery ? 15000 : 0;
+        const ongkir = isDelivery ? ongkirDelivery : 0;
         ongkirDisplay.textContent = ongkir > 0 ? formatRp(ongkir) : 'Gratis';
         totalDisplay.textContent  = formatRp(subtotal + ongkir);
         if (labelDelivery) setDeliverySelected(labelDelivery, isDelivery);

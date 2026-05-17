@@ -30,6 +30,15 @@ class CheckoutController extends Controller
         return $r * $c; // hasil dalam km
     }
 
+    private function hitungOngkir(float $jarakKm): int
+    {
+        $km = (int) ceil($jarakKm);
+        if ($km <= 2) return 5000;
+        if ($km <= 4) return 8000;
+        if ($km === 5) return 10000;
+        return 0;
+    }
+
     public function index()
     {
         if (Setting::get('store_open', '1') !== '1') {
@@ -52,7 +61,7 @@ class CheckoutController extends Controller
         }
 
         // Ongkir default (akan diupdate via JS sesuai pilihan)
-        $ongkir = $bisaDelivery ? 15000 : 0;
+        $ongkir = $bisaDelivery ? $this->hitungOngkir($jarakKm) : 0;
         $total = $subtotal + $ongkir;
 
         return view('checkout', compact('carts', 'subtotal', 'ongkir', 'total', 'jarakKm', 'bisaDelivery'));
@@ -90,7 +99,7 @@ class CheckoutController extends Controller
                 return back()->withErrors(['metode_pengiriman' => 'Maaf, jarak Anda terlalu jauh untuk delivery (maks. 5 km).']);
             }
         }
-        $ongkir = 15000;
+        $ongkir = $this->hitungOngkir($jarakKm);
     }
 
     $total = $subtotal + $ongkir;
