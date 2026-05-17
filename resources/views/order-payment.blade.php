@@ -5,7 +5,7 @@
 
     {{-- HEADER --}}
     <div class="text-center mb-10">
-        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div data-permanent class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-check-circle text-green-600 text-3xl"></i>
         </div>
         <h1 class="font-playfair text-[2rem] text-[#1a1a1a] mb-2">Pesanan Berhasil Dibuat!</h1>
@@ -143,12 +143,38 @@
         {{-- STATUS PESANAN --}}
         <div class="bg-maroon-50 border-[1.5px] border-maroon-200 rounded-[20px] p-6 mb-6">
             <p class="text-[0.82rem] font-bold text-maroon mb-3 uppercase tracking-wider">Status Pesanan</p>
-            <div class="flex items-center gap-3 flex-wrap">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-orange-700 rounded-[20px] text-[0.78rem] font-extrabold">
-                    <i class="fas fa-clock"></i> Menunggu Konfirmasi
-                </span>
-                <span class="text-[0.8rem] text-[#999]">Kami akan segera memproses pesanan Anda</span>
-            </div>
+
+            @if($order->status === 'belum_bayar')
+                <div class="flex items-center gap-3 flex-wrap mb-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-orange-700 rounded-[20px] text-[0.78rem] font-extrabold">
+                        <i class="fas fa-hourglass-half"></i> Belum Bayar
+                    </span>
+                    <span class="text-[0.8rem] text-[#999]">Selesaikan pembayaran sebelum waktu habis</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-white border-[1.5px] border-amber-300 rounded-xl px-5 py-4 mb-4">
+                    <div>
+                        <p class="text-[0.78rem] text-[#999] mb-0.5">Sisa waktu pembayaran</p>
+                        <p class="text-[0.75rem] text-amber-700">Pesanan dibatalkan otomatis jika lewat waktu</p>
+                    </div>
+                    <strong class="font-mono text-[1.6rem] text-maroon payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
+                </div>
+
+                <form method="POST" action="{{ route('orders.markPaid', $order->id) }}">
+                    @csrf
+                    <button type="submit" class="w-full py-[14px] bg-maroon text-white rounded-xl font-extrabold text-[0.95rem] hover:bg-maroon-dark transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-check-circle"></i> Saya Sudah Bayar
+                    </button>
+                    <p class="text-[0.75rem] text-[#999] text-center mt-2">Klik setelah selesai transfer/scan QRIS. Admin akan verifikasi pembayaran Anda.</p>
+                </form>
+            @else
+                <div class="flex items-center gap-3 flex-wrap">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-800 rounded-[20px] text-[0.78rem] font-extrabold">
+                        <i class="fas fa-clock"></i> Menunggu
+                    </span>
+                    <span class="text-[0.8rem] text-[#999]">Kami akan segera memproses pesanan Anda</span>
+                </div>
+            @endif
         </div>
 
         {{-- TOMBOL NAVIGASI --}}
@@ -176,5 +202,28 @@ function copyVA() {
         alert('Nomor VA berhasil disalin: ' + va);
     });
 }
+
+// Countdown pembayaran untuk pesanan belum_bayar
+(function () {
+    const elements = document.querySelectorAll('.payment-countdown');
+    if (!elements.length) return;
+    let needReload = false;
+    function tick() {
+        const now = Date.now();
+        elements.forEach(el => {
+            const target = new Date(el.dataset.expiresAt).getTime();
+            const diff = Math.max(0, Math.floor((target - now) / 1000));
+            const mm = String(Math.floor(diff / 60)).padStart(2, '0');
+            const ss = String(diff % 60).padStart(2, '0');
+            el.textContent = `${mm}:${ss}`;
+            if (diff === 0 && !needReload) {
+                needReload = true;
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        });
+    }
+    tick();
+    setInterval(tick, 1000);
+})();
 </script>
 @endpush

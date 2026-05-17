@@ -222,16 +222,28 @@
     const tbody  = document.getElementById('tbody-pesanan-aktif');
 
     const statusColor = {
-        pending:    'bg-yellow-100 text-yellow-700',
-        diproses:   'bg-blue-100 text-blue-700',
-        dikirim:    'bg-purple-100 text-purple-700',
-        selesai:    'bg-green-100 text-green-700',
-        dibatalkan: 'bg-red-100 text-red-700',
+        belum_bayar:  'bg-amber-100 text-amber-700',
+        pending:      'bg-yellow-100 text-yellow-700',
+        diproses:     'bg-blue-100 text-blue-700',
+        dikirim:      'bg-purple-100 text-purple-700',
+        siap_diambil: 'bg-orange-100 text-orange-700',
+        selesai:      'bg-green-100 text-green-700',
+        dibatalkan:   'bg-red-100 text-red-700',
+    };
+
+    const statusLabel = {
+        belum_bayar:  'Belum Bayar',
+        pending:      'Menunggu',
+        diproses:     'Sedang Dimasak',
+        dikirim:      'Dikirim',
+        siap_diambil: 'Siap Diambil',
+        selesai:      'Selesai',
+        dibatalkan:   'Dibatalkan',
     };
 
     function renderRow(o) {
         const sc = statusColor[o.status] || 'bg-gray-100 text-gray-700';
-        const label = o.status.charAt(0).toUpperCase() + o.status.slice(1);
+        const label = statusLabel[o.status] || (o.status.charAt(0).toUpperCase() + o.status.slice(1));
         return `<tr class="border-b border-gray-50 hover:bg-gray-50">
             <td class="py-3 px-4 font-semibold text-gray-700">#${o.id}</td>
             <td class="py-3 px-4 text-gray-600">${o.nama}</td>

@@ -1,5 +1,6 @@
 @php
     $sc = match($order->status) {
+        'belum_bayar'  => 'bg-amber-100 text-amber-700',
         'pending'      => 'bg-yellow-100 text-yellow-700',
         'diproses'     => 'bg-blue-100 text-blue-700',
         'dikirim'      => 'bg-purple-100 text-purple-700',
@@ -9,7 +10,16 @@
         default        => 'bg-gray-100 text-gray-700',
     };
     $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
-    $statusLabel = $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status);
+    $statusLabel = match($order->status) {
+        'belum_bayar'  => 'Belum Bayar',
+        'pending'      => 'Menunggu',
+        'diproses'     => 'Sedang Dimasak',
+        'dikirim'      => 'Dikirim',
+        'siap_diambil' => 'Siap Diambil',
+        'selesai'      => 'Selesai',
+        'dibatalkan'   => 'Dibatalkan',
+        default        => ucfirst($order->status),
+    };
     $nextStatus = match(true) {
         $order->status === 'pending'                  => 'diproses',
         $order->status === 'diproses' && $isDelivery  => 'dikirim',
@@ -19,14 +29,14 @@
         default                                       => null,
     };
     $nextLabel = match(true) {
-        $order->status === 'pending'                  => 'Proses Pesanan',
+        $order->status === 'pending'                  => 'Tandai Sedang Dimasak',
         $order->status === 'diproses' && $isDelivery  => 'Tandai Dikirim',
         $order->status === 'diproses' && !$isDelivery => 'Tandai Siap Diambil',
         $order->status === 'dikirim'                  => 'Tandai Selesai',
         $order->status === 'siap_diambil'             => 'Tandai Selesai',
         default                                       => null,
     };
-    $canCancel = in_array($order->status, ['pending', 'diproses']);
+    $canCancel = $order->status === 'pending';
 @endphp
 
 {{-- HEADER MODAL --}}
@@ -74,9 +84,9 @@
         <p class="text-xs font-semibold text-red-700 mb-2 uppercase tracking-wider">
             <i class="fas fa-times-circle mr-1"></i> Konfirmasi Pembatalan
         </p>
-        <textarea id="alasan-input-{{ $order->id }}" rows="3"
+        <textarea id="alasan-input-{{ $order->id }}" rows="3" required
             class="w-full text-xs border border-red-200 rounded-lg p-2.5 resize-none outline-none focus:border-red-400 bg-white mb-3"
-            placeholder="Alasan pembatalan (opsional)..."></textarea>
+            placeholder="Alasan pembatalan (wajib diisi)..."></textarea>
         <div class="flex gap-2">
             <button type="button" onclick="submitCancelWithReason({{ $order->id }})"
                 class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition">

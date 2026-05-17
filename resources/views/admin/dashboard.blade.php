@@ -88,15 +88,27 @@
                     <td class="py-3 px-4">
                         @php
                             $sc = match($order->status) {
-                                'pending'    => 'bg-yellow-100 text-yellow-700',
-                                'diproses'   => 'bg-blue-100 text-blue-700',
-                                'dikirim'    => 'bg-purple-100 text-purple-700',
-                                'selesai'    => 'bg-green-100 text-green-700',
-                                'dibatalkan' => 'bg-red-100 text-red-700',
-                                default      => 'bg-gray-100 text-gray-700',
+                                'belum_bayar'  => 'bg-amber-100 text-amber-700',
+                                'pending'      => 'bg-yellow-100 text-yellow-700',
+                                'diproses'     => 'bg-blue-100 text-blue-700',
+                                'dikirim'      => 'bg-purple-100 text-purple-700',
+                                'siap_diambil' => 'bg-orange-100 text-orange-700',
+                                'selesai'      => 'bg-green-100 text-green-700',
+                                'dibatalkan'   => 'bg-red-100 text-red-700',
+                                default        => 'bg-gray-100 text-gray-700',
+                            };
+                            $statusLabel = match($order->status) {
+                                'belum_bayar'  => 'Belum Bayar',
+                                'pending'      => 'Menunggu',
+                                'diproses'     => 'Sedang Dimasak',
+                                'dikirim'      => 'Dikirim',
+                                'siap_diambil' => 'Siap Diambil',
+                                'selesai'      => 'Selesai',
+                                'dibatalkan'   => 'Dibatalkan',
+                                default        => ucfirst($order->status),
                             };
                         @endphp
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ ucfirst($order->status) }}</span>
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $statusLabel }}</span>
                     </td>
                     <td class="py-3 px-4 text-gray-500">{{ $order->created_at->format('d M Y') }}</td>
                 </tr>

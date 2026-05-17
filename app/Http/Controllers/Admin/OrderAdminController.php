@@ -11,10 +11,18 @@ class OrderAdminController extends Controller
 {
     public function index(Request $request)
     {
+        Order::cancelExpiredUnpaidOrders();
+
         $status = $request->get('status', 'semua');
         $date   = $request->get('date', today()->format('Y-m-d'));
 
-        $query = Order::with('user')->latest()->whereDate('created_at', $date);
+        // Admin tidak melihat pesanan belum_bayar — itu state user-action
+        // yang otomatis di-cancel kalau lewat 10 menit, tidak butuh aksi admin.
+        $baseQuery = Order::query()
+            ->whereDate('created_at', $date)
+            ->where('status', '!=', 'belum_bayar');
+
+        $query = (clone $baseQuery)->with('user')->latest();
 
         if ($status !== 'semua') {
             $query->where('status', $status);
@@ -23,13 +31,13 @@ class OrderAdminController extends Controller
         $orders = $query->paginate(15);
 
         $counts = [
-            'semua'        => Order::whereDate('created_at', $date)->count(),
-            'pending'      => Order::whereDate('created_at', $date)->where('status', 'pending')->count(),
-            'diproses'     => Order::whereDate('created_at', $date)->where('status', 'diproses')->count(),
-            'dikirim'      => Order::whereDate('created_at', $date)->where('status', 'dikirim')->count(),
-            'siap_diambil' => Order::whereDate('created_at', $date)->where('status', 'siap_diambil')->count(),
-            'selesai'      => Order::whereDate('created_at', $date)->where('status', 'selesai')->count(),
-            'dibatalkan'   => Order::whereDate('created_at', $date)->where('status', 'dibatalkan')->count(),
+            'semua'        => (clone $baseQuery)->count(),
+            'pending'      => (clone $baseQuery)->where('status', 'pending')->count(),
+            'diproses'     => (clone $baseQuery)->where('status', 'diproses')->count(),
+            'dikirim'      => (clone $baseQuery)->where('status', 'dikirim')->count(),
+            'siap_diambil' => (clone $baseQuery)->where('status', 'siap_diambil')->count(),
+            'selesai'      => (clone $baseQuery)->where('status', 'selesai')->count(),
+            'dibatalkan'   => (clone $baseQuery)->where('status', 'dibatalkan')->count(),
         ];
 
         return view('admin.orders.index', compact('orders', 'status', 'counts', 'date'));
@@ -44,15 +52,23 @@ class OrderAdminController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status'            => 'required|in:pending,diproses,dikirim,siap_diambil,selesai,dibatalkan',
-            'alasan_pembatalan' => 'nullable|string|max:1000',
+            'status'            => 'required|in:belum_bayar,pending,diproses,dikirim,siap_diambil,selesai,dibatalkan',
+            'alasan_pembatalan' => 'required_if:status,dibatalkan|nullable|string|max:1000',
         ]);
 
         $order = Order::findOrFail($id);
 
+        if ($request->status === 'dibatalkan' && $order->status !== 'pending') {
+            $message = 'Pembatalan hanya dapat dilakukan saat status pesanan masih "Menunggu".';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 422);
+            }
+            return back()->withErrors(['status' => $message]);
+        }
+
         $updateData = ['status' => $request->status];
         if ($request->status === 'dibatalkan') {
-            $updateData['alasan_pembatalan'] = $request->alasan_pembatalan ?? null;
+            $updateData['alasan_pembatalan'] = $request->alasan_pembatalan;
         }
 
         $order->update($updateData);

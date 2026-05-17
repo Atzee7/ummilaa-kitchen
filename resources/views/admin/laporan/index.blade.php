@@ -107,11 +107,13 @@
 {{-- Status Pills --}}
 @php
     $statusConfig = [
-        'pending'    => ['label' => 'Pending',    'bg' => 'bg-yellow-50',  'text' => 'text-yellow-700',  'dot' => 'bg-yellow-400'],
-        'diproses'   => ['label' => 'Diproses',   'bg' => 'bg-blue-50',    'text' => 'text-blue-700',    'dot' => 'bg-blue-400'],
-        'dikirim'    => ['label' => 'Dikirim',    'bg' => 'bg-purple-50',  'text' => 'text-purple-700',  'dot' => 'bg-purple-400'],
-        'selesai'    => ['label' => 'Selesai',    'bg' => 'bg-green-50',   'text' => 'text-green-700',   'dot' => 'bg-green-500'],
-        'dibatalkan' => ['label' => 'Dibatalkan', 'bg' => 'bg-red-50',     'text' => 'text-red-700',     'dot' => 'bg-red-400'],
+        'belum_bayar'  => ['label' => 'Belum Bayar',    'bg' => 'bg-amber-50',   'text' => 'text-amber-700',   'dot' => 'bg-amber-400'],
+        'pending'      => ['label' => 'Menunggu',       'bg' => 'bg-yellow-50',  'text' => 'text-yellow-700',  'dot' => 'bg-yellow-400'],
+        'diproses'     => ['label' => 'Sedang Dimasak', 'bg' => 'bg-blue-50',    'text' => 'text-blue-700',    'dot' => 'bg-blue-400'],
+        'dikirim'      => ['label' => 'Dikirim',        'bg' => 'bg-purple-50',  'text' => 'text-purple-700',  'dot' => 'bg-purple-400'],
+        'siap_diambil' => ['label' => 'Siap Diambil',   'bg' => 'bg-orange-50',  'text' => 'text-orange-700',  'dot' => 'bg-orange-400'],
+        'selesai'      => ['label' => 'Selesai',        'bg' => 'bg-green-50',   'text' => 'text-green-700',   'dot' => 'bg-green-500'],
+        'dibatalkan'   => ['label' => 'Dibatalkan',     'bg' => 'bg-red-50',     'text' => 'text-red-700',     'dot' => 'bg-red-400'],
     ];
 @endphp
 <div class="bg-white rounded-2xl shadow-sm p-4 mb-6">

@@ -12,14 +12,16 @@
             <p class="text-[#999] mt-1.5 text-[0.88rem]"><i class="fas fa-calendar-alt mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }} WIB</p>
         </div>
         <span class="inline-flex items-center gap-1.5 px-[18px] py-2 rounded-[20px] text-[0.82rem] font-extrabold
-            @if($order->status === 'pending') bg-amber-50 text-orange-700
+            @if($order->status === 'belum_bayar') bg-amber-50 text-orange-700
+            @elseif($order->status === 'pending') bg-yellow-50 text-yellow-800
             @elseif($order->status === 'diproses') bg-blue-50 text-blue-800
             @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
             @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
             @elseif($order->status === 'selesai') bg-green-100 text-green-800
             @else bg-pink-100 text-red-700 @endif">
-            @if($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu Konfirmasi
-            @elseif($order->status === 'diproses') <i class="fas fa-cog fa-spin"></i> Sedang Diproses
+            @if($order->status === 'belum_bayar') <i class="fas fa-hourglass-half"></i> Belum Bayar
+            @elseif($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu
+            @elseif($order->status === 'diproses') <i class="fas fa-utensils"></i> Sedang Dimasak
             @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
             @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
             @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai

@@ -34,8 +34,20 @@
         <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
             <span class="text-[#999]">Total Pembayaran</span><strong class="text-maroon font-bold">Rp{{ number_format($order->total, 0, ',', '.') }}</strong>
         </div>
+        @php
+            $successStatusLabel = match($order->status) {
+                'belum_bayar'  => 'Belum Bayar',
+                'pending'      => 'Menunggu',
+                'diproses'     => 'Sedang Dimasak',
+                'dikirim'      => 'Dikirim',
+                'siap_diambil' => 'Siap Diambil',
+                'selesai'      => 'Selesai',
+                'dibatalkan'   => 'Dibatalkan',
+                default        => ucfirst($order->status),
+            };
+        @endphp
         <div class="flex justify-between py-[10px] text-[0.9rem]">
-            <span class="text-[#999]">Status</span><strong class="text-orange-700 font-bold">Menunggu Konfirmasi</strong>
+            <span class="text-[#999]">Status</span><strong class="text-orange-700 font-bold">{{ $successStatusLabel }}</strong>
         </div>
     </div>
 

@@ -5,6 +5,7 @@
 
 @php
     $sc = match($order->status) {
+        'belum_bayar'  => 'bg-amber-100 text-amber-700',
         'pending'      => 'bg-yellow-100 text-yellow-700',
         'diproses'     => 'bg-blue-100 text-blue-700',
         'dikirim'      => 'bg-purple-100 text-purple-700',
@@ -14,7 +15,16 @@
         default        => 'bg-gray-100 text-gray-700',
     };
     $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
-    $statusLabel = $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status);
+    $statusLabel = match($order->status) {
+        'belum_bayar'  => 'Belum Bayar',
+        'pending'      => 'Menunggu',
+        'diproses'     => 'Sedang Dimasak',
+        'dikirim'      => 'Dikirim',
+        'siap_diambil' => 'Siap Diambil',
+        'selesai'      => 'Selesai',
+        'dibatalkan'   => 'Dibatalkan',
+        default        => ucfirst($order->status),
+    };
 @endphp
 
 {{-- NOTIFIKASI WA --}}
@@ -239,20 +249,25 @@
                 <div class="mb-4">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Ubah Status</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 bg-white">
-                        <option value="pending"      {{ $order->status === 'pending'      ? 'selected' : '' }}>Pending</option>
-                        <option value="diproses"     {{ $order->status === 'diproses'     ? 'selected' : '' }}>Diproses</option>
+                        @if($order->status === 'belum_bayar')
+                        <option value="belum_bayar" selected>Belum Bayar</option>
+                        @endif
+                        <option value="pending"      {{ $order->status === 'pending'      ? 'selected' : '' }}>Menunggu</option>
+                        <option value="diproses"     {{ $order->status === 'diproses'     ? 'selected' : '' }}>Sedang Dimasak</option>
                         @if($isDelivery)
                         <option value="dikirim"      {{ $order->status === 'dikirim'      ? 'selected' : '' }}>Dikirim</option>
                         @else
                         <option value="siap_diambil" {{ $order->status === 'siap_diambil' ? 'selected' : '' }}>Siap Diambil</option>
                         @endif
                         <option value="selesai"      {{ $order->status === 'selesai'      ? 'selected' : '' }}>Selesai</option>
+                        @if($order->status === 'pending' || $order->status === 'dibatalkan')
                         <option value="dibatalkan"   {{ $order->status === 'dibatalkan'   ? 'selected' : '' }}>Dibatalkan</option>
+                        @endif
                     </select>
                 </div>
                 <div id="alasan-section" class="{{ $order->status === 'dibatalkan' ? '' : 'hidden' }} mb-4">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                        Alasan Pembatalan <span class="font-normal text-gray-400">(opsional)</span>
+                        Alasan Pembatalan <span class="font-normal text-red-500">(wajib diisi)</span>
                     </label>
                     <textarea name="alasan_pembatalan" rows="3"
                         class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 resize-none"
@@ -271,8 +286,8 @@
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Alur Status</h3>
             @php
                 $steps = $isDelivery
-                    ? [['key' => 'pending', 'label' => 'Pending'], ['key' => 'diproses', 'label' => 'Diproses'], ['key' => 'dikirim', 'label' => 'Dikirim'], ['key' => 'selesai', 'label' => 'Selesai']]
-                    : [['key' => 'pending', 'label' => 'Pending'], ['key' => 'diproses', 'label' => 'Diproses'], ['key' => 'siap_diambil', 'label' => 'Siap Diambil'], ['key' => 'selesai', 'label' => 'Selesai']];
+                    ? [['key' => 'pending', 'label' => 'Menunggu'], ['key' => 'diproses', 'label' => 'Sedang Dimasak'], ['key' => 'dikirim', 'label' => 'Dikirim'], ['key' => 'selesai', 'label' => 'Selesai']]
+                    : [['key' => 'pending', 'label' => 'Menunggu'], ['key' => 'diproses', 'label' => 'Sedang Dimasak'], ['key' => 'siap_diambil', 'label' => 'Siap Diambil'], ['key' => 'selesai', 'label' => 'Selesai']];
                 $stepKeys = array_column($steps, 'key');
                 $currentIndex = array_search($order->status, $stepKeys);
             @endphp
@@ -443,10 +458,21 @@ function sendWhatsapp(orderId) {
 document.addEventListener('DOMContentLoaded', () => {
     // Show/hide textarea alasan saat dropdown status berubah
     const statusSelect = document.querySelector('select[name="status"]');
-    const alasanSection = document.getElementById('alasan-section');
+    const alasanSection  = document.getElementById('alasan-section');
+    const alasanTextarea = alasanSection?.querySelector('textarea[name="alasan_pembatalan"]');
+    function syncAlasanRequired(targetStatus) {
+        if (!alasanTextarea) return;
+        if (targetStatus === 'dibatalkan') {
+            alasanTextarea.setAttribute('required', '');
+        } else {
+            alasanTextarea.removeAttribute('required');
+        }
+    }
     if (statusSelect && alasanSection) {
+        syncAlasanRequired(statusSelect.value);
         statusSelect.addEventListener('change', function () {
             alasanSection.classList.toggle('hidden', this.value !== 'dibatalkan');
+            syncAlasanRequired(this.value);
         });
     }
 

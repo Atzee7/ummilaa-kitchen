@@ -38,6 +38,15 @@
         'selesai'      => 'bg-green-100 text-green-700',
         'dibatalkan'   => 'bg-red-100 text-red-700',
     ];
+    $tabLabel = [
+        'semua'        => 'Semua',
+        'pending'      => 'Menunggu',
+        'diproses'     => 'Sedang Dimasak',
+        'dikirim'      => 'Dikirim',
+        'siap_diambil' => 'Siap Diambil',
+        'selesai'      => 'Selesai',
+        'dibatalkan'   => 'Dibatalkan',
+    ];
 @endphp
 
 <div class="flex flex-wrap gap-2 mb-6">
@@ -45,7 +54,7 @@
     <a href="{{ route('admin.orders.index', ['status' => $tab, 'date' => $date]) }}"
        class="px-4 py-2 rounded-xl text-sm font-semibold transition
               {{ $status === $tab ? $tabColor[$tab] . ' ring-2 ring-offset-1 ring-gray-300' : 'bg-white text-gray-500 hover:bg-gray-50' }}">
-        {{ $tab === 'siap_diambil' ? 'Siap Diambil' : ucfirst($tab) }}
+        {{ $tabLabel[$tab] }}
         <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-black bg-opacity-10">{{ $counts[$tab] }}</span>
     </a>
     @endforeach
@@ -69,6 +78,7 @@
             @forelse($orders as $order)
             @php
                 $sc = match($order->status) {
+                    'belum_bayar'  => 'bg-amber-100 text-amber-700',
                     'pending'      => 'bg-yellow-100 text-yellow-700',
                     'diproses'     => 'bg-blue-100 text-blue-700',
                     'dikirim'      => 'bg-purple-100 text-purple-700',
@@ -76,6 +86,16 @@
                     'selesai'      => 'bg-green-100 text-green-700',
                     'dibatalkan'   => 'bg-red-100 text-red-700',
                     default        => 'bg-gray-100 text-gray-700',
+                };
+                $statusLabel = match($order->status) {
+                    'belum_bayar'  => 'Belum Bayar',
+                    'pending'      => 'Menunggu',
+                    'diproses'     => 'Sedang Dimasak',
+                    'dikirim'      => 'Dikirim',
+                    'siap_diambil' => 'Siap Diambil',
+                    'selesai'      => 'Selesai',
+                    'dibatalkan'   => 'Dibatalkan',
+                    default        => ucfirst($order->status),
                 };
                 $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
                 $nextStatus = match(true) {
@@ -87,7 +107,7 @@
                     default                                               => null,
                 };
                 $nextLabel = match(true) {
-                    $order->status === 'pending'                          => '→ Proses',
+                    $order->status === 'pending'                          => '→ Sedang Dimasak',
                     $order->status === 'diproses' && $isDelivery          => '→ Kirim',
                     $order->status === 'diproses' && !$isDelivery         => '→ Siap Diambil',
                     $order->status === 'dikirim'                          => '→ Selesai',
@@ -102,7 +122,6 @@
                     $order->status === 'siap_diambil'                     => 'bg-green-600 hover:bg-green-700 text-white',
                     default                                               => '',
                 };
-                $canCancel = in_array($order->status, ['pending', 'diproses']);
             @endphp
             <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery ? '1' : '0' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
                 <td class="py-4 px-6 font-bold text-gray-700">#{{ $order->id }}</td>
@@ -132,7 +151,7 @@
                 </td>
                 <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->metode_pembayaran }}</td>
                 <td class="py-4 px-6">
-                    <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $order->status === 'siap_diambil' ? 'Siap Diambil' : ucfirst($order->status) }}</span>
+                    <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $statusLabel }}</span>
                 </td>
                 <td class="py-4 px-6 text-gray-400 text-xs">{{ $order->created_at->format('d M Y, H:i') }}</td>
                 <td class="py-4 px-6">
@@ -145,15 +164,6 @@
                             onclick="quickUpdateStatus({{ $order->id }}, '{{ $nextStatus }}', this)"
                             class="quick-status-btn px-2.5 py-1.5 text-xs font-bold rounded-lg transition {{ $nextColor }}">
                             {{ $nextLabel }}
-                        </button>
-                        @endif
-
-                        {{-- Tombol batalkan --}}
-                        @if($canCancel)
-                        <button
-                            onclick="quickUpdateStatus({{ $order->id }}, 'dibatalkan', this)"
-                            class="cancel-btn px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition">
-                            Batal
                         </button>
                         @endif
 
@@ -223,6 +233,7 @@
 const CSRF_TOKEN = '{{ csrf_token() }}';
 
 const STATUS_BADGE = {
+    belum_bayar:  'bg-amber-100 text-amber-700',
     pending:      'bg-yellow-100 text-yellow-700',
     diproses:     'bg-blue-100 text-blue-700',
     dikirim:      'bg-purple-100 text-purple-700',
@@ -232,8 +243,9 @@ const STATUS_BADGE = {
 };
 
 const STATUS_LABEL = {
-    pending:      'Pending',
-    diproses:     'Diproses',
+    belum_bayar:  'Belum Bayar',
+    pending:      'Menunggu',
+    diproses:     'Sedang Dimasak',
     dikirim:      'Dikirim',
     siap_diambil: 'Siap Diambil',
     selesai:      'Selesai',
@@ -241,7 +253,7 @@ const STATUS_LABEL = {
 };
 
 function getNextStatus(currentStatus, isDelivery) {
-    if (currentStatus === 'pending')      return { status: 'diproses',     label: '→ Proses',       color: 'bg-blue-600 hover:bg-blue-700 text-white' };
+    if (currentStatus === 'pending')      return { status: 'diproses',     label: '→ Sedang Dimasak', color: 'bg-blue-600 hover:bg-blue-700 text-white' };
     if (currentStatus === 'diproses')     return isDelivery
         ? { status: 'dikirim',      label: '→ Kirim',        color: 'bg-purple-600 hover:bg-purple-700 text-white' }
         : { status: 'siap_diambil', label: '→ Siap Diambil', color: 'bg-orange-500 hover:bg-orange-600 text-white' };
@@ -293,7 +305,6 @@ function updateRowUI(orderId, newStatus) {
 
     const isDelivery = row.dataset.delivery === '1';
     const next = getNextStatus(newStatus, isDelivery);
-    const canCancel = ['pending', 'diproses'].includes(newStatus);
 
     let buttonsHtml = '';
     if (next) {
@@ -301,13 +312,6 @@ function updateRowUI(orderId, newStatus) {
             onclick="quickUpdateStatus(${orderId}, '${next.status}', this)"
             class="quick-status-btn px-2.5 py-1.5 text-xs font-bold rounded-lg transition ${next.color}">
             ${next.label}
-        </button>`;
-    }
-    if (canCancel) {
-        buttonsHtml += `<button
-            onclick="quickUpdateStatus(${orderId}, 'dibatalkan', this)"
-            class="cancel-btn px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition">
-            Batal
         </button>`;
     }
     buttonsHtml += `<button
@@ -499,7 +503,13 @@ function toggleCancelForm(orderId) {
 }
 
 function submitCancelWithReason(orderId) {
-    const alasan = document.getElementById('alasan-input-' + orderId)?.value.trim() ?? '';
+    const input  = document.getElementById('alasan-input-' + orderId);
+    const alasan = input?.value.trim() ?? '';
+    if (!alasan) {
+        alert('Alasan pembatalan wajib diisi.');
+        input?.focus();
+        return;
+    }
     fetch(`/admin/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -509,13 +519,19 @@ function submitCancelWithReason(orderId) {
         },
         body: JSON.stringify({ status: 'dibatalkan', alasan_pembatalan: alasan }),
     })
-    .then(r => r.json())
+    .then(async r => {
+        if (!r.ok) {
+            const err = await r.json().catch(() => ({}));
+            throw new Error(err.message || 'Gagal membatalkan pesanan.');
+        }
+        return r.json();
+    })
     .then(() => {
         fetch(`/admin/orders/${orderId}/modal`)
             .then(r => r.text())
             .then(html => { document.getElementById('order-modal-content').innerHTML = html; });
     })
-    .catch(() => alert('Gagal membatalkan pesanan. Coba lagi.'));
+    .catch(err => alert(err.message || 'Gagal membatalkan pesanan. Coba lagi.'));
 }
 
 // Tutup modal dengan tombol Escape

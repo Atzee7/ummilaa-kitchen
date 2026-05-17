@@ -116,7 +116,9 @@ class CheckoutController extends Controller
         'subtotal'           => $subtotal,
         'ongkir'             => $ongkir,
         'total'              => $total,
-        'status'             => 'pending',
+        'status'             => in_array($request->metode_pembayaran, Order::ONLINE_PAYMENT_METHODS, true)
+            ? 'belum_bayar'
+            : 'pending',
     ]);
 
     foreach ($carts as $cart) {

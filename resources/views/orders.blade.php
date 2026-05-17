@@ -8,14 +8,44 @@
         <p class="text-[#999] mt-1.5 text-[0.9rem]">Pantau status dan riwayat pesanan Anda</p>
     </div>
 
-    <div class="flex gap-2 mb-8 flex-wrap">
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all bg-[#8B1A1A] text-white border-[#8B1A1A]" data-status="semua">Semua</button>
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="pending">Menunggu</button>
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="diproses">Diproses</button>
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="dikirim">Dikirim</button>
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="siap_diambil">Siap Diambil</button>
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="selesai">Selesai</button>
-        <button class="status-tab px-5 py-[9px] rounded-[25px] border-[1.5px] border-maroon-200 text-[0.85rem] font-bold cursor-pointer bg-white text-[#777] hover:border-maroon hover:text-maroon transition-all" data-status="dibatalkan">Dibatalkan</button>
+    @php
+        // Floating notification badge — pojok kanan-atas tab, gaya Shopee/Tokopedia
+        $tabBadge = 'tab-badge absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-[5px] flex items-center justify-center rounded-full text-[0.68rem] font-extrabold leading-none bg-[#EF4444] text-white shadow-[0_2px_6px_rgba(239,68,68,0.45)] ring-[2.5px] ring-white pointer-events-none';
+        $tabBase  = 'status-tab relative inline-flex items-center px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all';
+    @endphp
+    <div class="flex gap-3 mb-8 flex-wrap pt-2">
+        <button class="{{ $tabBase }} bg-[#8B1A1A] text-white border-[#8B1A1A]" data-status="semua">
+            Semua
+            @if(($counts['semua'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['semua'] > 99 ? '99+' : $counts['semua'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="belum_bayar">
+            Belum Bayar
+            @if(($counts['belum_bayar'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['belum_bayar'] > 99 ? '99+' : $counts['belum_bayar'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="pending">
+            Menunggu
+            @if(($counts['pending'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['pending'] > 99 ? '99+' : $counts['pending'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="diproses">
+            Sedang Dimasak
+            @if(($counts['diproses'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['diproses'] > 99 ? '99+' : $counts['diproses'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="dikirim">
+            Dikirim
+            @if(($counts['dikirim'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['dikirim'] > 99 ? '99+' : $counts['dikirim'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="siap_diambil">
+            Siap Diambil
+            @if(($counts['siap_diambil'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['siap_diambil'] > 99 ? '99+' : $counts['siap_diambil'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="selesai">
+            Selesai
+            @if(($counts['selesai'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['selesai'] > 99 ? '99+' : $counts['selesai'] }}</span>@endif
+        </button>
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="dibatalkan">
+            Dibatalkan
+            @if(($counts['dibatalkan'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['dibatalkan'] > 99 ? '99+' : $counts['dibatalkan'] }}</span>@endif
+        </button>
     </div>
 
     @if(session('success'))
@@ -57,14 +87,16 @@
                     <div class="text-[0.82rem] text-[#999] mt-[3px]"><i class="fas fa-calendar-alt mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }} WIB</div>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-[14px] py-[6px] rounded-[20px] text-[0.78rem] font-extrabold
-                    @if($order->status === 'pending') bg-amber-50 text-orange-700
+                    @if($order->status === 'belum_bayar') bg-amber-50 text-orange-700
+                    @elseif($order->status === 'pending') bg-yellow-50 text-yellow-800
                     @elseif($order->status === 'diproses') bg-blue-50 text-blue-800
                     @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
                     @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
                     @elseif($order->status === 'selesai') bg-green-100 text-green-800
                     @else bg-pink-100 text-red-700 @endif">
-                    @if($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu Konfirmasi
-                    @elseif($order->status === 'diproses') <i class="fas fa-cog fa-spin"></i> Sedang Diproses
+                    @if($order->status === 'belum_bayar') <i class="fas fa-hourglass-half"></i> Belum Bayar
+                    @elseif($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu
+                    @elseif($order->status === 'diproses') <i class="fas fa-utensils"></i> Sedang Dimasak
                     @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
                     @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
                     @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai
@@ -72,6 +104,19 @@
                     @endif
                 </span>
             </div>
+
+            @if($order->status === 'belum_bayar')
+            <div class="px-6 pt-3 -mb-1 flex items-center justify-between flex-wrap gap-2">
+                <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg text-[0.78rem] text-amber-800">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>Bayar dalam</span>
+                    <strong class="font-mono payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
+                </span>
+                <a href="{{ route('order.payment', $order->id) }}" class="text-[0.78rem] font-bold text-maroon hover:underline">
+                    Bayar sekarang <i class="fas fa-arrow-right text-[0.7rem]"></i>
+                </a>
+            </div>
+            @endif
 
             {{-- BODY --}}
             <div class="px-6 py-5">
@@ -101,6 +146,16 @@
                         <p class="text-[0.83rem] text-[#999]">{{ $order->items->sum('quantity') }} item · {{ ucfirst($order->metode_pembayaran) }}</p>
                     </div>
                 </div>
+
+                @if($order->status === 'dibatalkan' && $order->alasan_pembatalan)
+                <div class="mt-4 flex items-start gap-2.5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
+                    <i class="fas fa-times-circle text-red-500 text-[0.9rem] mt-0.5 flex-shrink-0"></i>
+                    <div class="min-w-0">
+                        <p class="text-[0.72rem] font-bold text-red-600 uppercase tracking-wider mb-0.5">Alasan Pembatalan</p>
+                        <p class="text-[0.85rem] text-red-800 leading-relaxed line-clamp-2">{{ $order->alasan_pembatalan }}</p>
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- FOOTER --}}
@@ -215,14 +270,16 @@
                     <div class="text-[0.82rem] text-[#999] mt-[3px]"><i class="fas fa-calendar-alt mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }} WIB</div>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-[14px] py-[6px] rounded-[20px] text-[0.78rem] font-extrabold
-                    @if($order->status === 'pending') bg-amber-50 text-orange-700
+                    @if($order->status === 'belum_bayar') bg-amber-50 text-orange-700
+                    @elseif($order->status === 'pending') bg-yellow-50 text-yellow-800
                     @elseif($order->status === 'diproses') bg-blue-50 text-blue-800
                     @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
                     @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
                     @elseif($order->status === 'selesai') bg-green-100 text-green-800
                     @else bg-pink-100 text-red-700 @endif">
-                    @if($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu Konfirmasi
-                    @elseif($order->status === 'diproses') <i class="fas fa-cog fa-spin"></i> Sedang Diproses
+                    @if($order->status === 'belum_bayar') <i class="fas fa-hourglass-half"></i> Belum Bayar
+                    @elseif($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu
+                    @elseif($order->status === 'diproses') <i class="fas fa-utensils"></i> Sedang Dimasak
                     @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
                     @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
                     @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai
@@ -230,6 +287,19 @@
                     @endif
                 </span>
             </div>
+
+            @if($order->status === 'belum_bayar')
+            <div class="px-6 pt-3 -mb-1 flex items-center justify-between flex-wrap gap-2">
+                <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg text-[0.78rem] text-amber-800">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>Bayar dalam</span>
+                    <strong class="font-mono payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
+                </span>
+                <a href="{{ route('order.payment', $order->id) }}" class="text-[0.78rem] font-bold text-maroon hover:underline">
+                    Bayar sekarang <i class="fas fa-arrow-right text-[0.7rem]"></i>
+                </a>
+            </div>
+            @endif
 
             {{-- BODY --}}
             <div class="px-6 py-5">
@@ -259,6 +329,16 @@
                         <p class="text-[0.83rem] text-[#999]">{{ $order->items->sum('quantity') }} item · {{ ucfirst($order->metode_pembayaran) }}</p>
                     </div>
                 </div>
+
+                @if($order->status === 'dibatalkan' && $order->alasan_pembatalan)
+                <div class="mt-4 flex items-start gap-2.5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
+                    <i class="fas fa-times-circle text-red-500 text-[0.9rem] mt-0.5 flex-shrink-0"></i>
+                    <div class="min-w-0">
+                        <p class="text-[0.72rem] font-bold text-red-600 uppercase tracking-wider mb-0.5">Alasan Pembatalan</p>
+                        <p class="text-[0.85rem] text-red-800 leading-relaxed line-clamp-2">{{ $order->alasan_pembatalan }}</p>
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- FOOTER --}}
@@ -348,11 +428,11 @@
     // Status tab active state via Tailwind classes
     function deactivateTab(t) {
         t.classList.remove('bg-[#8B1A1A]', 'text-white', 'border-[#8B1A1A]');
-        t.classList.add('bg-white', 'text-[#777]', 'border-maroon-200');
+        t.classList.add('bg-white', 'text-[#777]', 'border-maroon-200', 'hover:border-maroon', 'hover:text-maroon');
     }
     function activateTab(t) {
         t.classList.add('bg-[#8B1A1A]', 'text-white', 'border-[#8B1A1A]');
-        t.classList.remove('bg-white', 'text-[#777]', 'border-maroon-200');
+        t.classList.remove('bg-white', 'text-[#777]', 'border-maroon-200', 'hover:border-maroon', 'hover:text-maroon');
     }
 
     document.querySelectorAll('.status-tab').forEach(tab => {
@@ -413,6 +493,29 @@
             if (hasError) e.preventDefault();
         });
     });
+
+    // Countdown pembayaran untuk pesanan belum_bayar
+    (function () {
+        const elements = document.querySelectorAll('.payment-countdown');
+        if (!elements.length) return;
+        let needReload = false;
+        function tick() {
+            const now = Date.now();
+            elements.forEach(el => {
+                const target = new Date(el.dataset.expiresAt).getTime();
+                const diff = Math.max(0, Math.floor((target - now) / 1000));
+                const mm = String(Math.floor(diff / 60)).padStart(2, '0');
+                const ss = String(diff % 60).padStart(2, '0');
+                el.textContent = `${mm}:${ss}`;
+                if (diff === 0 && !needReload) {
+                    needReload = true;
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            });
+        }
+        tick();
+        setInterval(tick, 1000);
+    })();
 
     // Star rating via JS (replaces CSS sibling selectors)
     document.querySelectorAll('.star-rating').forEach(container => {

@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/mark-paid', [OrderController::class, 'markPaid'])->name('orders.markPaid');
     Route::post('/testimonial', [TestimonialController::class, 'store'])->name('testimonial.store'); // TAMBAHAN
 });
 
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
         return view('order-success', compact('order'));
     })->name('order.success');
     Route::get('/order/payment/{id}', function($id) {
+        \App\Models\Order::cancelExpiredUnpaidOrders();
         $order = \App\Models\Order::with('items.product')->findOrFail($id);
         return view('order-payment', compact('order'));
     })->name('order.payment');
