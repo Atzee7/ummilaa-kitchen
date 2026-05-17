@@ -115,8 +115,8 @@
 
                     <div class="text-[0.85rem] text-[#999] mb-3 flex items-start gap-2">
                         <i class="fas fa-info-circle text-maroon mt-0.5 flex-shrink-0"></i>
-                        <span>Cari lokasi atau klik langsung pada peta untuk menentukan titik alamat Anda. Alamat akan terisi otomatis.
-                        <strong class="text-red-700">(Wajib klik peta untuk menentukan lokasi)</strong></span>
+                        <span>Gunakan tombol <strong class="text-blue-600">Lokasi Saya</strong> untuk deteksi otomatis via GPS, cari lokasi, atau klik langsung pada peta untuk menentukan titik alamat Anda.
+                        <strong class="text-red-700">(Wajib tentukan lokasi sebelum menyimpan)</strong></span>
                     </div>
 
                     <div class="flex gap-[10px] mb-[14px]">
@@ -125,6 +125,10 @@
                         <button type="button" onclick="searchLocation()"
                             class="px-5 py-3 bg-maroon text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-maroon-dark transition-colors">
                             <i class="fas fa-search"></i> Cari
+                        </button>
+                        <button type="button" id="gpsBtn" onclick="detectGPS()"
+                            class="px-4 py-3 bg-blue-600 text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i class="fas fa-location-arrow"></i> Lokasi Saya
                         </button>
                         <button type="button" onclick="resetMap()"
                             class="px-4 py-3 bg-[#f0f0f0] text-[#555] border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-[#e0e0e0] transition-colors">
@@ -239,6 +243,40 @@
         document.getElementById('mapResultText').textContent = 'Klik pada peta untuk menentukan lokasi Anda';
         document.getElementById('mapSearchInput').value = '';
         map.setView([-7.9666, 112.6326], 14);
+    }
+
+    function detectGPS() {
+        if (!navigator.geolocation) {
+            document.getElementById('mapResultText').textContent = 'Browser Anda tidak mendukung GPS. Silakan pilih lokasi manual di peta.';
+            return;
+        }
+        const btn = document.getElementById('gpsBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendeteksi...';
+        document.getElementById('mapResultText').textContent = 'Mendeteksi lokasi GPS...';
+
+        navigator.geolocation.getCurrentPosition(
+            async function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                map.setView([lat, lng], 16);
+                setMarker(lat, lng);
+                await reverseGeocode(lat, lng);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-location-arrow"></i> Lokasi Saya';
+            },
+            function(error) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-location-arrow"></i> Lokasi Saya';
+                const pesan = {
+                    1: 'Akses lokasi ditolak. Izinkan akses lokasi di pengaturan browser Anda.',
+                    2: 'Posisi tidak dapat ditentukan. Pastikan GPS perangkat aktif.',
+                    3: 'Waktu habis. Coba lagi atau pilih lokasi manual di peta.'
+                };
+                document.getElementById('mapResultText').textContent = pesan[error.code] || 'Gagal mendeteksi lokasi.';
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
     }
 
     document.getElementById('mapSearchInput').addEventListener('keypress', function(e) {
