@@ -148,6 +148,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Pengaturan Toko
         Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::delete('/settings/orders', [App\Http\Controllers\Admin\SettingController::class, 'destroyAllOrders'])->name('settings.orders.destroyAll');
 
         // API polling pesanan aktif
         Route::get('/api/pesanan-aktif', [App\Http\Controllers\Admin\DashboardController::class, 'pesananAktifApi'])->name('api.pesanan-aktif');
