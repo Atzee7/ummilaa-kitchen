@@ -6,7 +6,6 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Transaction;
 
 class MidtransService
 {
@@ -112,38 +111,6 @@ class MidtransService
         ]);
 
         return $updated;
-    }
-
-    /**
-     * Polling: ambil status terbaru dari Midtrans untuk order ini, lalu update.
-     * Dipakai sebagai fallback kalau webhook tidak sampai.
-     */
-    public function syncStatusFromMidtrans(Order $order): ?Order
-    {
-        if (!$order->midtrans_transaction_id) {
-            return null;
-        }
-
-        try {
-            $statusObj = Transaction::status($order->midtrans_transaction_id);
-            $payload   = json_decode(json_encode($statusObj), true);
-
-            $updated = $this->updateOrderFromPayload($order, $payload);
-
-            Log::info('Midtrans status disinkronisasi via polling', [
-                'order_id'   => $order->id,
-                'new_status' => $updated?->status,
-                'tx_status'  => $payload['transaction_status'] ?? null,
-            ]);
-
-            return $updated;
-        } catch (\Throwable $e) {
-            Log::warning('Sync Midtrans status gagal', [
-                'order_id' => $order->id,
-                'error'    => $e->getMessage(),
-            ]);
-            return null;
-        }
     }
 
     /**

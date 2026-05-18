@@ -151,26 +151,12 @@
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuka pembayaran...';
 
-        const syncUrl = '{{ route('orders.syncPayment', $order->id) }}';
         const ordersUrl = '{{ route('orders') }}';
-        const csrfToken = '{{ csrf_token() }}';
-
-        // Sync status order dari Midtrans sebelum redirect — fallback kalau webhook miss.
-        function syncThenRedirect() {
-            fetch(syncUrl, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                },
-            }).catch(() => {}).finally(() => {
-                window.location.href = ordersUrl;
-            });
-        }
+        function redirectToOrders() { window.location.href = ordersUrl; }
 
         snap.pay(token, {
-            onSuccess: syncThenRedirect,
-            onPending: syncThenRedirect,
+            onSuccess: redirectToOrders,
+            onPending: redirectToOrders,
             onError: function () {
                 alert('Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.');
                 btn.disabled = false;

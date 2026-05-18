@@ -27,14 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/mark-paid', [OrderController::class, 'markPaid'])->name('orders.markPaid');
-    Route::post('/orders/{id}/sync-payment', function ($id) {
-        $order = \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())->findOrFail($id);
-        $synced = app(\App\Services\MidtransService::class)->syncStatusFromMidtrans($order);
-        return response()->json([
-            'ok'     => $synced !== null,
-            'status' => $synced?->status,
-        ]);
-    })->name('orders.syncPayment');
     Route::post('/testimonial', [TestimonialController::class, 'store'])->name('testimonial.store'); // TAMBAHAN
 });
 
@@ -72,13 +64,6 @@ Route::middleware('auth')->group(function () {
                     'error'    => $e->getMessage(),
                 ]);
             }
-        }
-
-        // Self-heal status: sync dari Midtrans kalau order belum_bayar tapi transaksi sudah ada
-        // Melindungi dari skenario webhook miss (user tutup browser setelah bayar, ngrok mati, dll)
-        if ($order->status === 'belum_bayar' && !empty($order->midtrans_transaction_id)) {
-            app(\App\Services\MidtransService::class)->syncStatusFromMidtrans($order);
-            $order->refresh();
         }
 
         return view('order-payment', compact('order'));
