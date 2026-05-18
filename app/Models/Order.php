@@ -5,12 +5,17 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     const PAYMENT_TIMEOUT_MINUTES = 10;
-    const ONLINE_PAYMENT_METHODS  = ['Mandiri Virtual Account', 'QRIS'];
+    const ONLINE_PAYMENT_METHODS  = ['Bayar Online'];
 
     protected $fillable = [
         'user_id', 'nama_penerima', 'alamat', 'detail_alamat', 'no_telepon',
         'metode_pembayaran', 'metode_pengiriman', 'catatan',
-        'subtotal', 'ongkir', 'total', 'status', 'alasan_pembatalan'
+        'subtotal', 'ongkir', 'total', 'status', 'alasan_pembatalan',
+        'snap_token', 'midtrans_transaction_id', 'payment_type', 'paid_at',
+    ];
+
+    protected $casts = [
+        'paid_at' => 'datetime',
     ];
 
     public function items() { return $this->hasMany(OrderItem::class); }

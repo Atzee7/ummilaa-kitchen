@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\LaporanController;
@@ -26,6 +27,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/mark-paid', [OrderController::class, 'markPaid'])->name('orders.markPaid');
+    Route::post('/orders/{id}/sync-payment', function ($id) {
+        $order = \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())->findOrFail($id);
+        $synced = app(\App\Services\MidtransService::class)->syncStatusFromMidtrans($order);
+        return response()->json([
+            'ok'     => $synced !== null,
+            'status' => $synced?->status,
+        ]);
+    })->name('orders.syncPayment');
     Route::post('/testimonial', [TestimonialController::class, 'store'])->name('testimonial.store'); // TAMBAHAN
 });
 
@@ -47,6 +56,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/payment/{id}', function($id) {
         \App\Models\Order::cancelExpiredUnpaidOrders();
         $order = \App\Models\Order::with('items.product')->findOrFail($id);
+
+        // Self-heal: regenerate Snap token kalau order online masih belum_bayar tapi token NULL
+        if ($order->status === 'belum_bayar'
+            && in_array($order->metode_pembayaran, \App\Models\Order::ONLINE_PAYMENT_METHODS, true)
+            && empty($order->snap_token)
+            && !$order->isPaymentExpired()
+        ) {
+            try {
+                app(\App\Services\MidtransService::class)->getSnapToken($order);
+                $order->refresh();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Retry Snap token gagal', [
+                    'order_id' => $order->id,
+                    'error'    => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Self-heal status: sync dari Midtrans kalau order belum_bayar tapi transaksi sudah ada
+        // Melindungi dari skenario webhook miss (user tutup browser setelah bayar, ngrok mati, dll)
+        if ($order->status === 'belum_bayar' && !empty($order->midtrans_transaction_id)) {
+            app(\App\Services\MidtransService::class)->syncStatusFromMidtrans($order);
+            $order->refresh();
+        }
+
         return view('order-payment', compact('order'));
     })->name('order.payment');
 });
@@ -56,6 +90,11 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 });
+
+// Midtrans webhook (di luar middleware auth, CSRF di-exclude di bootstrap/app.php)
+// Dua path didukung agar dashboard Midtrans bisa pakai konvensi mana saja.
+Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle'])->name('midtrans.notification');
+Route::post('/midtrans/callback',     [MidtransWebhookController::class, 'handle'])->name('midtrans.callback');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/catalogue', [CatalogueController::class, 'index'])->name('catalogue');

@@ -17,99 +17,59 @@
 
     <div class="max-w-xl mx-auto">
 
-        @if($order->metode_pembayaran === 'Mandiri Virtual Account')
-        {{-- ===== MANDIRI VIRTUAL ACCOUNT ===== --}}
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-8 mb-6">
-            <div class="flex items-center gap-3 mb-6 pb-5 border-b border-maroon-200">
-                <div class="w-10 h-10 bg-yellow-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-university text-white"></i>
-                </div>
-                <div>
-                    <h2 class="font-bold text-[#1a1a1a] text-[1rem]">Mandiri Virtual Account</h2>
-                    <p class="text-[0.8rem] text-[#999]">Transfer sesuai nominal yang tertera</p>
-                </div>
-            </div>
-
-            <p class="text-[0.82rem] text-[#999] mb-1 font-semibold uppercase tracking-wider">Nomor Virtual Account</p>
-            <div class="flex items-center justify-between bg-maroon-50 px-5 py-4 rounded-xl mb-6">
-                <span class="font-extrabold text-[1.4rem] text-maroon tracking-widest" id="va-number">8800 0012 3456 7890</span>
-                <button onclick="copyVA()" class="text-maroon font-bold text-[0.82rem] hover:underline flex-shrink-0">
-                    <i class="fas fa-copy mr-1"></i> Salin
-                </button>
-            </div>
-
-            <div class="flex justify-between text-[0.88rem] mb-6 px-1">
-                <span class="text-[#999]">Total yang dibayar</span>
-                <strong class="text-maroon text-[1.05rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</strong>
-            </div>
-
-            <div class="space-y-3 text-[0.85rem] text-[#555]">
-                <p class="font-bold text-[#1a1a1a] mb-2">Cara Pembayaran:</p>
-                <div class="flex gap-3 items-start">
-                    <span class="w-6 h-6 rounded-full bg-maroon text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">1</span>
-                    <span>Buka aplikasi <strong>Livin' by Mandiri</strong> atau ATM Mandiri</span>
-                </div>
-                <div class="flex gap-3 items-start">
-                    <span class="w-6 h-6 rounded-full bg-maroon text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">2</span>
-                    <span>Pilih menu <strong>Transfer</strong> &rarr; <strong>Virtual Account</strong></span>
-                </div>
-                <div class="flex gap-3 items-start">
-                    <span class="w-6 h-6 rounded-full bg-maroon text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">3</span>
-                    <span>Masukkan nomor VA di atas</span>
-                </div>
-                <div class="flex gap-3 items-start">
-                    <span class="w-6 h-6 rounded-full bg-maroon text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">4</span>
-                    <span>Konfirmasi jumlah transfer dan selesaikan pembayaran</span>
-                </div>
-            </div>
-        </div>
-
-        @elseif($order->metode_pembayaran === 'QRIS')
-        {{-- ===== QRIS ===== --}}
+        @if($order->metode_pembayaran === 'Bayar Online')
+        {{-- ===== BAYAR ONLINE via MIDTRANS SNAP ===== --}}
         <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-8 mb-6">
             <div class="flex items-center gap-3 mb-6 pb-5 border-b border-maroon-200">
                 <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-qrcode text-white"></i>
+                    <i class="fas fa-credit-card text-white"></i>
                 </div>
                 <div>
-                    <h2 class="font-bold text-[#1a1a1a] text-[1rem]">Pembayaran QRIS</h2>
-                    <p class="text-[0.8rem] text-[#999]">Scan QR Code menggunakan aplikasi e-wallet</p>
+                    <h2 class="font-bold text-[#1a1a1a] text-[1rem]">Pembayaran Online</h2>
+                    <p class="text-[0.8rem] text-[#999]">Kartu kredit, GoPay, OVO, ShopeePay, QRIS, VA semua bank</p>
                 </div>
-            </div>
-
-            <div class="flex flex-col items-center mb-6">
-                {{-- Placeholder QR Code — ganti dengan <img> ke gambar QRIS asli --}}
-                <div class="w-52 h-52 border-2 border-dashed border-maroon-200 rounded-xl flex items-center justify-center bg-maroon-50 mb-3">
-                    <div class="text-center text-[#ccc]">
-                        <i class="fas fa-qrcode text-5xl mb-2 block"></i>
-                        <p class="text-[0.75rem]">QR Code</p>
-                    </div>
-                </div>
-                <p class="text-[0.78rem] text-[#bbb]">Scan dengan GoPay, OVO, Dana, atau aplikasi bank</p>
             </div>
 
             <div class="flex justify-between text-[0.88rem] mb-6 bg-maroon-50 px-5 py-4 rounded-xl">
                 <span class="text-[#999]">Total yang dibayar</span>
-                <strong class="text-maroon text-[1.05rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</strong>
+                <strong class="text-maroon text-[1.2rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</strong>
             </div>
 
-            <div class="space-y-3 text-[0.85rem] text-[#555]">
+            @if($order->status === 'belum_bayar')
+                @if($order->snap_token)
+                <button type="button" id="btn-snap-pay"
+                        data-snap-token="{{ $order->snap_token }}"
+                        class="w-full py-[14px] bg-maroon text-white rounded-xl font-extrabold text-[0.95rem] hover:bg-maroon-dark transition-all flex items-center justify-center gap-2 mb-4">
+                    <i class="fas fa-lock"></i> Bayar Sekarang
+                </button>
+                <p class="text-[0.78rem] text-[#999] text-center">
+                    Anda akan diarahkan ke halaman pembayaran aman Midtrans. Pilih metode pembayaran favorit Anda di sana.
+                </p>
+                @else
+                <div class="bg-pink-100 border-[1.5px] border-red-300 text-red-700 rounded-xl px-5 py-4 text-[0.85rem]">
+                    <i class="fas fa-exclamation-circle mr-1"></i>
+                    Gagal memuat halaman pembayaran. Silakan refresh halaman ini atau hubungi admin.
+                </div>
+                @endif
+            @endif
+
+            <div class="space-y-3 text-[0.85rem] text-[#555] mt-6 pt-5 border-t border-[#f0eaea]">
                 <p class="font-bold text-[#1a1a1a] mb-2">Cara Pembayaran:</p>
                 <div class="flex gap-3 items-start">
                     <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">1</span>
-                    <span>Buka aplikasi e-wallet atau m-banking Anda</span>
+                    <span>Klik tombol <strong>Bayar Sekarang</strong></span>
                 </div>
                 <div class="flex gap-3 items-start">
                     <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">2</span>
-                    <span>Pilih menu <strong>Scan QR</strong> atau <strong>QRIS</strong></span>
+                    <span>Pilih metode pembayaran yang Anda inginkan</span>
                 </div>
                 <div class="flex gap-3 items-start">
                     <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">3</span>
-                    <span>Arahkan kamera ke QR Code di atas</span>
+                    <span>Selesaikan pembayaran sesuai instruksi di layar</span>
                 </div>
                 <div class="flex gap-3 items-start">
                     <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[0.72rem] font-bold flex-shrink-0 mt-0.5">4</span>
-                    <span>Pastikan nominal sesuai dan konfirmasi pembayaran</span>
+                    <span>Status pesanan akan otomatis diperbarui setelah pembayaran berhasil</span>
                 </div>
             </div>
         </div>
@@ -152,21 +112,13 @@
                     <span class="text-[0.8rem] text-[#999]">Selesaikan pembayaran sebelum waktu habis</span>
                 </div>
 
-                <div class="flex items-center justify-between bg-white border-[1.5px] border-amber-300 rounded-xl px-5 py-4 mb-4">
+                <div class="flex items-center justify-between bg-white border-[1.5px] border-amber-300 rounded-xl px-5 py-4">
                     <div>
                         <p class="text-[0.78rem] text-[#999] mb-0.5">Sisa waktu pembayaran</p>
                         <p class="text-[0.75rem] text-amber-700">Pesanan dibatalkan otomatis jika lewat waktu</p>
                     </div>
                     <strong class="font-mono text-[1.6rem] text-maroon payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
                 </div>
-
-                <form method="POST" action="{{ route('orders.markPaid', $order->id) }}">
-                    @csrf
-                    <button type="submit" class="w-full py-[14px] bg-maroon text-white rounded-xl font-extrabold text-[0.95rem] hover:bg-maroon-dark transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-check-circle"></i> Saya Sudah Bayar
-                    </button>
-                    <p class="text-[0.75rem] text-[#999] text-center mt-2">Klik setelah selesai transfer/scan QRIS. Admin akan verifikasi pembayaran Anda.</p>
-                </form>
             @else
                 <div class="flex items-center gap-3 flex-wrap">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-800 rounded-[20px] text-[0.78rem] font-extrabold">
@@ -194,15 +146,57 @@
 @endsection
 
 @push('scripts')
+@if($order->metode_pembayaran === 'Bayar Online' && $order->status === 'belum_bayar' && $order->snap_token)
+<script src="https://app.{{ config('services.midtrans.is_production') ? '' : 'sandbox.' }}midtrans.com/snap/snap.js"
+        data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 <script>
-function copyVA() {
-    const va = document.getElementById('va-number')?.textContent.replace(/\s/g, '');
-    if (!va) return;
-    navigator.clipboard.writeText(va).then(() => {
-        alert('Nomor VA berhasil disalin: ' + va);
-    });
-}
+(function () {
+    const btn = document.getElementById('btn-snap-pay');
+    if (!btn || typeof snap === 'undefined') return;
 
+    btn.addEventListener('click', function () {
+        const token = btn.dataset.snapToken;
+        if (!token) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuka pembayaran...';
+
+        const syncUrl = '{{ route('orders.syncPayment', $order->id) }}';
+        const ordersUrl = '{{ route('orders') }}';
+        const csrfToken = '{{ csrf_token() }}';
+
+        // Sync status order dari Midtrans sebelum redirect — fallback kalau webhook miss.
+        function syncThenRedirect() {
+            fetch(syncUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+            }).catch(() => {}).finally(() => {
+                window.location.href = ordersUrl;
+            });
+        }
+
+        snap.pay(token, {
+            onSuccess: syncThenRedirect,
+            onPending: syncThenRedirect,
+            onError: function () {
+                alert('Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Bayar Sekarang';
+            },
+            onClose: function () {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Bayar Sekarang';
+            }
+        });
+    });
+})();
+</script>
+@endif
+
+<script>
 // Countdown pembayaran untuk pesanan belum_bayar
 (function () {
     const elements = document.querySelectorAll('.payment-countdown');

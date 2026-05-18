@@ -4,8 +4,10 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Setting;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -131,6 +133,19 @@ class CheckoutController extends Controller
     }
 
     Cart::where('user_id', Auth::id())->delete();
+
+    if (in_array($order->metode_pembayaran, Order::ONLINE_PAYMENT_METHODS, true)) {
+        try {
+            app(MidtransService::class)->getSnapToken($order->fresh('items.product'));
+        } catch (\Throwable $e) {
+            Log::error('Gagal membuat Snap token Midtrans', [
+                'order_id' => $order->id,
+                'error'    => $e->getMessage(),
+            ]);
+            return redirect()->route('order.payment', $order->id)
+                ->with('error', 'Gagal menghubungi gateway pembayaran. Silakan coba lagi atau hubungi admin.');
+        }
+    }
 
     return redirect()->route('order.payment', $order->id);
     }

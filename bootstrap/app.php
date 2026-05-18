@@ -15,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'            => \App\Http\Middleware\AdminMiddleware::class,
             'profile.complete' => \App\Http\Middleware\ProfileCompleteMiddleware::class,
         ]);
+
+        // Midtrans webhook tidak perlu CSRF token
+        $middleware->validateCsrfTokens(except: [
+            'midtrans/notification',
+            'midtrans/callback',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
