@@ -82,20 +82,20 @@
                     onclick="window.location='{{ route('product.show', $product->id) }}'"
                 @endif>
 
-                <div class="relative overflow-hidden h-[200px]">
+                <div class="relative overflow-hidden aspect-[4/3] sm:aspect-auto sm:h-[200px]">
                     @if($product->image && Str::startsWith($product->image, 'products/'))
                         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                             class="w-full h-full object-cover transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'hover:scale-[1.06]' }}">
+                             class="absolute inset-0 w-full h-full object-cover transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'hover:scale-[1.06]' }}">
                     @else
                         <img src="{{ $product->image }}" alt="{{ $product->name }}"
-                             class="w-full h-full object-cover transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'hover:scale-[1.06]' }}">
+                             class="absolute inset-0 w-full h-full object-cover transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'hover:scale-[1.06]' }}">
                     @endif
-                    <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
-                        <span class="bg-white/90 backdrop-blur-sm text-maroon text-[0.72rem] font-extrabold px-3 py-1 rounded-[20px] tracking-[0.5px]">
+                    <div class="absolute top-2 left-2 sm:top-3 sm:left-3 flex gap-1 sm:gap-1.5 flex-wrap">
+                        <span class="bg-white/90 backdrop-blur-sm text-maroon text-[0.6rem] sm:text-[0.72rem] font-extrabold px-2 sm:px-3 py-0.5 sm:py-1 rounded-[20px] tracking-[0.5px]">
                             {{ $product->categoryRelation->name ?? $product->category }}
                         </span>
                         @if($product->badge)
-                        <span class="px-[12px] py-[5px] rounded-[20px] text-[0.72rem] font-extrabold tracking-[1px] uppercase text-white backdrop-blur-sm
+                        <span class="px-2 sm:px-[12px] py-0.5 sm:py-[5px] rounded-[20px] text-[0.6rem] sm:text-[0.72rem] font-extrabold tracking-[1px] uppercase text-white backdrop-blur-sm
                             {{ $product->badge == 'new' ? 'bg-blue-700/90' : ($product->badge == 'terlaris' ? 'bg-orange-700/90' : 'bg-maroon/90') }}">
                             {{ $product->badge == 'new' ? 'New' : ($product->badge == 'terlaris' ? 'Terlaris' : 'Unggulan') }}
                         </span>
@@ -103,25 +103,25 @@
                     </div>
                 </div>
 
-                <div class="p-[18px]">
-                    <span class="inline-flex items-center gap-1 text-[0.7rem] px-[10px] py-[3px] rounded-[20px] font-bold mb-2 {{ $product->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-pink-100 text-red-800' }}">
+                <div class="p-3 sm:p-[18px]">
+                    <span class="inline-flex items-center gap-1 text-[0.6rem] sm:text-[0.7rem] px-2 sm:px-[10px] py-[2px] sm:py-[3px] rounded-[20px] font-bold mb-1.5 {{ $product->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-pink-100 text-red-800' }}">
                         ● @if($product->status === 'ready') Ready Stock @else Habis @endif
                     </span>
-                    <h3 class="font-extrabold text-[#1a1a1a] text-[0.97rem] mb-1.5">{{ $product->name }}</h3>
-                    <p class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-[14px] min-h-[36px]">{{ Str::limit($product->description, 60) }}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="font-extrabold text-maroon text-base">Rp{{ number_format($product->price, 0, ',', '.') }}</span>
+                    <h3 class="font-extrabold text-[#1a1a1a] text-[0.82rem] sm:text-[0.97rem] mb-1 sm:mb-1.5 line-clamp-2">{{ $product->name }}</h3>
+                    <p class="hidden sm:block text-[0.82rem] text-[#aaa] leading-[1.5] mb-[14px] line-clamp-2">{{ Str::limit($product->description, 60) }}</p>
+                    <div class="flex justify-between items-center mt-2 sm:mt-0">
+                        <span class="font-extrabold text-maroon text-[0.88rem] sm:text-base">Rp{{ number_format($product->price, 0, ',', '.') }}</span>
 
                         @if($product->status === 'habis')
-                            <button class="bg-[#ccc] text-white border-none rounded-[10px] w-[38px] h-[38px] flex items-center justify-center text-[0.85rem] cursor-not-allowed pointer-events-none" onclick="event.stopPropagation()">
+                            <button class="bg-[#ccc] text-white border-none rounded-[10px] w-8 h-8 sm:w-[38px] sm:h-[38px] flex items-center justify-center text-[0.8rem] cursor-not-allowed pointer-events-none" onclick="event.stopPropagation()">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         @elseif(auth()->check())
-                            <button class="bg-maroon text-white border-none rounded-[10px] w-[38px] h-[38px] flex items-center justify-center text-[0.85rem] cursor-pointer transition-all duration-200 hover:bg-maroon-dark hover:scale-110" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->id) }}'">
+                            <button class="bg-maroon text-white border-none rounded-[10px] w-8 h-8 sm:w-[38px] sm:h-[38px] flex items-center justify-center text-[0.8rem] cursor-pointer transition-all duration-200 hover:bg-maroon-dark hover:scale-110" onclick="event.stopPropagation(); window.location='{{ route('product.show', $product->id) }}'">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         @else
-                            <a href="{{ route('login') }}" class="bg-maroon text-white no-underline rounded-[10px] w-[38px] h-[38px] flex items-center justify-center text-[0.85rem] transition-all duration-200 hover:bg-maroon-dark hover:scale-110" onclick="event.stopPropagation()">
+                            <a href="{{ route('login') }}" class="bg-maroon text-white no-underline rounded-[10px] w-8 h-8 sm:w-[38px] sm:h-[38px] flex items-center justify-center text-[0.8rem] transition-all duration-200 hover:bg-maroon-dark hover:scale-110" onclick="event.stopPropagation()">
                                 <i class="fas fa-shopping-cart"></i>
                             </a>
                         @endif

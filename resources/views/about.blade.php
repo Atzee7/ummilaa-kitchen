@@ -67,7 +67,7 @@
                 class="inline-flex items-center gap-2 bg-maroon text-white px-8 py-[14px] rounded-full font-bold text-[0.88rem] tracking-wide no-underline transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_12px_36px_rgba(139,26,26,0.3)] shadow-[0_4px_18px_rgba(139,26,26,0.22)]">
                 <i class="fas fa-utensils text-[0.8rem]"></i> Lihat Menu Kami
             </a>
-            <a href="#cerita-kami"
+            <a href="#cerita-label"
                 class="inline-flex items-center gap-2 border border-[#e8e0e0] text-[#666] px-7 py-[13px] rounded-full font-semibold text-[0.88rem] no-underline hover:border-maroon hover:text-maroon transition-all duration-200">
                 Cerita Kami <i class="fas fa-arrow-down text-[0.72rem]"></i>
             </a>
@@ -75,7 +75,7 @@
 
         {{-- Pills --}}
         <div data-aos="fade-up" data-aos-duration="600" data-aos-delay="400"
-            class="flex flex-wrap items-center justify-center gap-3">
+            class="flex flex-wrap items-center justify-center gap-3 mb-10">
             @foreach([
                 ['icon' => 'fas fa-leaf', 'label' => 'Bahan Segar Pilihan'],
                 ['icon' => 'fas fa-shield-alt', 'label' => 'Higienis & Terjamin'],
@@ -95,16 +95,22 @@
 {{-- ================================================================
      CERITA / STORY
 ================================================================ --}}
-<section id="cerita-kami" class="scroll-mt-20 bg-white px-5 md:px-12 lg:px-[80px] py-[90px] lg:py-[110px]">
-    <div class="max-w-[1160px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+<section id="cerita-kami" class="scroll-mt-24 bg-white px-5 md:px-12 lg:px-[80px] py-14 sm:py-[60px] lg:py-[110px]">
+    <div class="max-w-[1160px] mx-auto">
+
+        {{-- Label center --}}
+        <div id="cerita-label" data-aos="fade-up" data-aos-duration="600" class="text-center mb-12">
+            <div class="flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon">
+                <span class="w-6 h-px bg-maroon"></span> Cerita Kami <span class="w-6 h-px bg-maroon"></span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
 
         {{-- Kiri: Teks --}}
         <div data-aos="fade-right" data-aos-duration="800">
-            <div class="flex items-center gap-2 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon mb-5">
-                <span class="w-6 h-px bg-maroon"></span> Cerita Kami
-            </div>
-            <h2 class="font-playfair text-[2.1rem] md:text-[2.6rem] text-[#1a1a1a] leading-[1.2] mb-6 tracking-[-0.5px]">
-                Berawal dari Dapur<br>Rumahan, Kini Melayani<br><span class="text-maroon">Ratusan Pelanggan</span>
+            <h2 class="font-playfair text-[1.8rem] md:text-[2.6rem] text-[#1a1a1a] leading-[1.25] mb-6 tracking-[-0.5px]">
+                Berawal dari Dapur Rumahan,<br class="hidden md:block"> Kini Melayani <span class="text-maroon">Ratusan Pelanggan</span>
             </h2>
             <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-4">
                 Ummilaa Kitchen lahir dari kecintaan mendalam terhadap dunia kuliner dan tekad untuk menghadirkan makanan berkualitas dengan harga yang bersahabat bagi masyarakat Malang.
@@ -170,7 +176,8 @@
             </div>
         </div>
 
-    </div>
+        </div>{{-- end grid --}}
+    </div>{{-- end max-w --}}
 </section>
 
 
@@ -302,5 +309,25 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 60 });
+
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (!target) return;
+            e.preventDefault();
+            const stickyNav = document.querySelector('.sticky');
+            const navHeight = stickyNav ? stickyNav.offsetHeight : 0;
+            // Gunakan offsetTop (tidak terpengaruh CSS transform dari AOS)
+            let absoluteTop = 0;
+            let el = target;
+            while (el) {
+                absoluteTop += el.offsetTop;
+                el = el.offsetParent;
+            }
+            const top = absoluteTop - navHeight - 24;
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        });
+    });
 </script>
 @endpush

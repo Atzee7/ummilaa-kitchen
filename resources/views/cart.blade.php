@@ -29,7 +29,7 @@
 
         <div class="flex flex-col gap-4">
             @foreach($carts as $cart)
-            <div data-cart-row="{{ $cart->id }}" class="grid grid-cols-[90px_1fr_auto] gap-5 items-center bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 transition-shadow hover:shadow-[0_6px_24px_rgba(139,26,26,0.07)]">
+            <div data-cart-row="{{ $cart->id }}" class="grid grid-cols-[90px_1fr] sm:grid-cols-[90px_1fr_auto] gap-4 sm:gap-5 items-center bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-4 sm:p-5 transition-shadow hover:shadow-[0_6px_24px_rgba(139,26,26,0.07)]">
                 <img class="w-[90px] h-[90px] object-cover rounded-[14px]"
                     src="{{ $cart->product->image && Str::startsWith($cart->product->image, 'products/') ? asset('storage/' . $cart->product->image) : $cart->product->image }}"
                     alt="{{ $cart->product->name }}">
@@ -38,7 +38,7 @@
                     <p class="text-[0.85rem] text-[#999] mb-2.5">{{ ucfirst($cart->product->category) }}</p>
                     <span class="font-extrabold text-maroon text-[0.97rem]">Rp{{ number_format($cart->product->price, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 col-span-2 sm:col-span-1">
                     <div class="flex items-center border-[1.5px] border-maroon-200 rounded-[10px] overflow-hidden">
                         <button type="button"
                             data-cart-id="{{ $cart->id }}"

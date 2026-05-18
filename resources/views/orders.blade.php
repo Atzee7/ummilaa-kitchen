@@ -2,7 +2,7 @@
 
 
 @section('content')
-<div class="px-[80px] py-[60px] min-h-[70vh]">
+<div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px] min-h-[70vh]">
     <div class="mb-10">
         <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Pesanan Saya</h1>
         <p class="text-[#999] mt-1.5 text-[0.9rem]">Pantau status dan riwayat pesanan Anda</p>
@@ -11,9 +11,10 @@
     @php
         // Floating notification badge — pojok kanan-atas tab, gaya Shopee/Tokopedia
         $tabBadge = 'tab-badge absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-[5px] flex items-center justify-center rounded-full text-[0.68rem] font-extrabold leading-none bg-[#EF4444] text-white shadow-[0_2px_6px_rgba(239,68,68,0.45)] ring-[2.5px] ring-white pointer-events-none';
-        $tabBase  = 'status-tab relative inline-flex items-center px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all';
+        $tabBase  = 'status-tab relative inline-flex items-center px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all whitespace-nowrap flex-shrink-0';
     @endphp
-    <div class="flex gap-3 mb-8 flex-wrap pt-2">
+    <div class="relative mb-8">
+    <div class="flex gap-3 overflow-x-auto pb-2 pt-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-4 px-4 md:mx-0 md:px-0">
         <button class="{{ $tabBase }} bg-[#8B1A1A] text-white border-[#8B1A1A]" data-status="semua">
             Semua
             @if(($counts['semua'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['semua'] > 99 ? '99+' : $counts['semua'] }}</span>@endif
@@ -46,6 +47,8 @@
             Dibatalkan
             @if(($counts['dibatalkan'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['dibatalkan'] > 99 ? '99+' : $counts['dibatalkan'] }}</span>@endif
         </button>
+    </div>
+    <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 md:hidden"></div>
     </div>
 
     @if(session('success'))
@@ -81,12 +84,12 @@
         <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}">
 
             {{-- HEADER --}}
-            <div class="flex justify-between items-center px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
+            <div class="flex justify-between items-start flex-wrap gap-y-2 px-4 sm:px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
                 <div>
                     <div class="font-extrabold text-[#1a1a1a] text-[0.92rem]">Order #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</div>
                     <div class="text-[0.82rem] text-[#999] mt-[3px]"><i class="fas fa-calendar-alt mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }} WIB</div>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-[14px] py-[6px] rounded-[20px] text-[0.78rem] font-extrabold
+                <span class="inline-flex items-center gap-1.5 px-[14px] py-[6px] rounded-[20px] text-[0.78rem] font-extrabold flex-shrink-0
                     @if($order->status === 'belum_bayar') bg-amber-50 text-orange-700
                     @elseif($order->status === 'pending') bg-yellow-50 text-yellow-800
                     @elseif($order->status === 'diproses') bg-blue-50 text-blue-800
@@ -159,25 +162,25 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="flex justify-between items-center px-6 py-4 border-t border-maroon-200">
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-t border-maroon-200">
                 <div>
-                    <div class="text-[0.82rem] text-[#999] mb-[3px]">Total Pembayaran</div>
-                    <div class="font-extrabold text-maroon text-[1.05rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</div>
+                    <div class="text-[0.78rem] sm:text-[0.82rem] text-[#999] mb-[3px]">Total Pembayaran</div>
+                    <div class="font-extrabold text-maroon text-[0.95rem] sm:text-[1.05rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2">
                     @if($order->status === 'selesai')
                         @if($order->testimonial)
-                            <span class="inline-flex items-center gap-1.5 text-green-700 text-[0.85rem] font-bold mr-2">
+                            <span class="inline-flex items-center gap-1 text-green-700 text-[0.75rem] sm:text-[0.85rem] font-bold mr-1 sm:mr-2">
                                 <i class="fas fa-check-circle"></i> Sudah Diulas
                             </span>
                         @else
-                            <button class="inline-flex items-center gap-2 bg-white text-maroon px-5 py-[10px] rounded-[10px] font-bold text-[0.85rem] border-[1.5px] border-maroon hover:bg-maroon-100 transition-all cursor-pointer" onclick="toggleForm({{ $order->id }})">
-                                <i class="fas fa-star"></i> Tulis Ulasan
+                            <button class="inline-flex items-center gap-1.5 bg-white text-maroon px-3 sm:px-5 py-[7px] sm:py-[10px] rounded-[10px] font-bold text-[0.75rem] sm:text-[0.85rem] border-[1.5px] border-maroon hover:bg-maroon-100 transition-all cursor-pointer" onclick="toggleForm({{ $order->id }})">
+                                <i class="fas fa-star text-[0.7rem]"></i> Tulis Ulasan
                             </button>
                         @endif
                     @endif
-                    <a href="{{ route('orders.show', $order->id) }}" class="inline-flex items-center gap-2 bg-maroon text-white px-5 py-[10px] rounded-[10px] font-bold text-[0.85rem] no-underline hover:bg-maroon-dark hover:-translate-y-px transition-all">
-                        <i class="fas fa-eye"></i> Lihat Detail
+                    <a href="{{ route('orders.show', $order->id) }}" class="inline-flex items-center gap-1.5 bg-maroon text-white px-3 sm:px-5 py-[7px] sm:py-[10px] rounded-[10px] font-bold text-[0.75rem] sm:text-[0.85rem] no-underline hover:bg-maroon-dark hover:-translate-y-px transition-all">
+                        <i class="fas fa-eye text-[0.7rem]"></i> Lihat Detail
                     </a>
                 </div>
             </div>
@@ -234,9 +237,6 @@
                 <p class="font-bold text-[#999] text-[0.95rem]">Belum ada pesanan hari ini</p>
                 <p class="text-[0.82rem] mt-0.5">Yuk pesan sekarang!</p>
             </div>
-            <a href="{{ route('catalogue') }}" class="ml-auto inline-flex items-center gap-2 bg-maroon text-white px-5 py-[9px] rounded-xl font-bold text-[0.85rem] no-underline hover:bg-maroon-dark transition-colors flex-shrink-0">
-                <i class="fas fa-utensils"></i> Pesan Sekarang
-            </a>
         </div>
         @endif
     </div>{{-- .date-group hari ini --}}
@@ -264,12 +264,12 @@
         <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}">
 
             {{-- HEADER --}}
-            <div class="flex justify-between items-center px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
+            <div class="flex justify-between items-start flex-wrap gap-y-2 px-4 sm:px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
                 <div>
                     <div class="font-extrabold text-[#1a1a1a] text-[0.92rem]">Order #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</div>
                     <div class="text-[0.82rem] text-[#999] mt-[3px]"><i class="fas fa-calendar-alt mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }} WIB</div>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-[14px] py-[6px] rounded-[20px] text-[0.78rem] font-extrabold
+                <span class="inline-flex items-center gap-1.5 px-[14px] py-[6px] rounded-[20px] text-[0.78rem] font-extrabold flex-shrink-0
                     @if($order->status === 'belum_bayar') bg-amber-50 text-orange-700
                     @elseif($order->status === 'pending') bg-yellow-50 text-yellow-800
                     @elseif($order->status === 'diproses') bg-blue-50 text-blue-800
@@ -342,25 +342,25 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="flex justify-between items-center px-6 py-4 border-t border-maroon-200">
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-t border-maroon-200">
                 <div>
-                    <div class="text-[0.82rem] text-[#999] mb-[3px]">Total Pembayaran</div>
-                    <div class="font-extrabold text-maroon text-[1.05rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</div>
+                    <div class="text-[0.78rem] sm:text-[0.82rem] text-[#999] mb-[3px]">Total Pembayaran</div>
+                    <div class="font-extrabold text-maroon text-[0.95rem] sm:text-[1.05rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2">
                     @if($order->status === 'selesai')
                         @if($order->testimonial)
-                            <span class="inline-flex items-center gap-1.5 text-green-700 text-[0.85rem] font-bold mr-2">
+                            <span class="inline-flex items-center gap-1 text-green-700 text-[0.75rem] sm:text-[0.85rem] font-bold mr-1 sm:mr-2">
                                 <i class="fas fa-check-circle"></i> Sudah Diulas
                             </span>
                         @else
-                            <button class="inline-flex items-center gap-2 bg-white text-maroon px-5 py-[10px] rounded-[10px] font-bold text-[0.85rem] border-[1.5px] border-maroon hover:bg-maroon-100 transition-all cursor-pointer" onclick="toggleForm({{ $order->id }})">
-                                <i class="fas fa-star"></i> Tulis Ulasan
+                            <button class="inline-flex items-center gap-1.5 bg-white text-maroon px-3 sm:px-5 py-[7px] sm:py-[10px] rounded-[10px] font-bold text-[0.75rem] sm:text-[0.85rem] border-[1.5px] border-maroon hover:bg-maroon-100 transition-all cursor-pointer" onclick="toggleForm({{ $order->id }})">
+                                <i class="fas fa-star text-[0.7rem]"></i> Tulis Ulasan
                             </button>
                         @endif
                     @endif
-                    <a href="{{ route('orders.show', $order->id) }}" class="inline-flex items-center gap-2 bg-maroon text-white px-5 py-[10px] rounded-[10px] font-bold text-[0.85rem] no-underline hover:bg-maroon-dark hover:-translate-y-px transition-all">
-                        <i class="fas fa-eye"></i> Lihat Detail
+                    <a href="{{ route('orders.show', $order->id) }}" class="inline-flex items-center gap-1.5 bg-maroon text-white px-3 sm:px-5 py-[7px] sm:py-[10px] rounded-[10px] font-bold text-[0.75rem] sm:text-[0.85rem] no-underline hover:bg-maroon-dark hover:-translate-y-px transition-all">
+                        <i class="fas fa-eye text-[0.7rem]"></i> Lihat Detail
                     </a>
                 </div>
             </div>

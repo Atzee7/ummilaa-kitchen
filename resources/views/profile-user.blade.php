@@ -32,24 +32,33 @@
     </div>
     @endif
 
-    <div class="grid grid-cols-[280px_1fr] gap-10 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 lg:gap-10 items-start">
 
         {{-- SIDEBAR --}}
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-8 text-center sticky top-[90px]">
-            <div class="w-[90px] h-[90px] bg-maroon rounded-full flex items-center justify-center text-white text-[2rem] font-extrabold mx-auto mb-4">
-                {{ strtoupper(substr($user->name, 0, 1)) }}
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 lg:p-8 lg:text-center lg:sticky lg:top-[90px]">
+            {{-- Mobile: horizontal | Desktop: vertical centered --}}
+            <div class="flex items-center gap-4 lg:flex-col lg:items-center">
+                <div class="w-14 h-14 lg:w-[90px] lg:h-[90px] bg-maroon rounded-full flex items-center justify-center text-white text-[1.3rem] lg:text-[2rem] font-extrabold flex-shrink-0 lg:mx-auto lg:mb-4">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+                <div class="flex-1 min-w-0 lg:w-full">
+                    <h3 class="font-playfair text-[1rem] lg:text-[1.2rem] text-[#1a1a1a] mb-0.5 truncate">{{ $user->name }}</h3>
+                    <p class="text-[0.78rem] lg:text-[0.85rem] text-[#999] truncate lg:mb-5">{{ $user->email }}</p>
+                </div>
             </div>
-            <h3 class="font-playfair text-[1.2rem] text-[#1a1a1a] mb-1">{{ $user->name }}</h3>
-            <p class="text-[0.85rem] text-[#999] mb-5">{{ $user->email }}</p>
-            <div class="flex flex-col gap-1.5">
-                <a href="{{ route('profile.user') }}" class="flex items-center gap-[10px] px-4 py-[11px] rounded-xl text-[0.9rem] font-semibold bg-maroon-100 text-maroon no-underline transition-all">
-                    <i class="fas fa-user-edit w-4 text-maroon"></i> Edit Profil
+            {{-- Nav links --}}
+            <div class="flex gap-2 mt-4 lg:flex-col lg:gap-1.5">
+                <a href="{{ route('profile.user') }}" class="flex-1 flex items-center justify-center lg:justify-start gap-2 px-3 lg:px-4 py-3 lg:py-[11px] rounded-xl text-[0.78rem] lg:text-[0.9rem] font-semibold bg-maroon-100 text-maroon no-underline transition-all">
+                    <i class="fas fa-user-edit text-maroon text-[0.7rem] lg:text-sm lg:w-4"></i>
+                    <span class="hidden sm:inline lg:inline">Edit Profil</span>
                 </a>
-                <a href="{{ route('orders') }}" class="flex items-center gap-[10px] px-4 py-[11px] rounded-xl text-[0.9rem] font-semibold text-[#555] no-underline transition-all hover:bg-maroon-100 hover:text-maroon">
-                    <i class="fas fa-box w-4 text-maroon"></i> Pesanan Saya
+                <a href="{{ route('orders') }}" class="flex-1 flex items-center justify-center lg:justify-start gap-2 px-3 lg:px-4 py-3 lg:py-[11px] rounded-xl text-[0.78rem] lg:text-[0.9rem] font-semibold text-[#555] no-underline transition-all hover:bg-maroon-100 hover:text-maroon border border-[#f0f0f0] lg:border-none">
+                    <i class="fas fa-box text-maroon text-[0.7rem] lg:text-sm lg:w-4"></i>
+                    <span class="hidden sm:inline lg:inline">Pesanan Saya</span>
                 </a>
-                <a href="{{ route('cart') }}" class="flex items-center gap-[10px] px-4 py-[11px] rounded-xl text-[0.9rem] font-semibold text-[#555] no-underline transition-all hover:bg-maroon-100 hover:text-maroon">
-                    <i class="fas fa-shopping-cart w-4 text-maroon"></i> Keranjang
+                <a href="{{ route('cart') }}" class="flex-1 flex items-center justify-center lg:justify-start gap-2 px-3 lg:px-4 py-3 lg:py-[11px] rounded-xl text-[0.78rem] lg:text-[0.9rem] font-semibold text-[#555] no-underline transition-all hover:bg-maroon-100 hover:text-maroon border border-[#f0f0f0] lg:border-none">
+                    <i class="fas fa-shopping-cart text-maroon text-[0.7rem] lg:text-sm lg:w-4"></i>
+                    <span class="hidden sm:inline lg:inline">Keranjang</span>
                 </a>
             </div>
         </div>
@@ -60,44 +69,44 @@
                 @csrf
 
                 {{-- INFO PRIBADI --}}
-                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-8 mb-6">
-                    <div class="font-extrabold text-[#1a1a1a] text-base mb-6 pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
-                        <i class="fas fa-user text-maroon"></i> Informasi Pribadi
+                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 sm:p-8 mb-5">
+                    <div class="font-extrabold text-[#1a1a1a] text-[0.88rem] sm:text-base mb-4 sm:mb-6 pb-3 sm:pb-[14px] border-b border-maroon-200 flex items-center gap-2">
+                        <i class="fas fa-user text-maroon text-[0.85rem]"></i> Informasi Pribadi
                     </div>
-                    <div class="grid grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
                         <div>
-                            <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">Nama Lengkap <span class="text-red-500 ml-0.5">*</span></label>
+                            <label class="block font-bold text-[0.72rem] sm:text-[0.82rem] text-[#555] mb-1.5 uppercase tracking-[0.5px]">Nama Lengkap <span class="text-red-500 ml-0.5">*</span></label>
                             <input type="text" name="name" value="{{ old('name', $user->name) }}" required
-                                class="w-full px-4 py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
+                                class="w-full px-3 sm:px-4 py-[10px] sm:py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.88rem] sm:text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
                         </div>
                         <div>
-                            <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">Nomor Telepon <span class="text-red-500 ml-0.5">*</span></label>
+                            <label class="block font-bold text-[0.72rem] sm:text-[0.82rem] text-[#555] mb-1.5 uppercase tracking-[0.5px]">Nomor Telepon <span class="text-red-500 ml-0.5">*</span></label>
                             <input type="text" name="no_telepon" value="{{ old('no_telepon', $user->no_telepon) }}" placeholder="08xxxxxxxxxx"
-                                class="w-full px-4 py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
+                                class="w-full px-3 sm:px-4 py-[10px] sm:py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.88rem] sm:text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
                         </div>
                         <div>
-                            <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">Tanggal Lahir <span class="text-red-500 ml-0.5">*</span></label>
+                            <label class="block font-bold text-[0.72rem] sm:text-[0.82rem] text-[#555] mb-1.5 uppercase tracking-[0.5px]">Tanggal Lahir <span class="text-red-500 ml-0.5">*</span></label>
                             <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}"
-                                class="w-full px-4 py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
+                                class="w-full px-3 sm:px-4 py-[10px] sm:py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.88rem] sm:text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
                         </div>
                         <div>
-                            <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">Kode Pos <span class="text-red-500 ml-0.5">*</span></label>
+                            <label class="block font-bold text-[0.72rem] sm:text-[0.82rem] text-[#555] mb-1.5 uppercase tracking-[0.5px]">Kode Pos <span class="text-red-500 ml-0.5">*</span></label>
                             <input type="text" name="kode_pos" value="{{ old('kode_pos', $user->kode_pos) }}" placeholder="Contoh: 65148"
-                                class="w-full px-4 py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
+                                class="w-full px-3 sm:px-4 py-[10px] sm:py-[13px] border-2 border-[#f0f0f0] rounded-xl text-[0.88rem] sm:text-[0.95rem] text-[#333] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
                         </div>
                     </div>
                 </div>
 
                 {{-- ALAMAT + MAP --}}
-                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-8 mb-6">
-                    <div class="font-extrabold text-[#1a1a1a] text-base mb-6 pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
+                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 sm:p-8 mb-5 sm:mb-6">
+                    <div class="font-extrabold text-[#1a1a1a] text-[0.88rem] sm:text-base mb-4 sm:mb-6 pb-3 sm:pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
                         <i class="fas fa-map-marker-alt text-maroon"></i> Alamat Pengiriman
                     </div>
 
                     <div class="mb-5">
                         <label class="block font-bold text-[0.82rem] text-[#555] mb-2 uppercase tracking-[0.5px]">
                             Alamat Lengkap <span class="text-red-500 ml-0.5">*</span>
-                            <span class="ml-2 text-[0.75rem] text-maroon font-semibold normal-case tracking-normal bg-maroon-100 px-2 py-0.5 rounded-lg">
+                            <span class="block mt-1 sm:inline sm:ml-2 text-[0.75rem] text-maroon font-semibold normal-case tracking-normal bg-maroon-100 px-2 py-0.5 rounded-lg">
                                 <i class="fas fa-lock text-[0.65rem]"></i> Diisi otomatis dari peta
                             </span>
                         </label>
@@ -119,24 +128,26 @@
                         <strong class="text-red-700">(Wajib tentukan lokasi sebelum menyimpan)</strong></span>
                     </div>
 
-                    <div class="flex gap-[10px] mb-[14px]">
+                    <div class="flex flex-col gap-[10px] mb-[14px] sm:flex-row sm:flex-wrap">
                         <input type="text" id="mapSearchInput" placeholder="Cari daerah... (contoh: Sukun Malang)"
-                            class="flex-1 px-4 py-3 border-2 border-[#f0f0f0] rounded-xl text-[0.92rem] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
-                        <button type="button" onclick="searchLocation()"
-                            class="px-5 py-3 bg-maroon text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-maroon-dark transition-colors">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                        <button type="button" id="gpsBtn" onclick="detectGPS()"
-                            class="px-4 py-3 bg-maroon text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-maroon-dark transition-colors flex items-center gap-2">
-                            <i class="fas fa-location-arrow"></i> Lokasi Saya
-                        </button>
-                        <button type="button" onclick="resetMap()"
-                            class="px-4 py-3 bg-[#f0f0f0] text-[#555] border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-[#e0e0e0] transition-colors">
-                            Reset
-                        </button>
+                            class="w-full sm:flex-1 sm:min-w-0 px-4 py-3 border-2 border-[#f0f0f0] rounded-xl text-[0.92rem] bg-[#fafafa] transition-all focus:border-maroon focus:bg-white focus:outline-none">
+                        <div class="flex gap-[10px]">
+                            <button type="button" onclick="searchLocation()"
+                                class="flex-1 sm:flex-none px-5 py-3 bg-maroon text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-maroon-dark transition-colors">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                            <button type="button" id="gpsBtn" onclick="detectGPS()"
+                                class="flex-1 sm:flex-none px-4 py-3 bg-maroon text-white border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-maroon-dark transition-colors flex items-center justify-center gap-2">
+                                <i class="fas fa-location-arrow"></i> Lokasi Saya
+                            </button>
+                            <button type="button" onclick="resetMap()"
+                                class="flex-1 sm:flex-none px-4 py-3 bg-[#f0f0f0] text-[#555] border-none rounded-xl font-bold text-[0.88rem] font-sans cursor-pointer hover:bg-[#e0e0e0] transition-colors">
+                                Reset
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="rounded-[16px] overflow-hidden border-2 border-maroon-200 h-[320px] mb-[14px]">
+                    <div class="rounded-[16px] overflow-hidden border-2 border-maroon-200 h-[220px] sm:h-[280px] lg:h-[320px] mb-[14px]">
                         <div id="map" class="w-full h-full"></div>
                     </div>
 

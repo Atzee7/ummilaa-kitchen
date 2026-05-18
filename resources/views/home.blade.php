@@ -69,28 +69,28 @@
             @foreach($featuredProducts as $product)
             <a href="{{ $product->status !== 'habis' ? route('product.show', $product->id) : '#' }}"
                class="product-card flex-[0_0_calc(50%-14px)] md:flex-[0_0_calc(33.333%-19px)] lg:flex-[0_0_calc(25%-21px)] rounded-[20px] overflow-hidden bg-white border border-maroon-200 transition-all duration-300 no-underline block {{ $product->status === 'habis' ? 'pointer-events-none' : '' }} hover:shadow-[0_16px_48px_rgba(139,26,26,0.12)] hover:-translate-y-1.5">
-                <div class="relative overflow-hidden">
-                    <img class="w-full h-[160px] md:h-[180px] lg:h-[200px] object-cover bg-maroon-50 block transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'group-hover:scale-105' }}"
+                <div class="relative overflow-hidden aspect-[4/3] sm:aspect-auto sm:h-[160px] md:h-[180px] lg:h-[200px]">
+                    <img class="absolute inset-0 w-full h-full object-cover bg-maroon-50 transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'group-hover:scale-105' }}"
                          src="{{ $product->image && Str::startsWith($product->image, 'products/') ? asset('storage/' . $product->image) : $product->image }}"
                          alt="{{ $product->name }}">
 
                     @if($product->badge)
-                    <span class="absolute top-[14px] left-[14px] px-[14px] py-[5px] rounded-[30px] text-[0.72rem] font-extrabold tracking-[1px] uppercase text-white backdrop-blur-sm
+                    <span class="absolute top-2 sm:top-[14px] left-2 sm:left-[14px] px-2 sm:px-[14px] py-0.5 sm:py-[5px] rounded-[30px] text-[0.6rem] sm:text-[0.72rem] font-extrabold tracking-[1px] uppercase text-white backdrop-blur-sm
                         {{ $product->badge == 'new' ? 'bg-blue-700/90' : ($product->badge == 'terlaris' ? 'bg-orange-700/90' : 'bg-maroon/90') }}">
                         {{ $product->badge == 'new' ? 'New' : ($product->badge == 'terlaris' ? 'Terlaris' : 'Unggulan') }}
                     </span>
                     @endif
 
-                    <span class="absolute bottom-3 left-3 px-3 py-1 rounded-[20px] text-[0.72rem] font-bold {{ $product->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-pink-100 text-red-800' }}">
+                    <span class="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 px-2 sm:px-3 py-0.5 sm:py-1 rounded-[20px] text-[0.6rem] sm:text-[0.72rem] font-bold {{ $product->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-pink-100 text-red-800' }}">
                         @if($product->status === 'ready') ● Ready Stock @else ● Habis @endif
                     </span>
                 </div>
-                <div class="p-[18px_20px_20px]">
-                    <h3 class="font-bold text-[#1a1a1a] text-base mb-1.5">{{ $product->name }}</h3>
-                    <p class="text-[0.82rem] text-[#aaa] leading-[1.5] mb-4 min-h-[38px]">{{ Str::limit($product->description, 65) }}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="font-extrabold text-maroon text-base">Rp{{ number_format($product->price, 0, ',', '.') }}</span>
-                        <span class="bg-maroon text-white rounded-[10px] w-[38px] h-[38px] flex items-center justify-center text-[0.85rem] transition-all duration-200 {{ $product->status === 'habis' ? 'bg-[#ccc]' : 'hover:bg-maroon-dark hover:scale-110' }}">
+                <div class="p-3 sm:p-[18px_20px_20px]">
+                    <h3 class="font-bold text-[#1a1a1a] text-[0.82rem] sm:text-base mb-1 sm:mb-1.5 line-clamp-2">{{ $product->name }}</h3>
+                    <p class="hidden sm:block text-[0.82rem] text-[#aaa] leading-[1.5] mb-4 line-clamp-2">{{ Str::limit($product->description, 65) }}</p>
+                    <div class="flex justify-between items-center mt-2 sm:mt-0">
+                        <span class="font-extrabold text-maroon text-[0.88rem] sm:text-base">Rp{{ number_format($product->price, 0, ',', '.') }}</span>
+                        <span class="bg-maroon text-white rounded-[10px] w-8 h-8 sm:w-[38px] sm:h-[38px] flex items-center justify-center text-[0.8rem] sm:text-[0.85rem] transition-all duration-200 {{ $product->status === 'habis' ? 'bg-[#ccc]' : 'hover:bg-maroon-dark hover:scale-110' }}">
                             <i class="fas fa-shopping-cart"></i>
                         </span>
                     </div>
@@ -102,7 +102,7 @@
     @endif
 </section>
 
-<div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-[80px]"></div>
+<div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-5 md:mx-10 lg:mx-[80px]"></div>
 
 {{-- AREA PENGIRIMAN --}}
 <section class="bg-white px-5 md:px-10 lg:px-[80px] py-[80px] lg:py-[100px] border-t border-[#f0eeec]">

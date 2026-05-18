@@ -11,22 +11,22 @@
     </div>
 
     {{-- STEP INDICATOR --}}
-    <div class="flex items-center gap-0 mb-10">
-        <div class="flex items-center gap-[10px] text-[0.82rem] font-bold text-green-700">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.78rem] font-extrabold bg-green-700 text-white">
+    <div class="flex items-center gap-0 mb-10 overflow-x-auto">
+        <div class="flex items-center gap-[10px] text-[0.82rem] font-bold text-green-700 whitespace-nowrap">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.78rem] font-extrabold bg-green-700 text-white flex-shrink-0">
                 <i class="fas fa-check text-[0.65rem]"></i>
             </div>
-            Keranjang
+            <span class="hidden sm:inline">Keranjang</span>
         </div>
-        <div class="w-10 h-0.5 bg-green-700 mx-2"></div>
-        <div class="flex items-center gap-[10px] text-[0.82rem] font-bold text-maroon">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.78rem] font-extrabold bg-maroon text-white">2</div>
-            Checkout
+        <div class="w-6 sm:w-10 h-0.5 bg-green-700 mx-1 sm:mx-2 flex-shrink-0"></div>
+        <div class="flex items-center gap-[10px] text-[0.82rem] font-bold text-maroon whitespace-nowrap">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.78rem] font-extrabold bg-maroon text-white flex-shrink-0">2</div>
+            <span class="hidden sm:inline">Checkout</span>
         </div>
-        <div class="w-10 h-0.5 bg-[#eee] mx-2"></div>
-        <div class="flex items-center gap-[10px] text-[0.82rem] font-bold text-[#bbb]">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.78rem] font-extrabold bg-[#eee] text-[#bbb]">3</div>
-            Selesai
+        <div class="w-6 sm:w-10 h-0.5 bg-[#eee] mx-1 sm:mx-2 flex-shrink-0"></div>
+        <div class="flex items-center gap-[10px] text-[0.82rem] font-bold text-[#bbb] whitespace-nowrap">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.78rem] font-extrabold bg-[#eee] text-[#bbb] flex-shrink-0">3</div>
+            <span class="hidden sm:inline">Selesai</span>
         </div>
     </div>
 

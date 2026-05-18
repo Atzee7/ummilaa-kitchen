@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="px-[80px] py-[60px]">
+<div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px]">
     <a href="{{ route('orders') }}" class="inline-flex items-center gap-2 text-maroon font-bold text-[0.9rem] mb-7 transition-all duration-200 hover:gap-3 no-underline">
         <i class="fas fa-arrow-left"></i> Kembali ke Pesanan Saya
     </a>
 
-    <div class="flex justify-between items-start mb-10">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-10">
         <div>
             <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Order #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</h1>
             <p class="text-[#999] mt-1.5 text-[0.88rem]"><i class="fas fa-calendar-alt mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }} WIB</p>
@@ -29,7 +29,7 @@
         </span>
     </div>
 
-    <div class="grid grid-cols-[1fr_360px] gap-8 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 lg:gap-8 items-start">
         <div>
             {{-- PRODUK --}}
             <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 mb-6">
@@ -58,18 +58,18 @@
                 <div class="font-extrabold text-[#1a1a1a] text-[0.97rem] mb-5 pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
                     <i class="fas fa-map-marker-alt text-maroon"></i> Info Pengiriman
                 </div>
-                <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
                     <span class="text-[#999]">Penerima</span><strong class="text-[#1a1a1a] font-bold">{{ $order->nama_penerima }}</strong>
                 </div>
-                <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
                     <span class="text-[#999]">No. Telepon</span><strong class="text-[#1a1a1a] font-bold">{{ $order->no_telepon }}</strong>
                 </div>
-                <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
-                    <span class="text-[#999]">Alamat</span><strong class="text-[#1a1a1a] font-bold text-right max-w-[200px]">{{ $order->alamat }}</strong>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
+                    <span class="text-[#999] flex-shrink-0">Alamat</span><strong class="text-[#1a1a1a] font-bold sm:text-right">{{ $order->alamat }}</strong>
                 </div>
                 @if($order->detail_alamat)
-                <div class="flex justify-between py-[10px] text-[0.9rem]">
-                    <span class="text-[#999]">Detail Alamat</span><strong class="text-[#1a1a1a] font-bold text-right max-w-[200px]">{{ $order->detail_alamat }}</strong>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] text-[0.9rem] gap-0.5 sm:gap-0">
+                    <span class="text-[#999] flex-shrink-0">Detail Alamat</span><strong class="text-[#1a1a1a] font-bold sm:text-right">{{ $order->detail_alamat }}</strong>
                 </div>
                 @endif
             </div>
@@ -85,7 +85,7 @@
         </div>
 
         {{-- SUMMARY --}}
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 sticky top-[90px]">
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 lg:sticky lg:top-[90px]">
             <div class="font-extrabold text-[#1a1a1a] text-[0.97rem] mb-5 pb-[14px] border-b border-maroon-200">Ringkasan Pembayaran</div>
             <div class="flex justify-between text-[0.9rem] mb-3">
                 <span class="text-[#777]">Subtotal</span><strong class="text-[#1a1a1a] font-bold">Rp{{ number_format($order->subtotal, 0, ',', '.') }}</strong>
