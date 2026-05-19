@@ -50,4 +50,16 @@ class Order extends Model
                 'alasan_pembatalan' => 'Pembayaran melewati batas waktu (10 menit)',
             ]);
     }
+
+    public function scopeExcludeAutoCancelled($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('status', '!=', 'dibatalkan')
+              ->orWhere(function ($q2) {
+                  $q2->where('status', 'dibatalkan')
+                     ->where('alasan_pembatalan', 'not like', '% di Midtrans')
+                     ->where('alasan_pembatalan', '!=', 'Pembayaran melewati batas waktu (10 menit)');
+              });
+        });
+    }
 }

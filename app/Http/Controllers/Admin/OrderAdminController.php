@@ -18,9 +18,12 @@ class OrderAdminController extends Controller
 
         // Admin tidak melihat pesanan belum_bayar — itu state user-action
         // yang otomatis di-cancel kalau lewat 10 menit, tidak butuh aksi admin.
+        // excludeAutoCancelled() menyembunyikan pesanan yang dibatalkan otomatis
+        // sistem (Midtrans expire/fail) — hanya pembatalan oleh admin yang tampil.
         $baseQuery = Order::query()
             ->whereDate('created_at', $date)
-            ->where('status', '!=', 'belum_bayar');
+            ->where('status', '!=', 'belum_bayar')
+            ->excludeAutoCancelled();
 
         $query = (clone $baseQuery)->with('user')->latest();
 
