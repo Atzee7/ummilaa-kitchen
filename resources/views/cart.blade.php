@@ -53,7 +53,8 @@
                             data-action="increment"
                             data-quantity="{{ $cart->quantity + 1 }}"
                             data-url="{{ route('cart.update', $cart->id) }}"
-                            class="w-9 h-9 bg-[#fafafa] border-none text-base font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors">+</button>
+                            {{ $cart->quantity >= 10 ? 'disabled' : '' }}
+                            class="w-9 h-9 bg-[#fafafa] border-none text-base font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors disabled:opacity-40 disabled:hover:bg-[#fafafa]">+</button>
                     </div>
                     <form method="POST" action="{{ route('cart.destroy', $cart->id) }}">
                         @csrf @method('DELETE')
@@ -63,6 +64,9 @@
                         </button>
                     </form>
                 </div>
+                <p id="qty-error-{{ $cart->id }}" class="col-span-2 sm:col-span-3 text-red-600 text-[0.8rem] mt-1 hidden">
+                    <i class="fas fa-exclamation-circle"></i> <span></span>
+                </p>
             </div>
             @endforeach
         </div>
@@ -110,6 +114,8 @@
 </div>
 
 <script>
+const CART_MAX_QTY = {{ $maxQty ?? 10 }};
+
 (function () {
     function getCsrf() {
         return document.querySelector('meta[name="csrf-token"]').content;
@@ -122,12 +128,30 @@
         if (counter) counter.textContent = count + ' produk dalam keranjang Anda';
     }
 
+    function showRowError(cartId, msg) {
+        const errEl = document.getElementById(`qty-error-${cartId}`);
+        if (errEl) {
+            errEl.querySelector('span').textContent = msg;
+            errEl.classList.remove('hidden');
+        }
+    }
+
+    function hideRowError(cartId) {
+        const errEl = document.getElementById(`qty-error-${cartId}`);
+        if (errEl) errEl.classList.add('hidden');
+    }
+
     async function handleQty(btn) {
         const cartId = btn.dataset.cartId;
         const newQty = parseInt(btn.dataset.quantity);
-        const url = btn.dataset.url;
+        const url    = btn.dataset.url;
         const decBtn = document.querySelector(`[data-cart-id="${cartId}"][data-action="decrement"]`);
         const incBtn = document.querySelector(`[data-cart-id="${cartId}"][data-action="increment"]`);
+
+        if (newQty > CART_MAX_QTY) {
+            showRowError(cartId, 'Maksimal pesanan per produk adalah ' + CART_MAX_QTY + ' item.');
+            return;
+        }
 
         decBtn.disabled = true;
         incBtn.disabled = true;
@@ -136,21 +160,30 @@
             const res = await fetch(url, {
                 method: 'PATCH',
                 headers: {
-                    'X-CSRF-TOKEN': getCsrf(),
+                    'X-CSRF-TOKEN':     getCsrf(),
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    'Content-Type':     'application/json',
+                    'Accept':           'application/json',
                 },
                 body: JSON.stringify({ quantity: newQty }),
             });
             const data = await res.json();
+
+            if (!res.ok) {
+                showRowError(cartId, data.error ?? 'Terjadi kesalahan. Coba lagi.');
+                decBtn.disabled = false;
+                incBtn.disabled = false;
+                return;
+            }
+
+            hideRowError(cartId);
             document.getElementById(`qty-${cartId}`).textContent = data.quantity;
             decBtn.dataset.quantity = data.quantity - 1;
             incBtn.dataset.quantity = data.quantity + 1;
-            document.querySelector(`[data-summary-row="${cartId}"] .item-qty`).textContent = `x${data.quantity}`;
+            document.querySelector(`[data-summary-row="${cartId}"] .item-qty`).textContent   = `x${data.quantity}`;
             document.querySelector(`[data-summary-row="${cartId}"] .item-total`).textContent = 'Rp' + Number(data.item_total).toLocaleString('id-ID');
             decBtn.disabled = data.quantity <= 1;
-            incBtn.disabled = false;
+            incBtn.disabled = data.quantity >= CART_MAX_QTY;
             updateTotals(data.subtotal, data.cart_count);
         } catch (e) {
             if (document.body.contains(decBtn)) {

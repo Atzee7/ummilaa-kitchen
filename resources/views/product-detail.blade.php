@@ -10,6 +10,14 @@
 </div>
 @endif
 
+@if($errors->has('quantity'))
+<div class="px-4 md:px-10 lg:px-[80px] pt-5">
+    <div class="bg-red-100 text-red-800 px-5 py-[14px] rounded-xl text-[0.9rem] flex items-center gap-[10px]">
+        <i class="fas fa-exclamation-circle"></i> {{ $errors->first('quantity') }}
+    </div>
+</div>
+@endif
+
 <div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px]">
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr_auto] gap-8 lg:gap-[60px] items-start">
 
@@ -41,9 +49,13 @@
             <div class="font-extrabold text-[#1a1a1a] text-[0.88rem] sm:text-[0.95rem] mb-4 sm:mb-5">Pesan Sekarang</div>
             <div class="flex items-center border-[1.5px] border-maroon-200 rounded-xl overflow-hidden mb-4 sm:mb-5">
                 <button class="w-9 h-9 sm:w-11 sm:h-11 bg-[#fafafa] border-none text-[1rem] sm:text-[1.1rem] font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors" onclick="changeQty(-1)">−</button>
-                <input class="flex-1 text-center border-none text-[0.9rem] sm:text-base font-bold font-sans outline-none text-[#1a1a1a] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" type="number" id="qty" value="1" min="1" max="{{ $product->stock }}">
+                <input class="flex-1 text-center border-none text-[0.9rem] sm:text-base font-bold font-sans outline-none text-[#1a1a1a] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" type="number" id="qty" value="1" min="1" max="{{ min($product->stock, 10) }}">
                 <button class="w-9 h-9 sm:w-11 sm:h-11 bg-[#fafafa] border-none text-[1rem] sm:text-[1.1rem] font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors" onclick="changeQty(1)">+</button>
             </div>
+            <p id="qty-error-msg" style="display:none" class="text-[0.75rem] text-red-600 flex items-center gap-[6px] -mt-3 mb-3">
+                <i class="fas fa-exclamation-circle flex-shrink-0"></i>
+                <span>Maksimal pemesanan per produk adalah 10 item.</span>
+            </p>
             <div class="bg-maroon-50 rounded-xl px-3 sm:px-4 py-[10px] sm:py-[14px] mb-4 sm:mb-5">
                 <p class="text-[0.75rem] sm:text-[0.82rem] text-[#999] mb-0.5 sm:mb-1">Subtotal</p>
                 <strong id="subtotalText" class="text-[0.95rem] sm:text-[1.1rem] text-maroon font-extrabold">Rp{{ number_format($product->price, 0, ',', '.') }}</strong>
@@ -117,28 +129,49 @@
 
 @push('scripts')
 <script>
-const price = {{ $product->price }};
+const price    = {{ $product->price }};
 const maxStock = {{ $product->stock }};
+const MAX_QTY  = Math.min(maxStock > 0 ? maxStock : 10, 10);
+
+function showQtyError() {
+    const el = document.getElementById('qty-error-msg');
+    if (el) el.style.display = 'flex';
+}
+
+function hideQtyError() {
+    const el = document.getElementById('qty-error-msg');
+    if (el) el.style.display = 'none';
+}
 
 function changeQty(delta) {
     const input = document.getElementById('qty');
     let val = parseInt(input.value) + delta;
     if (val < 1) val = 1;
-    if (maxStock > 0 && val > maxStock) val = maxStock;
+    if (val > MAX_QTY) {
+        val = MAX_QTY;
+        showQtyError();
+    } else {
+        hideQtyError();
+    }
     input.value = val;
     const hiddenQty = document.getElementById('hiddenQty');
     if (hiddenQty) hiddenQty.value = val;
     document.getElementById('subtotalText').textContent = 'Rp' + (price * val).toLocaleString('id-ID');
 }
 
-document.getElementById('qty')?.addEventListener('focus', function() {
+document.getElementById('qty')?.addEventListener('focus', function () {
     this.select();
 });
 
-document.getElementById('qty')?.addEventListener('input', function() {
+document.getElementById('qty')?.addEventListener('input', function () {
     let val = parseInt(this.value);
     if (isNaN(val) || val < 1) val = 1;
-    if (maxStock > 0 && val > maxStock) val = maxStock;
+    if (val > MAX_QTY) {
+        val = MAX_QTY;
+        showQtyError();
+    } else {
+        hideQtyError();
+    }
     this.value = val;
     const hiddenQty = document.getElementById('hiddenQty');
     if (hiddenQty) hiddenQty.value = val;
