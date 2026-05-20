@@ -147,6 +147,12 @@
                             <h4 class="text-[#999] text-[0.95rem] mb-1">Produk tidak tersedia</h4>
                         @endif
                         <p class="text-[0.83rem] text-[#999]">{{ $order->items->sum('quantity') }} item · {{ ucfirst($order->metode_pembayaran) }}</p>
+                        @if($order->tanggal_pengiriman)
+                        <p class="text-[0.78rem] text-blue-600 mt-1 font-semibold">
+                            <i class="fas fa-calendar-check text-[0.65rem]"></i>
+                            Jadwal: {{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->translatedFormat('d M Y') }}@if($order->waktu_pengiriman) · {{ $order->waktu_pengiriman }}@endif
+                        </p>
+                        @endif
                     </div>
                 </div>
 
@@ -327,6 +333,12 @@
                             <h4 class="text-[#999] text-[0.95rem] mb-1">Produk tidak tersedia</h4>
                         @endif
                         <p class="text-[0.83rem] text-[#999]">{{ $order->items->sum('quantity') }} item · {{ ucfirst($order->metode_pembayaran) }}</p>
+                        @if($order->tanggal_pengiriman)
+                        <p class="text-[0.78rem] text-blue-600 mt-1 font-semibold">
+                            <i class="fas fa-calendar-check text-[0.65rem]"></i>
+                            Jadwal: {{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->translatedFormat('d M Y') }}@if($order->waktu_pengiriman) · {{ $order->waktu_pengiriman }}@endif
+                        </p>
+                        @endif
                     </div>
                 </div>
 

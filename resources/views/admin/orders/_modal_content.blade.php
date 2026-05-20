@@ -173,6 +173,18 @@
         </div>
     </div>
 
+    {{-- JADWAL PENGIRIMAN --}}
+    @if($order->tanggal_pengiriman)
+    <div class="flex items-center gap-2 text-xs bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+        <svg class="w-3.5 h-3.5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span class="text-blue-700 font-semibold">
+            Jadwal: {{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->translatedFormat('l, d F Y') }}@if($order->waktu_pengiriman) · {{ $order->waktu_pengiriman }}@endif
+        </span>
+    </div>
+    @endif
+
     {{-- ALASAN PEMBATALAN --}}
     @if($order->status === 'dibatalkan' && $order->alasan_pembatalan)
     <div class="bg-red-50 border border-red-100 rounded-xl p-3 flex gap-2">

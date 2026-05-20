@@ -23,7 +23,11 @@ class OrderAdminController extends Controller
         $baseQuery = Order::query()
             ->whereDate('created_at', $date)
             ->where('status', '!=', 'belum_bayar')
-            ->excludeAutoCancelled();
+            ->excludeAutoCancelled()
+            ->where(function ($q) use ($date) {
+                $q->whereNull('tanggal_pengiriman')
+                  ->orWhereDate('tanggal_pengiriman', $date);
+            });
 
         $query = (clone $baseQuery)->with('user')->latest();
 
@@ -31,7 +35,7 @@ class OrderAdminController extends Controller
             $query->where('status', $status);
         }
 
-        $orders = $query->paginate(15);
+        $orders = $query->paginate(5);
 
         $counts = [
             'semua'        => (clone $baseQuery)->count(),
@@ -43,7 +47,17 @@ class OrderAdminController extends Controller
             'dibatalkan'   => (clone $baseQuery)->where('status', 'dibatalkan')->count(),
         ];
 
-        return view('admin.orders.index', compact('orders', 'status', 'counts', 'date'));
+        $scheduledOrders = Order::query()
+            ->with('user')
+            ->whereDate('tanggal_pengiriman', '>', today())
+            ->where('status', '!=', 'belum_bayar')
+            ->whereNotIn('status', ['selesai', 'dibatalkan'])
+            ->excludeAutoCancelled()
+            ->orderBy('tanggal_pengiriman')
+            ->orderBy('waktu_pengiriman')
+            ->paginate(8, ['*'], 'spage');
+
+        return view('admin.orders.index', compact('orders', 'status', 'counts', 'date', 'scheduledOrders'));
     }
 
     public function show($id)
@@ -67,6 +81,24 @@ class OrderAdminController extends Controller
                 return response()->json(['message' => $message], 422);
             }
             return back()->withErrors(['status' => $message]);
+        }
+
+        if ($request->status !== 'dibatalkan' && $order->tanggal_pengiriman) {
+            if ($order->tanggal_pengiriman->isFuture()) {
+                $msg = 'Pesanan ini dijadwalkan untuk ' . $order->tanggal_pengiriman->translatedFormat('l, d F Y') . '. Belum bisa diproses sebelum harinya tiba.';
+                return $request->expectsJson()
+                    ? response()->json(['message' => $msg], 422)
+                    : back()->withErrors(['status' => $msg]);
+            }
+            if ($order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman) {
+                $startTime = substr($order->waktu_pengiriman, 0, 5);
+                if (now()->format('H:i') < $startTime) {
+                    $msg = "Pesanan ini baru bisa diproses mulai jam {$startTime}.";
+                    return $request->expectsJson()
+                        ? response()->json(['message' => $msg], 422)
+                        : back()->withErrors(['status' => $msg]);
+                }
+            }
         }
 
         $updateData = ['status' => $request->status];

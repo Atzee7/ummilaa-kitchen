@@ -9,13 +9,14 @@ class Order extends Model
 
     protected $fillable = [
         'user_id', 'nama_penerima', 'alamat', 'detail_alamat', 'no_telepon',
-        'metode_pembayaran', 'metode_pengiriman', 'catatan',
+        'metode_pembayaran', 'metode_pengiriman', 'catatan', 'tanggal_pengiriman', 'waktu_pengiriman',
         'subtotal', 'ongkir', 'total', 'status', 'alasan_pembatalan',
         'snap_token', 'midtrans_transaction_id', 'payment_type', 'paid_at',
     ];
 
     protected $casts = [
-        'paid_at' => 'datetime',
+        'paid_at'             => 'datetime',
+        'tanggal_pengiriman'  => 'date',
     ];
 
     public function items() { return $this->hasMany(OrderItem::class); }

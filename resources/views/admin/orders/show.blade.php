@@ -351,6 +351,12 @@
                         {{ $isDelivery ? 'Delivery' : 'Ambil Sendiri' }}
                     </span>
                 </div>
+                @if($order->tanggal_pengiriman)
+                <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                    <span class="text-gray-400 font-semibold">Jadwal</span>
+                    <span class="font-bold text-blue-600">{{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->translatedFormat('d M Y') }}@if($order->waktu_pengiriman) · {{ $order->waktu_pengiriman }}@endif</span>
+                </div>
+                @endif
                 <div class="flex justify-between items-center py-2 border-b border-gray-50">
                     <span class="text-gray-400 font-semibold">Jumlah Item</span>
                     <span class="font-bold text-gray-800">{{ $order->items->count() }} produk</span>

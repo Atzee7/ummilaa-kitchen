@@ -85,6 +85,7 @@
             </svg>
             Pesanan
             <span id="order-badge" class="hidden ml-auto bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center leading-none">0</span>
+            <span id="scheduled-badge" class="hidden bg-blue-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full items-center justify-center leading-none">0</span>
         </a>
 
         <a href="{{ route('admin.kasir.index') }}"
@@ -265,6 +266,15 @@
                 } else {
                     badge.classList.add('hidden');
                     badge.classList.remove('flex');
+                }
+                const scheduledBadge = document.getElementById('scheduled-badge');
+                if (scheduledBadge) {
+                    if (data.scheduled_count > 0) {
+                        scheduledBadge.textContent = data.scheduled_count > 99 ? '99+' : data.scheduled_count;
+                        scheduledBadge.classList.replace('hidden', 'inline-flex');
+                    } else {
+                        scheduledBadge.classList.replace('inline-flex', 'hidden');
+                    }
                 }
                 if (tbody) {
                     tbody.innerHTML = data.orders.length

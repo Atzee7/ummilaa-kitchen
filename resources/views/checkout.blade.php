@@ -191,6 +191,26 @@
                             Lokasi GPS belum diatur di profil. <a href="{{ route('profile.user') }}" class="text-maroon font-bold ml-1">Update profil</a> untuk mengaktifkan Delivery.
                         </div>
                     @endif
+
+                    {{-- PESAN UNTUK NANTI --}}
+                    <div class="mt-4 border-[1.5px] border-maroon-200 rounded-xl overflow-hidden">
+                        <div id="btn-pesan-nanti"
+                            class="w-full flex items-center justify-between px-4 py-[13px] text-[0.88rem] font-bold text-[#444] hover:bg-[#fdf8f8] transition-all cursor-pointer select-none">
+                            <span class="flex items-center gap-[10px]">
+                                <i class="fas fa-calendar-alt text-maroon w-5 text-center"></i>
+                                <span>Pesan untuk nanti</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span id="label-jadwal-selected" class="hidden text-maroon text-[0.78rem] font-extrabold"></span>
+                                <span id="btn-clear-jadwal" class="hidden text-[#bbb] hover:text-red-500 transition-colors cursor-pointer p-1">
+                                    <i class="fas fa-times-circle"></i>
+                                </span>
+                                <i class="fas fa-chevron-right text-[0.75rem] text-[#bbb]" id="icon-pesan-nanti"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="tanggal_pengiriman" id="input-tanggal">
+                    <input type="hidden" name="waktu_pengiriman" id="input-waktu">
                 </div>
 
                 {{-- 4. PEMBAYARAN --}}
@@ -268,6 +288,110 @@
     </form>
 </div>
 
+{{-- MODAL: PESAN UNTUK NANTI --}}
+<div id="jadwal-overlay" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background:rgba(0,0,0,0.5)">
+    <div class="bg-white rounded-[20px] shadow-2xl w-full max-w-sm overflow-hidden">
+
+        {{-- VIEW UTAMA --}}
+        <div id="jn-main">
+            <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[#f5f0f0]">
+                <h3 class="font-playfair text-[1.1rem] font-bold text-[#1a1a1a]">Pesan untuk Nanti</h3>
+                <button type="button" onclick="closePesanNanti()"
+                    class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-[#999]">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Baris Hari --}}
+            <div onclick="showJnHari()" class="flex items-center justify-between px-5 py-4 border-b border-[#f5f0f0] cursor-pointer hover:bg-[#fdf8f8] transition-all group">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-[#fdf0f0] flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-calendar text-maroon text-[0.85rem]"></i>
+                    </div>
+                    <div>
+                        <p class="text-[0.7rem] text-[#aaa] font-semibold uppercase tracking-wide leading-none mb-1">Hari</p>
+                        <p id="jn-date-label" class="text-[0.9rem] font-bold text-[#444] leading-tight">Pilih hari pengiriman</p>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-[0.75rem] text-[#ccc] group-hover:text-maroon transition-colors flex-shrink-0"></i>
+            </div>
+
+            {{-- Baris Jam --}}
+            <div onclick="showJnJam()" class="flex items-center justify-between px-5 py-4 border-b border-[#f5f0f0] cursor-pointer hover:bg-[#fdf8f8] transition-all group">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-[#fdf0f0] flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-clock text-maroon text-[0.85rem]"></i>
+                    </div>
+                    <div>
+                        <p class="text-[0.7rem] text-[#aaa] font-semibold uppercase tracking-wide leading-none mb-1">Jam</p>
+                        <p id="jn-time-label" class="text-[0.9rem] font-bold text-[#444] leading-tight">Pilih jam pengiriman</p>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-[0.75rem] text-[#ccc] group-hover:text-maroon transition-colors flex-shrink-0"></i>
+            </div>
+
+            {{-- Footer --}}
+            <div class="px-5 py-4 flex flex-col gap-2">
+                <button type="button" id="btn-confirm-jadwal" disabled onclick="confirmJadwal()"
+                    class="w-full py-[13px] bg-maroon text-white rounded-xl font-bold text-[0.9rem] disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    Konfirmasi Jadwal
+                </button>
+                <button type="button" onclick="pesanSekarang()"
+                    class="w-full py-3 text-[0.85rem] font-bold text-[#888] hover:text-maroon transition-all">
+                    Pesan Sekarang (tanpa jadwal)
+                </button>
+            </div>
+        </div>
+
+        {{-- VIEW PILIH HARI --}}
+        <div id="jn-hari" class="hidden">
+            <div class="flex items-center gap-3 px-5 pt-5 pb-4 border-b border-[#f5f0f0]">
+                <button type="button" onclick="showJnMain()"
+                    class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-[#999]">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </button>
+                <h3 class="font-playfair text-[1.05rem] font-bold text-[#1a1a1a]">Pilih Hari</h3>
+            </div>
+            <div id="jn-hari-list" class="px-3 py-2"></div>
+        </div>
+
+        {{-- VIEW PILIH JAM --}}
+        <div id="jn-jam" class="hidden">
+            <div class="flex items-center gap-3 px-5 pt-5 pb-4 border-b border-[#f5f0f0]">
+                <button type="button" onclick="showJnMain()"
+                    class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-[#999]">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </button>
+                <h3 class="font-playfair text-[1.05rem] font-bold text-[#1a1a1a]">Pilih Jam</h3>
+            </div>
+            <div class="px-5 pt-3 pb-2">
+                <p class="text-[0.7rem] font-bold text-[#aaa] uppercase tracking-wide mb-2">Jam</p>
+                <div id="jn-hour-grid" class="grid grid-cols-4 gap-2"></div>
+            </div>
+            <div class="px-5 pb-3">
+                <p class="text-[0.7rem] font-bold text-[#aaa] uppercase tracking-wide mb-2">Menit</p>
+                <div class="flex gap-2">
+                    <button type="button" id="min-00" onclick="selectMin(0)"
+                        class="flex-1 py-[10px] rounded-xl border-[1.5px] text-[0.88rem] font-bold transition-all border-maroon-200 text-[#555] hover:border-maroon hover:text-maroon">
+                        : 00
+                    </button>
+                    <button type="button" id="min-30" onclick="selectMin(30)"
+                        class="flex-1 py-[10px] rounded-xl border-[1.5px] text-[0.88rem] font-bold transition-all border-maroon-200 text-[#555] hover:border-maroon hover:text-maroon">
+                        : 30
+                    </button>
+                </div>
+            </div>
+            <div class="px-5 pb-5 pt-2 border-t border-[#f0eaea]">
+                <button type="button" id="btn-jam-oke" disabled onclick="showJnMain()"
+                    class="w-full py-[13px] bg-maroon text-white rounded-xl font-bold text-[0.9rem] disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    OKE
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 {{-- MODAL KONFIRMASI PESANAN --}}
 <div id="checkout-confirm-modal"
      class="fixed inset-0 z-50 flex items-center justify-center hidden"
@@ -294,6 +418,7 @@
                     <p class="text-[#1a1a1a] font-semibold leading-[1.6]" id="modal-detail-alamat"></p>
                 </div>
                 <div class="flex justify-between"><span>Pengiriman</span><strong class="text-[#1a1a1a]" id="modal-pengiriman"></strong></div>
+                <div class="flex justify-between"><span>Jadwal</span><strong class="text-[#1a1a1a]" id="modal-jadwal"></strong></div>
                 <div class="flex justify-between"><span>Pembayaran</span><strong class="text-[#1a1a1a]" id="modal-pembayaran"></strong></div>
                 <div id="modal-catatan-wrap" class="hidden">
                     <p class="text-[#888] mb-1">Catatan</p>
@@ -467,6 +592,12 @@
             }
 
             document.getElementById('modal-pengiriman').textContent = delivery ? 'Delivery' : 'Ambil Sendiri';
+
+            const jadwalText = selectedDate && selectedSlot
+                ? parseLocalDate(selectedDate).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'long' }) + ' · ' + selectedSlot
+                : 'Langsung';
+            document.getElementById('modal-jadwal').textContent = jadwalText;
+
             document.getElementById('modal-pembayaran').textContent = bayar;
 
             const catatanVal  = document.querySelector('textarea[name="catatan"]')?.value.trim() ?? '';
@@ -509,5 +640,251 @@
             document.getElementById('checkout-form').submit();
         });
     })();
+
+    // ====== PESAN UNTUK NANTI ======
+    const JAM_BUKA  = 8;
+    const JAM_TUTUP = 20;
+
+    // Gunakan tanggal lokal (bukan UTC) agar cocok dengan server timezone (WIB)
+    function localDateIso(d) {
+        const pad = n => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    function parseLocalDate(iso) {
+        const [y, m, d] = iso.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    let selectedDate = null;
+    let selectedSlot = null;
+    let tempDate     = null;
+    let tempHour     = null;
+    let tempMin      = null;
+
+    document.getElementById('btn-pesan-nanti').addEventListener('click', openPesanNanti);
+    document.getElementById('btn-clear-jadwal').addEventListener('click', clearJadwal);
+
+    function openPesanNanti() {
+        tempDate = selectedDate;
+        tempHour = selectedSlot ? parseInt(selectedSlot.slice(0, 2)) : null;
+        tempMin  = selectedSlot ? parseInt(selectedSlot.slice(3, 5)) : null;
+        showJnMain();
+        document.getElementById('jadwal-overlay').classList.remove('hidden');
+        document.getElementById('jadwal-overlay').classList.add('flex');
+    }
+
+    function closePesanNanti() {
+        document.getElementById('jadwal-overlay').classList.add('hidden');
+        document.getElementById('jadwal-overlay').classList.remove('flex');
+    }
+
+    // ---- View switching ----
+    function showJnMain() {
+        updateMainLabels();
+        updateConfirmBtn();
+        document.getElementById('jn-hari').classList.add('hidden');
+        document.getElementById('jn-jam').classList.add('hidden');
+        document.getElementById('jn-main').classList.remove('hidden');
+    }
+
+    function showJnHari() {
+        document.getElementById('jn-main').classList.add('hidden');
+        document.getElementById('jn-hari').classList.remove('hidden');
+        buildHariList();
+    }
+
+    function showJnJam() {
+        document.getElementById('jn-main').classList.add('hidden');
+        document.getElementById('jn-jam').classList.remove('hidden');
+        buildHourGrid();
+        renderMinButtons();
+        updateOkeBtn();
+    }
+
+    // ---- Update labels on main view ----
+    function updateMainLabels() {
+        const todayIso  = localDateIso(new Date());
+        const dateLabel = document.getElementById('jn-date-label');
+        if (tempDate) {
+            const d   = parseLocalDate(tempDate);
+            const lbl = tempDate === todayIso
+                ? 'Hari Ini, ' + d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })
+                : d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            dateLabel.textContent = lbl;
+            dateLabel.style.color = 'var(--color-maroon, #8B1A1A)';
+        } else {
+            dateLabel.textContent = 'Pilih hari pengiriman';
+            dateLabel.style.color = '#444';
+        }
+        const timeLabel = document.getElementById('jn-time-label');
+        if (tempHour !== null && tempMin !== null) {
+            const endH = tempMin === 30 ? tempHour + 1 : tempHour;
+            const endM = tempMin === 30 ? 0 : 30;
+            timeLabel.textContent = `${String(tempHour).padStart(2,'0')}:${String(tempMin).padStart(2,'0')} – ${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}`;
+            timeLabel.style.color = 'var(--color-maroon, #8B1A1A)';
+        } else {
+            timeLabel.textContent = 'Pilih jam pengiriman';
+            timeLabel.style.color = '#444';
+        }
+    }
+
+    // ---- Build hari list (4 baris, tanpa scroll) ----
+    function buildHariList() {
+        const container = document.getElementById('jn-hari-list');
+        container.innerHTML = '';
+        const today = new Date();
+        for (let i = 0; i < 4; i++) {
+            const d      = new Date(today);
+            d.setDate(today.getDate() + i);
+            const iso    = localDateIso(d);
+            const nama   = i === 0 ? 'Hari Ini' : i === 1 ? 'Besok'
+                : d.toLocaleDateString('id-ID', { weekday: 'long' });
+            const tgl    = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const active = tempDate === iso;
+            const row    = document.createElement('div');
+            row.className = 'flex items-center justify-between px-3 py-[13px] rounded-xl cursor-pointer transition-all mx-1 '
+                + (active ? 'bg-[#fdf0f0]' : 'hover:bg-[#fdf8f8]');
+            row.innerHTML = `
+                <div>
+                    <p class="text-[0.9rem] font-bold" style="color:${active ? '#8B1A1A' : '#1a1a1a'}">${nama}</p>
+                    <p class="text-[0.75rem] mt-0.5" style="color:#999">${tgl}</p>
+                </div>
+                ${active
+                    ? '<i class="fas fa-check-circle" style="color:#8B1A1A;font-size:1rem"></i>'
+                    : '<i class="fas fa-circle" style="color:#e8e0e0;font-size:0.55rem"></i>'
+                }
+            `;
+            row.addEventListener('click', () => {
+                if (tempDate !== iso) {
+                    if (tempHour !== null && !isHourAvailable(iso, tempHour)) {
+                        tempHour = null;
+                        tempMin  = null;
+                    } else if (tempMin !== null && !isTimeAvailable(iso, tempHour, tempMin)) {
+                        tempMin = null;
+                    }
+                }
+                tempDate = iso;
+                showJnMain();
+            });
+            container.appendChild(row);
+        }
+    }
+
+    // ---- Hour grid ----
+    function buildHourGrid() {
+        const container = document.getElementById('jn-hour-grid');
+        container.innerHTML = '';
+        for (let h = JAM_BUKA; h < JAM_TUTUP; h++) {
+            const available  = isHourAvailable(tempDate, h);
+            const isSelected = tempHour === h;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = String(h).padStart(2, '0');
+            if (!available) {
+                btn.disabled = true;
+                btn.className = 'py-[10px] rounded-xl border-[1.5px] border-[#eee] text-[0.88rem] text-[#ccc] cursor-not-allowed';
+            } else {
+                btn.className = 'py-[10px] rounded-xl border-[1.5px] text-[0.88rem] font-bold transition-all '
+                    + (isSelected ? 'bg-maroon text-white border-maroon' : 'border-maroon-200 text-[#555] hover:border-maroon hover:text-maroon');
+                btn.addEventListener('click', () => {
+                    tempHour = h;
+                    if (tempMin !== null && !isTimeAvailable(tempDate, h, tempMin)) {
+                        tempMin = null;
+                    }
+                    buildHourGrid();
+                    renderMinButtons();
+                    updateOkeBtn();
+                });
+            }
+            container.appendChild(btn);
+        }
+    }
+
+    // ---- Minute buttons ----
+    function renderMinButtons() {
+        [0, 30].forEach(m => {
+            const id  = m === 0 ? 'min-00' : 'min-30';
+            const btn = document.getElementById(id);
+            const available  = tempHour !== null && isTimeAvailable(tempDate, tempHour, m);
+            const isSelected = tempMin === m;
+            if (!available) {
+                btn.disabled = true;
+                btn.className = 'flex-1 py-[10px] rounded-xl border-[1.5px] border-[#eee] text-[0.88rem] text-[#ccc] cursor-not-allowed';
+            } else {
+                btn.disabled = false;
+                btn.className = 'flex-1 py-[10px] rounded-xl border-[1.5px] text-[0.88rem] font-bold transition-all '
+                    + (isSelected ? 'bg-maroon text-white border-maroon' : 'border-maroon-200 text-[#555] hover:border-maroon hover:text-maroon');
+            }
+        });
+    }
+
+    function selectMin(m) {
+        if (tempHour === null) return;
+        if (!isTimeAvailable(tempDate, tempHour, m)) return;
+        tempMin = m;
+        renderMinButtons();
+        updateOkeBtn();
+    }
+
+    function updateOkeBtn() {
+        document.getElementById('btn-jam-oke').disabled = !(tempHour !== null && tempMin !== null);
+    }
+
+    // ---- Helpers ----
+    function updateConfirmBtn() {
+        document.getElementById('btn-confirm-jadwal').disabled = !(tempDate && tempHour !== null && tempMin !== null);
+    }
+
+    function isHourAvailable(dateIso, h) {
+        if (!dateIso) return true;
+        const todayIso = localDateIso(new Date());
+        if (dateIso !== todayIso) return true;
+        return isTimeAvailable(dateIso, h, 0) || isTimeAvailable(dateIso, h, 30);
+    }
+
+    function isTimeAvailable(dateIso, h, m) {
+        if (!dateIso) return true;
+        const todayIso = localDateIso(new Date());
+        if (dateIso !== todayIso) return true;
+        const slotTime = new Date();
+        slotTime.setHours(h, m, 0, 0);
+        return slotTime >= new Date(Date.now() + 30 * 60 * 1000);
+    }
+
+    function confirmJadwal() {
+        selectedDate = tempDate;
+        const endH   = tempMin === 30 ? tempHour + 1 : tempHour;
+        const endM   = tempMin === 30 ? 0 : 30;
+        selectedSlot = `${String(tempHour).padStart(2,'0')}:${String(tempMin).padStart(2,'0')} - ${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}`;
+        document.getElementById('input-tanggal').value = selectedDate;
+        document.getElementById('input-waktu').value   = selectedSlot;
+        const d        = parseLocalDate(selectedDate);
+        const todayIso = localDateIso(new Date());
+        const dayLabel = selectedDate === todayIso ? 'Hari Ini'
+            : d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+        document.getElementById('label-jadwal-selected').textContent = `${dayLabel} · ${selectedSlot}`;
+        document.getElementById('label-jadwal-selected').classList.remove('hidden');
+        document.getElementById('btn-clear-jadwal').classList.remove('hidden');
+        document.getElementById('icon-pesan-nanti').classList.add('hidden');
+        closePesanNanti();
+    }
+
+    function clearJadwal(e) {
+        e.stopPropagation();
+        selectedDate = selectedSlot = null;
+        tempHour     = null;
+        tempMin      = null;
+        document.getElementById('input-tanggal').value = '';
+        document.getElementById('input-waktu').value   = '';
+        document.getElementById('label-jadwal-selected').classList.add('hidden');
+        document.getElementById('btn-clear-jadwal').classList.add('hidden');
+        document.getElementById('icon-pesan-nanti').classList.remove('hidden');
+    }
+
+    function pesanSekarang() {
+        clearJadwal({ stopPropagation: () => {} });
+        closePesanNanti();
+    }
 </script>
 @endpush

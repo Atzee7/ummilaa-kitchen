@@ -60,6 +60,10 @@
     @endforeach
 </div>
 
+<p class="text-sm font-semibold text-gray-500 mb-3">
+    Pengiriman {{ $date === today()->format('Y-m-d') ? 'Hari Ini' : \Carbon\Carbon::parse($date)->translatedFormat('l, d F Y') }}
+</p>
+
 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
     <table class="w-full text-sm">
         <thead class="border-b border-gray-100">
@@ -123,7 +127,7 @@
                     default                                               => '',
                 };
             @endphp
-            <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery ? '1' : '0' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
+            <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery ? '1' : '0' }}" data-waktu-start="{{ $order->tanggal_pengiriman && $order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman ? substr($order->waktu_pengiriman,0,5) : '' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
                 <td class="py-4 px-6 font-bold text-gray-700">#{{ $order->id }}</td>
                 <td class="py-4 px-6">
                     <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
@@ -153,7 +157,18 @@
                 <td class="py-4 px-6">
                     <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $statusLabel }}</span>
                 </td>
-                <td class="py-4 px-6 text-gray-400 text-xs">{{ $order->created_at->format('d M Y, H:i') }}</td>
+                <td class="py-4 px-6 text-xs">
+                    <p class="text-gray-400">{{ $order->created_at->format('d M Y, H:i') }}</p>
+                    @if($order->tanggal_pengiriman)
+                    <p class="text-blue-600 font-semibold mt-0.5">
+                        <svg class="w-3 h-3 inline-block mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        {{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->format('d M Y') }}
+                    </p>
+                    @if($order->waktu_pengiriman)
+                    <p class="text-blue-500 text-[0.72rem]">{{ $order->waktu_pengiriman }}</p>
+                    @endif
+                    @endif
+                </td>
                 <td class="py-4 px-6">
                     <div class="flex items-center gap-1.5 flex-wrap">
                         {{-- Tombol next status --}}
@@ -186,6 +201,133 @@
     </table>
     <div class="p-4">{{ $orders->appends(['status' => $status, 'date' => $date])->links() }}</div>
 </div>
+
+{{-- SECTION 2: PESANAN TERJADWAL --}}
+@if($scheduledOrders->total() > 0)
+<div class="mt-10">
+    <div class="flex items-center gap-3 mb-4">
+        <h2 class="text-base font-bold text-gray-700">Pesanan Terjadwal</h2>
+        <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
+            {{ $scheduledOrders->total() }} pesanan
+        </span>
+        <span class="text-xs text-gray-400">Dijadwalkan setelah hari ini</span>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="border-b border-gray-100 bg-blue-50">
+                <tr>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">ID</th>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pelanggan</th>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Total</th>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pengiriman</th>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pembayaran</th>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Status</th>
+                    <th class="text-left py-4 px-6 text-blue-600 font-semibold">Jadwal Kirim</th>
+                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $grouped2 = $scheduledOrders->getCollection()->groupBy(
+                        fn($o) => $o->tanggal_pengiriman->format('Y-m-d')
+                    );
+                @endphp
+                @foreach($grouped2 as $dateKey => $dayOrders)
+                @php
+                    $dayLabel = match($dateKey) {
+                        today()->addDay()->format('Y-m-d')   => 'Besok',
+                        today()->addDays(2)->format('Y-m-d') => 'Lusa',
+                        default => \Carbon\Carbon::parse($dateKey)->translatedFormat('l, d M Y'),
+                    };
+                @endphp
+                <tr>
+                    <td colspan="8" class="px-6 py-2 bg-blue-50 border-y border-blue-100">
+                        <span class="text-blue-700 font-bold text-xs">📅 {{ $dayLabel }}</span>
+                    </td>
+                </tr>
+                @foreach($dayOrders as $order)
+                @php
+                    $sc2 = match($order->status) {
+                        'pending'      => 'bg-yellow-100 text-yellow-700',
+                        'diproses'     => 'bg-blue-100 text-blue-700',
+                        'dikirim'      => 'bg-purple-100 text-purple-700',
+                        'siap_diambil' => 'bg-orange-100 text-orange-700',
+                        default        => 'bg-gray-100 text-gray-700',
+                    };
+                    $statusLabel2 = match($order->status) {
+                        'pending'      => 'Menunggu',
+                        'diproses'     => 'Sedang Dimasak',
+                        'dikirim'      => 'Dikirim',
+                        'siap_diambil' => 'Siap Diambil',
+                        default        => ucfirst($order->status),
+                    };
+                    $isDelivery2 = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
+                    $nextStatus2 = match(true) {
+                        $order->status === 'pending'                           => 'diproses',
+                        $order->status === 'diproses' && $isDelivery2          => 'dikirim',
+                        $order->status === 'diproses' && !$isDelivery2         => 'siap_diambil',
+                        $order->status === 'dikirim'                           => 'selesai',
+                        $order->status === 'siap_diambil'                      => 'selesai',
+                        default                                                => null,
+                    };
+                    $lockTitle2 = 'Bisa diproses mulai ' . $order->tanggal_pengiriman->translatedFormat('d M Y')
+                        . ($order->waktu_pengiriman ? ' jam ' . substr($order->waktu_pengiriman,0,5) : '');
+                @endphp
+                <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery2 ? '1' : '0' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
+                    <td class="py-4 px-6 font-bold text-gray-700">#{{ $order->id }}</td>
+                    <td class="py-4 px-6">
+                        <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
+                        <p class="text-xs text-gray-400">{{ $order->user->email ?? '' }}</p>
+                    </td>
+                    <td class="py-4 px-6 font-bold text-[#8B1A1A]">Rp{{ number_format($order->total, 0, ',', '.') }}</td>
+                    <td class="py-4 px-6">
+                        @if($isDelivery2)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                                Delivery
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-orange-50 text-orange-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                Ambil Sendiri
+                            </span>
+                        @endif
+                    </td>
+                    <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->metode_pembayaran }}</td>
+                    <td class="py-4 px-6">
+                        <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc2 }}">{{ $statusLabel2 }}</span>
+                    </td>
+                    <td class="py-4 px-6 text-xs">
+                        <p class="text-blue-700 font-bold">{{ $order->tanggal_pengiriman->translatedFormat('l, d M Y') }}</p>
+                        @if($order->waktu_pengiriman)
+                        <p class="text-blue-500 text-[0.72rem]">{{ $order->waktu_pengiriman }}</p>
+                        @endif
+                        <p class="text-gray-400 mt-0.5">Dipesan: {{ $order->created_at->format('d M, H:i') }}</p>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            @if($nextStatus2)
+                            <span class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
+                                  title="{{ $lockTitle2 }}">🔒 Belum Waktunya</span>
+                            @endif
+                            <button
+                                onclick="openOrderModal({{ $order->id }})"
+                                class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                                Detail
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+                @endforeach
+            </tbody>
+        </table>
+        <div class="p-4">
+            {{ $scheduledOrders->appends(['status' => $status, 'date' => $date])->links() }}
+        </div>
+    </div>
+</div>
+@endif
 
 {{-- MODAL OVERLAY --}}
 <div id="order-modal-backdrop"
@@ -413,6 +555,20 @@ function showWaConfirmModal(orderId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('tr[data-waktu-start]').forEach(row => {
+        const waktuStart = row.dataset.waktuStart;
+        if (!waktuStart) return;
+        const [hh, mm] = waktuStart.split(':').map(Number);
+        const now = new Date();
+        if (now.getHours() < hh || (now.getHours() === hh && now.getMinutes() < mm)) {
+            row.querySelectorAll('.quick-status-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-40', 'cursor-not-allowed');
+                btn.title = `Bisa diproses mulai jam ${waktuStart}`;
+            });
+        }
+    });
+
     document.getElementById('wa-confirm-no').addEventListener('click', () => {
         document.getElementById('wa-confirm-modal').classList.add('hidden');
         waOrderId = null;

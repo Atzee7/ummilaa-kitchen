@@ -76,9 +76,23 @@ class CheckoutController extends Controller
     }
 
     $request->validate([
-        'metode_pembayaran'  => 'required|string',
-        'metode_pengiriman'  => 'required|in:delivery,pickup',
-        'catatan'            => 'nullable|string|max:500',
+        'metode_pembayaran'   => 'required|string',
+        'metode_pengiriman'   => 'required|in:delivery,pickup',
+        'catatan'             => 'nullable|string|max:500',
+        'tanggal_pengiriman'  => [
+            'nullable',
+            'date',
+            'date_format:Y-m-d',
+            'after_or_equal:' . today()->toDateString(),
+            'before_or_equal:' . today()->addDays(4)->toDateString(),
+            'required_with:waktu_pengiriman',
+        ],
+        'waktu_pengiriman'    => [
+            'nullable',
+            'string',
+            'max:20',
+            'required_with:tanggal_pengiriman',
+        ],
     ]);
 
     $carts = Cart::with('product')->where('user_id', Auth::id())->get();
@@ -112,10 +126,12 @@ class CheckoutController extends Controller
         'alamat'             => $alamat,
         'detail_alamat'      => $user->detail_alamat,
         'no_telepon'         => $no_telepon,
-        'metode_pembayaran'  => $request->metode_pembayaran,
-        'metode_pengiriman'  => $request->metode_pengiriman,
-        'catatan'            => $request->catatan,
-        'subtotal'           => $subtotal,
+        'metode_pembayaran'   => $request->metode_pembayaran,
+        'metode_pengiriman'   => $request->metode_pengiriman,
+        'catatan'             => $request->catatan,
+        'tanggal_pengiriman'  => $request->tanggal_pengiriman ?: null,
+        'waktu_pengiriman'    => $request->waktu_pengiriman ?: null,
+        'subtotal'            => $subtotal,
         'ongkir'             => $ongkir,
         'total'              => $total,
         'status'             => in_array($request->metode_pembayaran, Order::ONLINE_PAYMENT_METHODS, true)

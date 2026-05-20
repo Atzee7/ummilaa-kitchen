@@ -68,8 +68,16 @@
                     <span class="text-[#999] flex-shrink-0">Alamat</span><strong class="text-[#1a1a1a] font-bold sm:text-right">{{ $order->alamat }}</strong>
                 </div>
                 @if($order->detail_alamat)
-                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] text-[0.9rem] gap-0.5 sm:gap-0">
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
                     <span class="text-[#999] flex-shrink-0">Detail Alamat</span><strong class="text-[#1a1a1a] font-bold sm:text-right">{{ $order->detail_alamat }}</strong>
+                </div>
+                @endif
+                @if($order->tanggal_pengiriman)
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] text-[0.9rem] gap-0.5 sm:gap-0">
+                    <span class="text-[#999]">Jadwal Pengiriman</span>
+                    <strong class="text-[#1a1a1a] font-bold">
+                        {{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->translatedFormat('l, d F Y') }}@if($order->waktu_pengiriman) · {{ $order->waktu_pengiriman }}@endif
+                    </strong>
                 </div>
                 @endif
             </div>
