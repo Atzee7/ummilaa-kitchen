@@ -20,6 +20,17 @@ class DashboardController extends Controller
 
         $pesananAktif = Order::with('user')
             ->whereIn('status', $this->activeStatuses)
+            ->where(function ($q) {
+                $q->whereNull('tanggal_pengiriman')
+                  ->orWhereDate('tanggal_pengiriman', '<', today())
+                  ->orWhere(function ($sq) {
+                      $sq->whereDate('tanggal_pengiriman', today())
+                         ->where(function ($tq) {
+                             $tq->whereNull('waktu_pengiriman')
+                                ->orWhereRaw("SUBSTRING(waktu_pengiriman, 1, 5) <= ?", [now()->format('H:i')]);
+                         });
+                  });
+            })
             ->latest()
             ->take(10)
             ->get();
@@ -37,6 +48,17 @@ class DashboardController extends Controller
     {
         $orders = Order::with('user')
             ->whereIn('status', $this->activeStatuses)
+            ->where(function ($q) {
+                $q->whereNull('tanggal_pengiriman')
+                  ->orWhereDate('tanggal_pengiriman', '<', today())
+                  ->orWhere(function ($sq) {
+                      $sq->whereDate('tanggal_pengiriman', today())
+                         ->where(function ($tq) {
+                             $tq->whereNull('waktu_pengiriman')
+                                ->orWhereRaw("SUBSTRING(waktu_pengiriman, 1, 5) <= ?", [now()->format('H:i')]);
+                         });
+                  });
+            })
             ->latest()
             ->take(10)
             ->get();
