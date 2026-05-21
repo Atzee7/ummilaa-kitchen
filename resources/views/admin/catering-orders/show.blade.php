@@ -60,6 +60,10 @@
                 <div class="col-span-2">
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi Acara</p>
                     <p class="font-semibold text-gray-700 leading-relaxed">{{ $order->lokasi_acara }}</p>
+                    @if($order->detail_lokasi_acara)
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 mt-3">Detail Lokasi</p>
+                    <p class="text-gray-600 text-sm leading-relaxed">{{ $order->detail_lokasi_acara }}</p>
+                    @endif
                 </div>
             </div>
             @if($order->catatan)
@@ -88,6 +92,23 @@
                 <div>
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Status Pembayaran</p>
                     <p class="font-semibold text-gray-700">{{ $order->paid_at ? 'Lunas · ' . $order->paid_at->format('d M Y H:i') : 'Belum dibayar' }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Metode Pembayaran</p>
+                    @php
+                        $paymentLabels = [
+                            'qris'          => 'QRIS',
+                            'bank_transfer' => 'Transfer Bank',
+                            'credit_card'   => 'Kartu Kredit',
+                            'gopay'         => 'GoPay',
+                            'shopeepay'     => 'ShopeePay',
+                            'echannel'      => 'Mandiri Bill',
+                            'cstore'        => 'Convenience Store',
+                        ];
+                    @endphp
+                    <p class="font-semibold text-gray-700">
+                        {{ $paymentLabels[$order->payment_type ?? ''] ?? ($order->payment_type ? ucfirst(str_replace('_', ' ', $order->payment_type)) : '—') }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -122,6 +143,30 @@
                 @error('total')<p class="text-red-500 text-xs mb-3">{{ $message }}</p>@enderror
                 <button type="submit" class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-[#8B1A1A]">
                     Buka Pembayaran
+                </button>
+            </form>
+        </div>
+        @endif
+
+        {{-- BATALKAN dari pengajuan --}}
+        @if($order->status === 'pengajuan')
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h3 class="font-playfair text-lg font-bold text-red-700 mb-2">Batalkan Pesanan</h3>
+            <p class="text-xs text-gray-400 mb-4">Tolak pengajuan ini jika tidak dapat dipenuhi.</p>
+            <form method="POST" action="{{ route('admin.catering-orders.updateStatus', $order->id) }}">
+                @csrf @method('PATCH')
+                <input type="hidden" name="status" value="dibatalkan">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                    Alasan Pembatalan <span class="text-red-500">*</span>
+                </label>
+                <textarea name="alasan_pembatalan" rows="3" required
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 resize-none mb-3"
+                    placeholder="Masukkan alasan pembatalan...">{{ old('alasan_pembatalan') }}</textarea>
+                @error('alasan_pembatalan')<p class="text-red-500 text-xs mb-2">{{ $message }}</p>@enderror
+                <button type="submit"
+                    onclick="return confirm('Yakin ingin membatalkan pesanan ini?')"
+                    class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-red-700">
+                    Batalkan Pesanan
                 </button>
             </form>
         </div>
@@ -191,7 +236,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script>
 const CSRF = '{{ csrf_token() }}';
-const WA_PROMPT_ID = {{ session('catering_wa_prompt') ?? 'null' }};
+const WA_PROMPT_ID = {{ session()->pull('catering_wa_prompt') ?? 'null' }};
 
 function showToast(success, message) {
     const t = document.getElementById('wa-toast');

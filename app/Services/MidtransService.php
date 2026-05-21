@@ -112,10 +112,17 @@ class MidtransService
                 'first_name' => $order->nama_pemesan,
                 'phone'      => $order->no_telepon,
             ],
+            // start_time absolute disinkronkan ke deadline internal agar masa hidup
+            // QR/QRIS di Midtrans berakhir persis di payment_expires_at — token dipakai
+            // ulang sehingga metode yang dipilih tetap valid sampai waktu habis.
             'expiry' => [
-                'start_time' => now()->setTimezone('+0700')->format('Y-m-d H:i:s O'),
+                'start_time' => $order->payment_expires_at
+                    ->copy()
+                    ->subMinutes(CateringOrder::PAYMENT_TIMEOUT_MINUTES)
+                    ->setTimezone('+0700')
+                    ->format('Y-m-d H:i:s O'),
                 'unit'       => 'minute',
-                'duration'   => CateringOrder::PAYMENT_EXPIRY_MINUTES,
+                'duration'   => CateringOrder::PAYMENT_TIMEOUT_MINUTES,
             ],
         ];
 
@@ -183,14 +190,20 @@ class MidtransService
             'payment_type'            => $payload['payment_type'] ?? $order->payment_type,
         ];
 
-        // Hanya pembayaran SUKSES yang mengubah status → diproses.
-        // QR yang expire/cancel/deny TIDAK membatalkan pesanan catering — pelanggan
-        // tetap bisa mengulang pembayaran (QR baru dibuat saat halaman bayar dibuka lagi).
-        // Pembatalan pesanan catering hanya lewat aksi admin.
+        // Pembayaran SUKSES → diproses.
         if ($newStatus === 'diproses' && $order->status !== 'diproses') {
             $updates['status'] = 'diproses';
             if (!$order->paid_at) {
                 $updates['paid_at'] = now();
+            }
+        }
+
+        // Transaksi expire/cancel/deny/failure membatalkan pesanan, tapi HANYA jika
+        // masih menunggu pembayaran (jangan override pesanan yang sudah diproses).
+        if ($newStatus === 'dibatalkan' && $order->status === 'menunggu_pembayaran') {
+            $updates['status'] = 'dibatalkan';
+            if (!$order->alasan_pembatalan) {
+                $updates['alasan_pembatalan'] = 'Pembayaran ' . ($payload['transaction_status'] ?? 'gagal') . ' di Midtrans';
             }
         }
 
@@ -310,7 +323,8 @@ class MidtransService
         return match ($transactionStatus) {
             'capture'    => ($fraudStatus === 'challenge') ? null : 'diproses',
             'settlement' => 'diproses',
-            // pending/expire/cancel/deny/failure → null: status catering tidak diubah.
+            'expire', 'cancel', 'deny', 'failure' => 'dibatalkan',
+            // pending → null: status catering tidak diubah (masih menunggu pembayaran).
             default      => null,
         };
     }

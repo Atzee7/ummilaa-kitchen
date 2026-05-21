@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/catering/riwayat', [CateringController::class, 'history'])->name('catering.history');
     Route::get('/catering/riwayat/{id}', [CateringController::class, 'show'])->name('catering.show');
     Route::get('/catering/riwayat/{id}/bayar', [CateringController::class, 'payment'])->name('catering.payment');
+    Route::delete('/catering/riwayat/{id}', [CateringController::class, 'cancel'])->name('catering.cancel');
 });
 
 // Cart — login tapi tidak perlu profile lengkap

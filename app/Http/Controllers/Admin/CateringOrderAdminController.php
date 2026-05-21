@@ -11,6 +11,8 @@ class CateringOrderAdminController extends Controller
 {
     public function index(Request $request)
     {
+        CateringOrder::cancelExpiredUnpaidOrders();
+
         $status = $request->get('status', 'semua');
 
         $baseQuery = CateringOrder::query()->with(['user', 'package']);
@@ -36,6 +38,8 @@ class CateringOrderAdminController extends Controller
 
     public function show($id)
     {
+        CateringOrder::cancelExpiredUnpaidOrders();
+
         $order = CateringOrder::with(['user', 'package'])->findOrFail($id);
         return view('admin.catering-orders.show', compact('order'));
     }
@@ -91,6 +95,10 @@ class CateringOrderAdminController extends Controller
         ]);
 
         $order = CateringOrder::findOrFail($id);
+
+        if ($order->status === 'pengajuan' && $request->status !== 'dibatalkan') {
+            return back()->withErrors(['status' => 'Pesanan pengajuan hanya bisa dibatalkan.']);
+        }
 
         $updateData = ['status' => $request->status];
         if ($request->status === 'dibatalkan') {

@@ -20,6 +20,16 @@
                 <strong class="text-maroon text-[1.05rem] sm:text-[1.2rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</strong>
             </div>
 
+            @if($order->paymentExpiresAt())
+            <div class="flex items-center justify-between bg-white border-[1.5px] border-amber-300 rounded-xl px-4 py-3 mb-5">
+                <div>
+                    <p class="text-[0.72rem] text-[#999] mb-0.5">Sisa waktu pembayaran</p>
+                    <p class="text-[0.7rem] text-amber-700">Dibatalkan otomatis jika lewat waktu</p>
+                </div>
+                <strong class="font-mono text-[1.4rem] sm:text-[1.6rem] text-maroon payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
+            </div>
+            @endif
+
             @if($order->snap_token)
             <button type="button" id="btn-snap-pay" data-snap-token="{{ $order->snap_token }}"
                     class="w-full py-[12px] sm:py-[14px] bg-maroon text-white rounded-xl font-extrabold text-[0.88rem] sm:text-[0.95rem] hover:bg-maroon-dark transition-all flex items-center justify-center gap-2 mb-3">
@@ -78,4 +88,29 @@
 })();
 </script>
 @endif
+
+<script>
+// Countdown pembayaran catering — reload saat habis agar controller membatalkan & redirect.
+(function () {
+    const elements = document.querySelectorAll('.payment-countdown');
+    if (!elements.length) return;
+    let needReload = false;
+    function tick() {
+        const now = Date.now();
+        elements.forEach(el => {
+            const target = new Date(el.dataset.expiresAt).getTime();
+            const diff = Math.max(0, Math.floor((target - now) / 1000));
+            const mm = String(Math.floor(diff / 60)).padStart(2, '0');
+            const ss = String(diff % 60).padStart(2, '0');
+            el.textContent = `${mm}:${ss}`;
+            if (diff === 0 && !needReload) {
+                needReload = true;
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        });
+    }
+    tick();
+    setInterval(tick, 1000);
+})();
+</script>
 @endpush

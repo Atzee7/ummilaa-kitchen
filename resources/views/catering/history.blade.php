@@ -13,6 +13,13 @@
 @section('content')
 <div class="px-4 sm:px-10 lg:px-[80px] py-8 lg:py-[50px] min-h-[70vh]">
 
+    @if(session('success'))
+    <div class="bg-green-100 text-green-800 rounded-xl px-4 py-3 text-sm mb-4">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+    <div class="bg-pink-100 border border-red-300 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">{{ session('error') }}</div>
+    @endif
+
     <div class="flex items-center justify-between mb-6">
         <h1 class="font-playfair text-[1.7rem] sm:text-[2.2rem] text-[#1a1a1a]">Riwayat Catering</h1>
         <a href="{{ route('catering.index') }}"

@@ -31,15 +31,26 @@ class CateringController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'catering_package_id' => 'nullable|exists:catering_packages,id',
-            'nama_acara'          => 'required|string|max:255',
-            'tanggal_acara'       => 'required|date|after_or_equal:today',
-            'jumlah_pax'          => 'required|integer|min:1',
-            'lokasi_acara'        => 'required|string|max:1000',
-            'catatan'             => 'nullable|string|max:1000',
-            'nama_pemesan'        => 'required|string|max:255',
-            'no_telepon'          => 'required|string|max:30',
+            'catering_package_id'  => 'nullable|exists:catering_packages,id',
+            'nama_acara'           => 'required|string|max:255',
+            'tanggal_acara'        => 'required|date|after_or_equal:today',
+            'jumlah_pax'           => 'required|integer|min:1',
+            'lokasi_acara'         => 'required|string|max:1000',
+            'detail_lokasi_acara'  => 'nullable|string|max:500',
+            'catatan'              => 'nullable|string|max:1000',
+            'nama_pemesan'         => 'required|string|max:255',
+            'no_telepon'           => 'required|string|max:30',
         ]);
+
+        // Validasi minimum pax sesuai paket yang dipilih
+        if (!empty($validated['catering_package_id'])) {
+            $pkg = \App\Models\CateringPackage::find($validated['catering_package_id']);
+            if ($pkg && $pkg->min_pax && (int) $validated['jumlah_pax'] < $pkg->min_pax) {
+                return back()
+                    ->withErrors(['jumlah_pax' => "Minimum pemesanan untuk paket \"{$pkg->name}\" adalah {$pkg->min_pax} pax."])
+                    ->withInput();
+            }
+        }
 
         $order = CateringOrder::create([
             'user_id'             => auth()->id(),
@@ -48,6 +59,7 @@ class CateringController extends Controller
             'tanggal_acara'       => $validated['tanggal_acara'],
             'jumlah_pax'          => $validated['jumlah_pax'],
             'lokasi_acara'        => $validated['lokasi_acara'],
+            'detail_lokasi_acara' => $validated['detail_lokasi_acara'] ?? null,
             'catatan'             => $validated['catatan'] ?? null,
             'nama_pemesan'        => $validated['nama_pemesan'],
             'no_telepon'          => $validated['no_telepon'],
@@ -61,6 +73,8 @@ class CateringController extends Controller
 
     public function history()
     {
+        CateringOrder::cancelExpiredUnpaidOrders();
+
         $orders = CateringOrder::with('package')
             ->where('user_id', auth()->id())
             ->latest()
@@ -71,6 +85,8 @@ class CateringController extends Controller
 
     public function show($id)
     {
+        CateringOrder::cancelExpiredUnpaidOrders();
+
         $order = CateringOrder::with('package')
             ->where('user_id', auth()->id())
             ->findOrFail($id);
@@ -83,6 +99,8 @@ class CateringController extends Controller
 
     public function payment($id, MidtransService $midtrans)
     {
+        CateringOrder::cancelExpiredUnpaidOrders();
+
         $order = CateringOrder::with('package')
             ->where('user_id', auth()->id())
             ->findOrFail($id);
@@ -93,22 +111,53 @@ class CateringController extends Controller
                 ->with('error', 'Pesanan ini belum bisa dibayar.');
         }
 
-        // Selalu generate token (order_id) BARU setiap halaman bayar dibuka.
-        // QR GoPay/QRIS hanya hidup ~15 menit, sedangkan window bayar catering panjang;
-        // memakai ulang token lama membuat QR yang di-scan sudah kedaluwarsa (error 2603).
-        // Webhook tetap aman: regex UMK-CTR-(\d+) resolve ke catering id yang sama,
-        // transaksi pending lama akan otomatis expire di Midtrans.
-        try {
-            $midtrans->getSnapTokenForCatering($order);
-            $order->refresh();
-        } catch (\Throwable $e) {
-            Log::error('Gagal generate Snap token catering', [
-                'catering_id' => $order->id,
-                'error'       => $e->getMessage(),
+        // Anchor deadline pada kunjungan pertama ke halaman bayar (seperti order catalogue
+        // yang memakai created_at). Reload/kunjungan ulang tidak me-reset deadline.
+        if (!$order->payment_expires_at) {
+            $order->update([
+                'payment_expires_at' => now()->addMinutes(CateringOrder::PAYMENT_TIMEOUT_MINUTES),
             ]);
         }
 
+        // Generate token HANYA bila belum ada (self-heal). Token dipakai ulang agar
+        // metode yang dipilih (mis. QRIS) tetap sama sampai waktu pembayaran berakhir.
+        if (empty($order->snap_token) && !$order->isPaymentExpired()) {
+            try {
+                $midtrans->getSnapTokenForCatering($order);
+                $order->refresh();
+            } catch (\Throwable $e) {
+                Log::error('Gagal generate Snap token catering', [
+                    'catering_id' => $order->id,
+                    'error'       => $e->getMessage(),
+                ]);
+            }
+        }
+
         return view('catering.payment', compact('order'));
+    }
+
+    public function cancel(Request $request, $id)
+    {
+        CateringOrder::cancelExpiredUnpaidOrders();
+
+        $order = CateringOrder::where('user_id', auth()->id())->findOrFail($id);
+
+        if ($order->status !== 'pengajuan') {
+            return redirect()->route('catering.show', $id)
+                ->with('error', 'Pesanan ini tidak dapat dibatalkan.');
+        }
+
+        $validated = $request->validate([
+            'alasan_pembatalan' => 'required|string|max:500',
+        ]);
+
+        $order->update([
+            'status'            => 'dibatalkan',
+            'alasan_pembatalan' => $validated['alasan_pembatalan'],
+        ]);
+
+        return redirect()->route('catering.history')
+            ->with('success', 'Pesanan catering berhasil dibatalkan.');
     }
 
     private function buildWhatsappLink(CateringOrder $order): string

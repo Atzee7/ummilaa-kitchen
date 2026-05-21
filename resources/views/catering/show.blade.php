@@ -58,6 +58,9 @@
                 <div class="col-span-2">
                     <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Lokasi Acara</p>
                     <p class="font-semibold text-[#444]">{{ $order->lokasi_acara }}</p>
+                    @if($order->detail_lokasi_acara)
+                    <p class="text-[0.82rem] text-[#666] mt-1">{{ $order->detail_lokasi_acara }}</p>
+                    @endif
                 </div>
                 @if($order->catatan)
                 <div class="col-span-2">
@@ -83,6 +86,31 @@
                style="background-color:#25D366">
                 <i class="fab fa-whatsapp text-lg"></i> Buka WhatsApp Admin
             </a>
+            <div class="mt-4 border-t border-gray-200 pt-4 text-left">
+                <button type="button" onclick="document.getElementById('batalForm').classList.toggle('hidden')"
+                    class="text-[0.82rem] text-red-500 hover:underline">
+                    Batalkan Pesanan
+                </button>
+                <div id="batalForm" class="hidden mt-3">
+                    <form method="POST" action="{{ route('catering.cancel', $order->id) }}">
+                        @csrf @method('DELETE')
+                        <label class="block text-[0.78rem] text-[#888] mb-1 font-semibold uppercase tracking-wider">
+                            Alasan Pembatalan <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="alasan_pembatalan" rows="3" required maxlength="500"
+                            placeholder="Tuliskan alasan pembatalan..."
+                            class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-red-300 resize-none mb-2">{{ old('alasan_pembatalan') }}</textarea>
+                        @error('alasan_pembatalan')
+                        <p class="text-red-500 text-xs mb-2">{{ $message }}</p>
+                        @enderror
+                        <button type="submit"
+                            onclick="return confirm('Yakin ingin membatalkan pesanan ini?')"
+                            class="w-full py-2 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition">
+                            Konfirmasi Pembatalan
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
         @elseif($order->status === 'menunggu_pembayaran')
         <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] p-5 text-center">
