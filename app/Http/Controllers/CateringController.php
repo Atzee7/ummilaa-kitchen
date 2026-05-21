@@ -66,6 +66,8 @@ class CateringController extends Controller
             'status'              => 'pengajuan',
         ]);
 
+        $order->logHistory('pengajuan', 'Pesanan catering berhasil diajukan.');
+
         return redirect()
             ->route('catering.show', $order->id)
             ->with('wa_link', $this->buildWhatsappLink($order));
@@ -87,7 +89,7 @@ class CateringController extends Controller
     {
         CateringOrder::cancelExpiredUnpaidOrders();
 
-        $order = CateringOrder::with('package')
+        $order = CateringOrder::with(['package', 'costItems', 'histories'])
             ->where('user_id', auth()->id())
             ->findOrFail($id);
 
@@ -155,6 +157,8 @@ class CateringController extends Controller
             'status'            => 'dibatalkan',
             'alasan_pembatalan' => $validated['alasan_pembatalan'],
         ]);
+
+        $order->logHistory('dibatalkan', 'Dibatalkan oleh pemesan: ' . $validated['alasan_pembatalan']);
 
         return redirect()->route('catering.history')
             ->with('success', 'Pesanan catering berhasil dibatalkan.');

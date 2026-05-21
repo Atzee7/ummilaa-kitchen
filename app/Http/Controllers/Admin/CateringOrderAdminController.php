@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CateringOrder;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CateringOrderAdminController extends Controller
 {
@@ -40,33 +41,55 @@ class CateringOrderAdminController extends Controller
     {
         CateringOrder::cancelExpiredUnpaidOrders();
 
-        $order = CateringOrder::with(['user', 'package'])->findOrFail($id);
+        $order = CateringOrder::with(['user', 'package', 'costItems', 'histories'])->findOrFail($id);
         return view('admin.catering-orders.show', compact('order'));
     }
 
     public function openPayment(Request $request, $id)
     {
         $request->validate([
-            'total' => 'required|integer|min:1',
+            'cost_items'          => 'required|array|min:1',
+            'cost_items.*.label'  => 'required|string|max:255',
+            'cost_items.*.amount' => 'required|integer|min:0',
+            'total'               => 'required|integer|min:1',
+            'admin_notes'         => 'nullable|string|max:2000',
         ]);
 
-        $order = CateringOrder::findOrFail($id);
+        $order = CateringOrder::with(['package', 'costItems'])->findOrFail($id);
 
         if ($order->status !== 'pengajuan') {
             return back()->withErrors(['total' => 'Pembayaran hanya bisa dibuka untuk pesanan berstatus "Pengajuan".']);
         }
 
-        $order->update([
-            'total'      => $request->total,
-            'status'     => 'menunggu_pembayaran',
-            'snap_token' => null, // reset agar token di-generate ulang dengan total final
-        ]);
+        $order->costItems()->delete();
 
-        if (!empty($order->no_telepon)) {
-            session(['catering_wa_prompt' => $order->id]);
+        foreach ($request->cost_items as $i => $item) {
+            $order->costItems()->create([
+                'label'      => $item['label'],
+                'amount'     => (int) $item['amount'],
+                'sort_order' => $i,
+            ]);
         }
 
-        return back()->with('success', 'Pembayaran berhasil dibuka. Total tagihan telah ditetapkan.');
+        $order->update([
+            'total'       => $request->total,
+            'admin_notes' => $request->admin_notes,
+            'status'      => 'menunggu_pembayaran',
+            'snap_token'  => null,
+        ]);
+
+        $order->logHistory('menunggu_pembayaran', 'Total akhir ditetapkan oleh admin.');
+
+        if (!empty($order->no_telepon)) {
+            $order->load('costItems');
+            try {
+                (new FonnteService())->send($order->no_telepon, $this->buildPaymentMessage($order));
+            } catch (\Throwable $e) {
+                Log::error('Gagal kirim WA catering openPayment', ['id' => $order->id, 'error' => $e->getMessage()]);
+            }
+        }
+
+        return back()->with('success', 'Total biaya berhasil ditetapkan. Notifikasi terkirim ke pelanggan.');
     }
 
     public function sendWhatsapp($id)
@@ -107,20 +130,28 @@ class CateringOrderAdminController extends Controller
 
         $order->update($updateData);
 
+        $order->logHistory($request->status, $request->alasan_pembatalan ?? null);
+
         return back()->with('success', 'Status pesanan catering berhasil diperbarui.');
     }
 
     private function buildPaymentMessage(CateringOrder $order): string
     {
+        $rincian = $order->costItems->map(
+            fn ($i) => "  • {$i->label}: Rp " . number_format($i->amount, 0, ',', '.')
+        )->join("\n");
+
         $total   = 'Rp ' . number_format((int) $order->total, 0, ',', '.');
         $linkUrl = route('catering.show', $order->id);
 
-        return "💳 *Pembayaran Catering Dibuka — Ummilaa Kitchen*\n\n"
-            . "Halo {$order->nama_pemesan}, pesanan catering Anda sudah dikonfirmasi.\n\n"
+        return "💳 *Total Catering Ditetapkan — Ummilaa Kitchen*\n\n"
+            . "Halo {$order->nama_pemesan}, total biaya pesanan catering Anda sudah ditetapkan.\n\n"
             . "🆔 ID Pesanan: #{$order->id}\n"
-            . "🎉 Acara: {$order->nama_acara}\n"
-            . "💰 Total Tagihan: {$total}\n\n"
-            . "Silakan lakukan pembayaran melalui halaman *Riwayat Catering* di website kami:\n{$linkUrl}\n\n"
+            . "🎉 Acara: {$order->nama_acara}\n\n"
+            . ($rincian ? "*Rincian Biaya:*\n{$rincian}\n\n" : '')
+            . "💰 *Total Akhir: {$total}*\n\n"
+            . ($order->admin_notes ? "📝 Catatan: {$order->admin_notes}\n\n" : '')
+            . "Silakan lakukan pembayaran di:\n{$linkUrl}\n\n"
             . "Terima kasih 🙏";
     }
 }

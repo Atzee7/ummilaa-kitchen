@@ -113,13 +113,61 @@
             </div>
         </div>
         @elseif($order->status === 'menunggu_pembayaran')
-        <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] p-5 text-center">
-            <p class="text-[0.88rem] text-[#666] mb-1">Pembayaran sudah dibuka oleh admin.</p>
-            <p class="text-maroon font-extrabold text-[1.3rem] mb-4">Rp{{ number_format($order->total, 0, ',', '.') }}</p>
+        <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] p-5">
+            <p class="text-[0.88rem] text-[#666] mb-3 text-center">Total biaya pesanan Anda sudah ditetapkan oleh admin.</p>
+
+            @if($order->costItems->isNotEmpty())
+            <div class="mb-4 bg-white rounded-xl p-4">
+                @foreach($order->costItems as $item)
+                <div class="flex justify-between text-[0.85rem] py-1.5 border-b border-gray-50 last:border-0">
+                    <span class="text-[#666]">{{ $item->label }}</span>
+                    <span class="font-semibold text-[#444]">Rp{{ number_format($item->amount, 0, ',', '.') }}</span>
+                </div>
+                @endforeach
+                <div class="flex justify-between font-extrabold text-maroon text-[1rem] pt-2 mt-1">
+                    <span>Total</span>
+                    <span>Rp{{ number_format($order->total, 0, ',', '.') }}</span>
+                </div>
+            </div>
+            @else
+            <p class="text-maroon font-extrabold text-[1.3rem] mb-3 text-center">Rp{{ number_format($order->total, 0, ',', '.') }}</p>
+            @endif
+
+            @if($order->admin_notes)
+            <p class="text-[0.8rem] text-[#888] mb-3 italic text-center">📝 {{ $order->admin_notes }}</p>
+            @endif
+
             <a href="{{ route('catering.payment', $order->id) }}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-maroon text-white rounded-xl font-extrabold text-[0.9rem] no-underline hover:bg-maroon-dark transition-all">
+               class="flex items-center justify-center gap-2 px-6 py-3 bg-maroon text-white rounded-xl font-extrabold text-[0.9rem] no-underline hover:bg-maroon-dark transition-all">
                 <i class="fas fa-credit-card"></i> Bayar Sekarang
             </a>
+        </div>
+        @endif
+
+        {{-- RIWAYAT PESANAN --}}
+        @if($order->histories->isNotEmpty())
+        <div class="bg-white border border-maroon-200 rounded-[18px] p-5 mt-5">
+            <h3 class="font-playfair text-[1rem] text-[#1a1a1a] mb-4">Riwayat Pesanan</h3>
+            @php
+                $historyLabels = [
+                    'pengajuan'           => 'Pengajuan Diterima',
+                    'menunggu_pembayaran' => 'Total Biaya Ditetapkan',
+                    'diproses'            => 'Sedang Diproses',
+                    'selesai'             => 'Pesanan Selesai',
+                    'dibatalkan'          => 'Pesanan Dibatalkan',
+                ];
+            @endphp
+            <div class="space-y-3">
+                @foreach($order->histories as $h)
+                <div class="flex gap-3 text-[0.85rem]">
+                    <span class="text-[#bbb] text-[0.72rem] whitespace-nowrap mt-0.5 w-20 shrink-0">{{ $h->created_at->format('d M H:i') }}</span>
+                    <div>
+                        <span class="font-bold text-[#333]">{{ $historyLabels[$h->status] ?? ucfirst($h->status) }}</span>
+                        @if($h->notes)<p class="text-[#888] text-[0.78rem] mt-0.5">{{ $h->notes }}</p>@endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
         @endif
 

@@ -13,7 +13,7 @@ class CateringOrder extends Model
     protected $fillable = [
         'user_id', 'catering_package_id',
         'nama_acara', 'tanggal_acara', 'jumlah_pax', 'lokasi_acara', 'detail_lokasi_acara', 'catatan',
-        'nama_pemesan', 'no_telepon', 'total', 'status', 'alasan_pembatalan',
+        'admin_notes', 'nama_pemesan', 'no_telepon', 'total', 'status', 'alasan_pembatalan',
         'snap_token', 'midtrans_transaction_id', 'payment_type', 'paid_at', 'payment_expires_at',
     ];
 
@@ -31,6 +31,21 @@ class CateringOrder extends Model
     public function package()
     {
         return $this->belongsTo(CateringPackage::class, 'catering_package_id');
+    }
+
+    public function costItems()
+    {
+        return $this->hasMany(CateringOrderCostItem::class)->orderBy('sort_order');
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(CateringOrderHistory::class)->latest();
+    }
+
+    public function logHistory(string $status, ?string $notes = null): void
+    {
+        $this->histories()->create(['status' => $status, 'notes' => $notes]);
     }
 
     public function isPayable(): bool
@@ -58,12 +73,19 @@ class CateringOrder extends Model
 
     public static function cancelExpiredUnpaidOrders(): int
     {
-        return self::where('status', 'menunggu_pembayaran')
+        $orders = self::where('status', 'menunggu_pembayaran')
             ->whereNotNull('payment_expires_at')
             ->where('payment_expires_at', '<', now())
-            ->update([
+            ->get();
+
+        foreach ($orders as $order) {
+            $order->update([
                 'status'            => 'dibatalkan',
                 'alasan_pembatalan' => 'Pembayaran melewati batas waktu (10 menit)',
             ]);
+            $order->logHistory('dibatalkan', 'Pembayaran melewati batas waktu (10 menit)');
+        }
+
+        return $orders->count();
     }
 }

@@ -127,22 +127,53 @@
     {{-- KANAN --}}
     <div class="flex flex-col gap-6">
 
-        {{-- BUKA PEMBAYARAN (status pengajuan) --}}
+        {{-- TETAPKAN TOTAL (status pengajuan) --}}
         @if($order->status === 'pengajuan')
         <div class="bg-white rounded-2xl shadow-sm p-6">
-            <h3 class="font-playfair text-lg font-bold text-gray-800 mb-2">Buka Pembayaran</h3>
-            <p class="text-xs text-gray-400 mb-4">Masukkan total tagihan hasil kesepakatan via WhatsApp.</p>
-            <form method="POST" action="{{ route('admin.catering-orders.openPayment', $order->id) }}">
+            <h3 class="font-playfair text-lg font-bold text-gray-800 mb-2">Tetapkan Total Biaya</h3>
+            <p class="text-xs text-gray-400 mb-4">Masukkan rincian biaya pesanan ini.</p>
+            <form method="POST" action="{{ route('admin.catering-orders.openPayment', $order->id) }}" id="costForm">
                 @csrf
-                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Total Tagihan (Rp) <span class="text-red-500">*</span></label>
-                <div class="relative mb-4">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-semibold">Rp</span>
-                    <input type="number" name="total" value="{{ old('total') }}" required min="1" placeholder="0"
-                        class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition">
+
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Rincian Biaya <span class="text-red-500">*</span></label>
+                <div id="costItems" class="space-y-2 mb-3">
+                    @if($order->package && $order->package->price_per_pax)
+                    <div class="cost-row flex gap-2 items-center">
+                        <input type="text" name="cost_items[0][label]"
+                            value="Paket {{ $order->package->name }} × {{ $order->jumlah_pax }} pax"
+                            placeholder="Keterangan"
+                            class="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800">
+                        <input type="number" name="cost_items[0][amount]"
+                            value="{{ $order->package->price_per_pax * $order->jumlah_pax }}"
+                            min="0" placeholder="0"
+                            class="w-28 px-3 py-2 rounded-xl border border-gray-200 text-sm cost-amount focus:outline-none focus:border-red-800">
+                        <button type="button" onclick="removeRow(this)" class="text-red-400 hover:text-red-600 text-xl leading-none">×</button>
+                    </div>
+                    @endif
                 </div>
-                @error('total')<p class="text-red-500 text-xs mb-3">{{ $message }}</p>@enderror
+                @error('cost_items')<p class="text-red-500 text-xs mb-2">{{ $message }}</p>@enderror
+
+                <button type="button" onclick="addRow()"
+                    class="w-full py-2 rounded-xl border border-dashed border-gray-300 text-xs text-gray-500 hover:border-red-300 hover:text-red-500 transition mb-4">
+                    + Tambah Biaya
+                </button>
+
+                <div class="flex items-center gap-2 mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                    <span class="text-sm text-amber-700 font-semibold flex-1">Total Akhir</span>
+                    <span class="text-sm text-gray-500 font-semibold">Rp</span>
+                    <input type="number" name="total" id="totalInput" required min="1"
+                        class="w-32 px-2 py-1 rounded-lg border border-amber-300 text-sm font-bold text-right bg-white focus:outline-none focus:border-amber-500"
+                        placeholder="0">
+                </div>
+                @error('total')<p class="text-red-500 text-xs mb-2">{{ $message }}</p>@enderror
+
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Catatan Admin</label>
+                <textarea name="admin_notes" rows="2"
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm mb-4 resize-none focus:outline-none focus:border-red-800"
+                    placeholder="Catatan revisi harga, kondisi khusus, dll...">{{ old('admin_notes') }}</textarea>
+
                 <button type="submit" class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-[#8B1A1A]">
-                    Buka Pembayaran
+                    Tetapkan Total & Buka Pembayaran
                 </button>
             </form>
         </div>
@@ -211,6 +242,46 @@
         </div>
         @endif
 
+        {{-- RINCIAN BIAYA --}}
+        @if($order->costItems->isNotEmpty())
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Rincian Biaya</h3>
+            <div class="space-y-2 text-sm">
+                @foreach($order->costItems as $item)
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">{{ $item->label }}</span>
+                    <span class="font-semibold text-gray-700">Rp{{ number_format($item->amount, 0, ',', '.') }}</span>
+                </div>
+                @endforeach
+                <div class="flex justify-between items-center pt-2 border-t border-gray-100 font-bold">
+                    <span class="text-gray-800">Total</span>
+                    <span class="text-[#8B1A1A]">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
+                </div>
+            </div>
+            @if($order->admin_notes)
+            <p class="mt-3 text-xs text-gray-500 italic border-t border-gray-50 pt-3">📝 {{ $order->admin_notes }}</p>
+            @endif
+        </div>
+        @endif
+
+        {{-- RIWAYAT STATUS --}}
+        @if($order->histories->isNotEmpty())
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Riwayat Status</h3>
+            <div class="space-y-3">
+                @foreach($order->histories as $h)
+                <div class="flex gap-3 text-sm">
+                    <span class="text-gray-400 text-xs whitespace-nowrap mt-0.5 w-20 shrink-0">{{ $h->created_at->format('d M H:i') }}</span>
+                    <div>
+                        <span class="font-semibold text-gray-700">{{ $statusMeta[$h->status][0] ?? ucfirst($h->status) }}</span>
+                        @if($h->notes)<p class="text-gray-500 text-xs mt-0.5">{{ $h->notes }}</p>@endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         {{-- RINGKASAN --}}
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Ringkasan</h3>
@@ -274,7 +345,45 @@ document.addEventListener('DOMContentLoaded', () => {
     if (WA_PROMPT_ID && WA_PROMPT_ID === {{ $order->id }}) {
         sendCateringWa(WA_PROMPT_ID);
     }
+
+    // Dynamic cost items
+    const costItems = document.getElementById('costItems');
+    if (costItems) {
+        recalcTotal();
+        costItems.addEventListener('input', recalcTotal);
+    }
 });
+
+@if($order->status === 'pengajuan')
+let _rowCount = {{ $order->package && $order->package->price_per_pax ? 1 : 0 }};
+
+function addRow() {
+    const container = document.getElementById('costItems');
+    const div = document.createElement('div');
+    div.className = 'cost-row flex gap-2 items-center';
+    div.innerHTML = `
+        <input type="text" name="cost_items[${_rowCount}][label]" placeholder="Keterangan"
+            class="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800">
+        <input type="number" name="cost_items[${_rowCount}][amount]" placeholder="0" min="0"
+            class="w-28 px-3 py-2 rounded-xl border border-gray-200 text-sm cost-amount focus:outline-none focus:border-red-800" oninput="recalcTotal()">
+        <button type="button" onclick="removeRow(this)" class="text-red-400 hover:text-red-600 text-xl leading-none">×</button>`;
+    container.appendChild(div);
+    _rowCount++;
+}
+
+function removeRow(btn) {
+    btn.closest('.cost-row').remove();
+    recalcTotal();
+}
+
+function recalcTotal() {
+    const amounts = document.querySelectorAll('.cost-amount');
+    let sum = 0;
+    amounts.forEach(el => sum += parseInt(el.value || 0, 10));
+    const totalInput = document.getElementById('totalInput');
+    if (totalInput) totalInput.value = sum || '';
+}
+@endif
 </script>
 @endpush
 @endsection
