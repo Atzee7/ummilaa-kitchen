@@ -42,10 +42,18 @@ class DashboardController extends Controller
             ->get();
 
         return response()->json([
-            'badge_count'     => Order::whereIn('status', $this->activeStatuses)->count(),
-            'scheduled_count' => Order::whereDate('tanggal_pengiriman', '>=', today())
-                ->whereNotIn('status', ['belum_bayar', 'selesai', 'dibatalkan'])
-                ->excludeAutoCancelled()
+            'badge_count'     => Order::whereIn('status', $this->activeStatuses)
+                ->where(function ($q) {
+                    $q->whereNull('tanggal_pengiriman')
+                      ->orWhereDate('tanggal_pengiriman', '<', today())
+                      ->orWhere(function ($sq) {
+                          $sq->whereDate('tanggal_pengiriman', today())
+                             ->where(function ($tq) {
+                                 $tq->whereNull('waktu_pengiriman')
+                                    ->orWhereRaw("SUBSTRING(waktu_pengiriman, 1, 5) <= ?", [now()->format('H:i')]);
+                             });
+                      });
+                })
                 ->count(),
             'orders' => $orders->map(fn($o) => [
                 'id'      => $o->id,

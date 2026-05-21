@@ -39,7 +39,7 @@
         'dibatalkan'   => 'bg-red-100 text-red-700',
     ];
     $tabLabel = [
-        'semua'        => 'Semua',
+        'semua'        => 'Aktif',
         'pending'      => 'Menunggu',
         'diproses'     => 'Sedang Dimasak',
         'dikirim'      => 'Dikirim',
@@ -49,13 +49,25 @@
     ];
 @endphp
 
+<div id="new-order-banner"
+     class="hidden mb-4 flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-5 py-3 shadow-sm">
+    <span class="text-lg">🔔</span>
+    <span class="text-sm font-semibold text-gray-700 flex-1">Ada pesanan baru masuk!</span>
+    <button onclick="window.location.reload()"
+            class="px-3 py-1.5 text-xs font-bold bg-[#8B1A1A] text-white rounded-lg hover:opacity-90 transition">
+        Muat Ulang
+    </button>
+    <button onclick="document.getElementById('new-order-banner').classList.add('hidden')"
+            class="text-gray-400 hover:text-gray-600 text-xl leading-none ml-1">&times;</button>
+</div>
+
 <div class="flex flex-wrap gap-2 mb-6">
     @foreach($tabs as $tab)
     <a href="{{ route('admin.orders.index', ['status' => $tab, 'date' => $date]) }}"
        class="px-4 py-2 rounded-xl text-sm font-semibold transition
               {{ $status === $tab ? $tabColor[$tab] . ' ring-2 ring-offset-1 ring-gray-300' : 'bg-white text-gray-500 hover:bg-gray-50' }}">
         {{ $tabLabel[$tab] }}
-        <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-black bg-opacity-10">{{ $counts[$tab] }}</span>
+        <span id="tab-count-{{ $tab }}" class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-black bg-opacity-10">{{ $counts[$tab] }}</span>
     </a>
     @endforeach
 </div>
@@ -127,7 +139,7 @@
                     default                                               => '',
                 };
             @endphp
-            <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery ? '1' : '0' }}" data-waktu-start="{{ $order->tanggal_pengiriman && $order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman ? substr($order->waktu_pengiriman,0,5) : '' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
+            <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery ? '1' : '0' }}" data-status="{{ $order->status }}" data-waktu-start="{{ $order->tanggal_pengiriman && $order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman ? substr($order->waktu_pengiriman,0,5) : '' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
                 <td class="py-4 px-6 font-bold text-gray-700">#{{ $order->id }}</td>
                 <td class="py-4 px-6">
                     <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
@@ -192,9 +204,8 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="8" class="py-16 text-center text-gray-400">
-                <div class="text-4xl mb-3">📭</div>
-                <p class="font-semibold">Tidak ada pesanan</p>
+            <tr><td colspan="8" class="py-10 text-center text-gray-400 text-sm">
+                Tidak ada pesanan
             </td></tr>
             @endforelse
         </tbody>
@@ -203,14 +214,12 @@
 </div>
 
 {{-- SECTION 2: PESANAN TERJADWAL --}}
-@if($scheduledOrders->total() > 0)
 <div class="mt-10">
     <div class="flex items-center gap-3 mb-4">
         <h2 class="text-base font-bold text-gray-700">Pesanan Terjadwal</h2>
         <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
             {{ $scheduledOrders->total() }} pesanan
         </span>
-        <span class="text-xs text-gray-400">Dijadwalkan setelah hari ini</span>
     </div>
     <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
         <table class="w-full text-sm">
@@ -235,6 +244,7 @@
                 @foreach($grouped2 as $dateKey => $dayOrders)
                 @php
                     $dayLabel = match($dateKey) {
+                        today()->format('Y-m-d')             => 'Hari Ini',
                         today()->addDay()->format('Y-m-d')   => 'Besok',
                         today()->addDays(2)->format('Y-m-d') => 'Lusa',
                         default => \Carbon\Carbon::parse($dateKey)->translatedFormat('l, d M Y'),
@@ -270,10 +280,15 @@
                         $order->status === 'siap_diambil'                      => 'selesai',
                         default                                                => null,
                     };
-                    $lockTitle2 = 'Bisa diproses mulai ' . $order->tanggal_pengiriman->translatedFormat('d M Y')
-                        . ($order->waktu_pengiriman ? ' jam ' . substr($order->waktu_pengiriman,0,5) : '');
+                    $lockTitle2 = $order->tanggal_pengiriman->isToday()
+                        ? 'Bisa diproses mulai jam ' . substr($order->waktu_pengiriman, 0, 5)
+                        : 'Bisa diproses mulai ' . $order->tanggal_pengiriman->translatedFormat('d M Y')
+                            . ($order->waktu_pengiriman ? ' jam ' . substr($order->waktu_pengiriman, 0, 5) : '');
                 @endphp
-                <tr id="order-row-{{ $order->id }}" data-delivery="{{ $isDelivery2 ? '1' : '0' }}" class="border-b border-gray-50 hover:bg-gray-50 transition">
+                <tr id="order-row-{{ $order->id }}"
+                    data-delivery="{{ $isDelivery2 ? '1' : '0' }}"
+                    data-today-waktu="{{ $order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman ? substr($order->waktu_pengiriman, 0, 5) : '' }}"
+                    class="border-b border-gray-50 hover:bg-gray-50 transition">
                     <td class="py-4 px-6 font-bold text-gray-700">#{{ $order->id }}</td>
                     <td class="py-4 px-6">
                         <p class="font-semibold text-gray-800">{{ $order->user->name ?? $order->nama_penerima ?? '-' }}</p>
@@ -320,6 +335,13 @@
                 </tr>
                 @endforeach
                 @endforeach
+                @if($scheduledOrders->total() === 0)
+                <tr>
+                    <td colspan="8" class="py-10 text-center text-gray-400 text-sm">
+                        Belum ada pesanan terjadwal
+                    </td>
+                </tr>
+                @endif
             </tbody>
         </table>
         <div class="p-4">
@@ -327,7 +349,6 @@
         </div>
     </div>
 </div>
-@endif
 
 {{-- MODAL OVERLAY --}}
 <div id="order-modal-backdrop"
@@ -373,6 +394,19 @@
 
 <script>
 const CSRF_TOKEN = '{{ csrf_token() }}';
+
+window.onNewOrderArrived = function() {
+    const modalOpen    = document.getElementById('order-modal-backdrop') &&
+                         !document.getElementById('order-modal-backdrop').classList.contains('hidden');
+    const typingActive = document.activeElement &&
+                         ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
+    if (!modalOpen && !typingActive) {
+        window.location.reload();
+    } else {
+        const banner = document.getElementById('new-order-banner');
+        if (banner) banner.classList.remove('hidden');
+    }
+};
 
 const STATUS_BADGE = {
     belum_bayar:  'bg-amber-100 text-amber-700',
@@ -463,6 +497,53 @@ function updateRowUI(orderId, newStatus) {
     </button>`;
 
     aksiCell.innerHTML = `<div class="flex items-center gap-1.5 flex-wrap">${buttonsHtml}</div>`;
+
+    // Update angka pada tab
+    const oldStatus = row.dataset.status;
+    if (oldStatus && oldStatus !== newStatus) {
+        const activeStatuses = ['pending', 'diproses', 'dikirim', 'siap_diambil'];
+        const oldSpan = document.getElementById(`tab-count-${oldStatus}`);
+        if (oldSpan) {
+            const n = parseInt(oldSpan.textContent) || 0;
+            if (n > 0) oldSpan.textContent = n - 1;
+        }
+        const newSpan = document.getElementById(`tab-count-${newStatus}`);
+        if (newSpan) newSpan.textContent = (parseInt(newSpan.textContent) || 0) + 1;
+        const semuaSpan = document.getElementById('tab-count-semua');
+        if (semuaSpan) {
+            const wasActive = activeStatuses.includes(oldStatus);
+            const isActive  = activeStatuses.includes(newStatus);
+            if (wasActive && !isActive) {
+                const n = parseInt(semuaSpan.textContent) || 0;
+                if (n > 0) semuaSpan.textContent = n - 1;
+            } else if (!wasActive && isActive) {
+                semuaSpan.textContent = (parseInt(semuaSpan.textContent) || 0) + 1;
+            }
+        }
+        row.dataset.status = newStatus;
+    }
+
+    // Hapus baris hanya saat status terminal (selesai / dibatalkan)
+    if (['selesai', 'dibatalkan'].includes(newStatus)) {
+        // Kurangi badge sidebar langsung tanpa menunggu poll berikutnya
+        const sidebarBadge = document.getElementById('order-badge');
+        if (sidebarBadge) {
+            const n = parseInt(sidebarBadge.textContent) || 0;
+            if (n <= 1) {
+                sidebarBadge.classList.add('hidden');
+                sidebarBadge.classList.remove('flex');
+            } else {
+                sidebarBadge.textContent = n - 1;
+            }
+        }
+        const rowToRemove = document.getElementById(`order-row-${orderId}`);
+        if (rowToRemove) {
+            rowToRemove.style.transition = 'opacity 0.4s, transform 0.4s';
+            rowToRemove.style.opacity = '0';
+            rowToRemove.style.transform = 'translateX(20px)';
+            setTimeout(() => rowToRemove.remove(), 420);
+        }
+    }
 }
 
 function openOrderModal(orderId) {
@@ -568,6 +649,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Auto-reload saat pesanan terjadwal hari ini sudah waktunya masuk Section 1
+    let earliestScheduledMs = null;
+    document.querySelectorAll('[data-today-waktu]').forEach(row => {
+        const t = row.dataset.todayWaktu;
+        if (!t) return;
+        const [hh, mm] = t.split(':').map(Number);
+        const target = new Date();
+        target.setHours(hh, mm, 0, 0);
+        const diff = target - Date.now();
+        if (diff > 0 && (earliestScheduledMs === null || diff < earliestScheduledMs)) {
+            earliestScheduledMs = diff;
+        }
+    });
+    if (earliestScheduledMs !== null) {
+        setTimeout(() => {
+            if (typeof window.onNewOrderArrived === 'function') {
+                window.onNewOrderArrived();
+            } else {
+                window.location.reload();
+            }
+        }, earliestScheduledMs);
+    }
 
     document.getElementById('wa-confirm-no').addEventListener('click', () => {
         document.getElementById('wa-confirm-modal').classList.add('hidden');

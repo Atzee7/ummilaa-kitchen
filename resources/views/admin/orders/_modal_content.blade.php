@@ -37,6 +37,20 @@
         default                                       => null,
     };
     $canCancel = $order->status === 'pending';
+
+    $isTimeLocked = false;
+    if ($order->tanggal_pengiriman) {
+        if ($order->tanggal_pengiriman->isFuture()) {
+            $isTimeLocked = true;
+        } elseif ($order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman) {
+            $startTime = substr($order->waktu_pengiriman, 0, 5);
+            $isTimeLocked = now()->format('H:i') < $startTime;
+        }
+    }
+    $lockTitle = $order->tanggal_pengiriman
+        ? 'Bisa diproses mulai ' . $order->tanggal_pengiriman->translatedFormat('d M Y')
+            . ($order->waktu_pengiriman ? ' jam ' . substr($order->waktu_pengiriman, 0, 5) : '')
+        : '';
 @endphp
 
 {{-- HEADER MODAL --}}
@@ -65,10 +79,15 @@
     <div class="bg-gray-50 rounded-xl p-4 flex flex-wrap items-center gap-3">
         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-auto">Ubah Status:</span>
         @if($nextStatus)
-        <button onclick="modalUpdateStatus({{ $order->id }}, '{{ $nextStatus }}')"
-            class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#8B1A1A] hover:opacity-90 transition">
-            {{ $nextLabel }}
-        </button>
+            @if($isTimeLocked)
+            <span class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-400 cursor-not-allowed"
+                  title="{{ $lockTitle }}">🔒 Belum Waktunya</span>
+            @else
+            <button onclick="modalUpdateStatus({{ $order->id }}, '{{ $nextStatus }}')"
+                class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#8B1A1A] hover:opacity-90 transition">
+                {{ $nextLabel }}
+            </button>
+            @endif
         @endif
         @if($canCancel)
         <button type="button" onclick="toggleCancelForm({{ $order->id }})"

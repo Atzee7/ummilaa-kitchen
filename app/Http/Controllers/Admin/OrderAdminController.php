@@ -26,19 +26,29 @@ class OrderAdminController extends Controller
             ->excludeAutoCancelled()
             ->where(function ($q) use ($date) {
                 $q->whereNull('tanggal_pengiriman')
-                  ->orWhereDate('tanggal_pengiriman', $date);
+                  ->orWhere(function ($sq) use ($date) {
+                      $sq->whereDate('tanggal_pengiriman', $date)
+                         ->where(function ($tq) {
+                             // Masuk Section 1 kalau tidak ada slot waktu,
+                             // atau slot waktu sudah dimulai
+                             $tq->whereNull('waktu_pengiriman')
+                                ->orWhereRaw("SUBSTRING(waktu_pengiriman, 1, 5) <= ?", [now()->format('H:i')]);
+                         });
+                  });
             });
 
-        $query = (clone $baseQuery)->with('user')->latest();
+        $query = (clone $baseQuery)->with('user')->oldest();
 
-        if ($status !== 'semua') {
+        if ($status === 'semua') {
+            $query->whereNotIn('status', ['selesai', 'dibatalkan']);
+        } else {
             $query->where('status', $status);
         }
 
         $orders = $query->paginate(5);
 
         $counts = [
-            'semua'        => (clone $baseQuery)->count(),
+            'semua'        => (clone $baseQuery)->whereNotIn('status', ['selesai', 'dibatalkan'])->count(),
             'pending'      => (clone $baseQuery)->where('status', 'pending')->count(),
             'diproses'     => (clone $baseQuery)->where('status', 'diproses')->count(),
             'dikirim'      => (clone $baseQuery)->where('status', 'dikirim')->count(),
@@ -49,10 +59,18 @@ class OrderAdminController extends Controller
 
         $scheduledOrders = Order::query()
             ->with('user')
-            ->whereDate('tanggal_pengiriman', '>', today())
             ->where('status', '!=', 'belum_bayar')
             ->whereNotIn('status', ['selesai', 'dibatalkan'])
             ->excludeAutoCancelled()
+            ->where(function ($q) {
+                $q->whereDate('tanggal_pengiriman', '>', today())
+                  ->orWhere(function ($sq) {
+                      // Hari ini tapi slot waktu belum dimulai
+                      $sq->whereDate('tanggal_pengiriman', today())
+                         ->whereNotNull('waktu_pengiriman')
+                         ->whereRaw("SUBSTRING(waktu_pengiriman, 1, 5) > ?", [now()->format('H:i')]);
+                  });
+            })
             ->orderBy('tanggal_pengiriman')
             ->orderBy('waktu_pengiriman')
             ->paginate(8, ['*'], 'spage');

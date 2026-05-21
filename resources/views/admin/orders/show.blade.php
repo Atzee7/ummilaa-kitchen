@@ -25,6 +25,20 @@
         'dibatalkan'   => 'Dibatalkan',
         default        => ucfirst($order->status),
     };
+
+    $isTimeLocked = false;
+    if ($order->tanggal_pengiriman) {
+        if ($order->tanggal_pengiriman->isFuture()) {
+            $isTimeLocked = true;
+        } elseif ($order->tanggal_pengiriman->isToday() && $order->waktu_pengiriman) {
+            $startTime = substr($order->waktu_pengiriman, 0, 5);
+            $isTimeLocked = now()->format('H:i') < $startTime;
+        }
+    }
+    $lockTitle = $order->tanggal_pengiriman
+        ? 'Bisa diproses mulai ' . $order->tanggal_pengiriman->translatedFormat('d M Y')
+            . ($order->waktu_pengiriman ? ' jam ' . substr($order->waktu_pengiriman, 0, 5) : '')
+        : '';
 @endphp
 
 {{-- NOTIFIKASI WA --}}
@@ -244,6 +258,34 @@
                 <p class="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Status saat ini</p>
                 <span class="px-3 py-1.5 rounded-full text-sm font-bold {{ $sc }}">{{ $statusLabel }}</span>
             </div>
+            @if($isTimeLocked)
+            {{-- TIME-LOCKED --}}
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center mb-4">
+                <p class="text-2xl mb-1">🔒</p>
+                <p class="text-sm font-semibold text-gray-600">Belum Waktunya</p>
+                <p class="text-xs text-gray-400 mt-1">{{ $lockTitle }}</p>
+            </div>
+            @if($order->status === 'pending')
+            <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                @csrf @method('PATCH')
+                <input type="hidden" name="status" value="dibatalkan">
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Alasan Pembatalan <span class="font-normal text-red-500">(wajib diisi)</span>
+                    </label>
+                    <textarea name="alasan_pembatalan" rows="3"
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 resize-none"
+                        placeholder="Masukkan alasan pembatalan...">{{ old('alasan_pembatalan') }}</textarea>
+                </div>
+                <button type="submit"
+                    class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-red-600">
+                    Batalkan Pesanan
+                </button>
+            </form>
+            @endif
+
+            @else
+            {{-- NORMAL FORM --}}
             <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
                 @csrf @method('PATCH')
                 <div class="mb-4">
@@ -278,6 +320,7 @@
                     Perbarui Status
                 </button>
             </form>
+            @endif
 
         </div>
 
