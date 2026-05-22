@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CateringOrder;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -32,16 +33,21 @@ class SettingController extends Controller
             'confirmation.in' => 'Frasa konfirmasi tidak cocok. Ketik persis: HAPUS SEMUA PESANAN',
         ]);
 
-        $count = Order::count();
+        $count         = Order::count();
+        $cateringCount = CateringOrder::count();
 
         DB::transaction(function () {
             DB::table('orders')->delete();
+            DB::table('catering_orders')->delete();
         });
 
         DB::statement('ALTER TABLE orders AUTO_INCREMENT = 1');
         DB::statement('ALTER TABLE order_items AUTO_INCREMENT = 1');
         DB::statement('ALTER TABLE testimonials AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE catering_orders AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE catering_order_cost_items AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE catering_order_histories AUTO_INCREMENT = 1');
 
-        return back()->with('success', "Berhasil menghapus {$count} pesanan beserta item dan testimoninya.");
+        return back()->with('success', "Berhasil menghapus {$count} pesanan produk dan {$cateringCount} pesanan catering beserta data terkait.");
     }
 }

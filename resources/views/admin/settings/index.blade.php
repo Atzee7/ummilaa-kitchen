@@ -74,7 +74,7 @@
         <div class="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-100">
             <div>
                 <div class="text-sm font-semibold text-[#1e1e2d]">Hapus Semua Pesanan</div>
-                <div class="text-xs text-gray-500 mt-0.5">Menghapus seluruh data pesanan, item pesanan, dan testimoni terkait.</div>
+                <div class="text-xs text-gray-500 mt-0.5">Menghapus seluruh data pesanan produk (item & testimoni) serta pesanan catering.</div>
             </div>
             <button type="button" onclick="openHapusModal()"
                 class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">
@@ -90,7 +90,7 @@
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
         <h3 class="text-lg font-bold text-red-700 mb-2">Konfirmasi Hapus Semua Pesanan</h3>
         <p class="text-sm text-gray-600 mb-4">
-            Tindakan ini akan menghapus <strong>seluruh pesanan</strong> beserta item dan testimoninya secara permanen.
+            Tindakan ini akan menghapus <strong>seluruh pesanan produk</strong> (beserta item & testimoni) <strong>dan pesanan catering</strong> secara permanen.
             Untuk melanjutkan, ketik <code class="bg-gray-100 px-2 py-0.5 rounded text-red-700 font-mono">HAPUS SEMUA PESANAN</code> di kolom bawah.
         </p>
 

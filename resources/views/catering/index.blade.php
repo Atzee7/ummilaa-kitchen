@@ -87,10 +87,10 @@
                 @foreach($packages as $package)
                 <div class="group shrink-0 w-[calc(50%-8px)] md:w-[calc(33.333%-11px)]
                             rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200
-                            transition-all duration-300
+                            transition-all duration-300 isolate
                             hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]">
                     <a href="{{ route('catering.package', $package->id) }}" class="no-underline block">
-                    <div class="relative overflow-hidden aspect-[4/3] md:aspect-auto md:h-[200px] bg-maroon-50">
+                    <div class="relative overflow-hidden aspect-[4/3] md:aspect-auto md:h-[200px] bg-maroon-50 rounded-t-[18px]">
                         @if($package->image)
                             <img src="{{ asset('storage/' . $package->image) }}"
                                  alt="{{ $package->name }}"
@@ -108,11 +108,7 @@
                     </div>
                     <div class="p-3 md:p-[18px]">
                         <h3 class="font-extrabold text-[#1a1a1a] text-[0.88rem] md:text-[1rem] mb-1 line-clamp-1">{{ $package->name }}</h3>
-                        @if($package->description)
-                        <p class="hidden md:block text-[0.78rem] text-[#aaa] leading-relaxed mb-2 line-clamp-2">{{ $package->description }}</p>
-                        @else
-                        <div class="hidden md:block mb-2"></div>
-                        @endif
+                        <p class="hidden md:block text-[0.78rem] text-[#aaa] leading-relaxed mb-2 line-clamp-2 min-h-[2.5rem]">{{ $package->description ?? '' }}</p>
                         <div class="flex items-center justify-between mt-2 md:mt-0">
                             <div>
                                 <p class="text-[0.6rem] md:text-[0.68rem] text-[#bbb] leading-none mb-0.5">mulai dari</p>

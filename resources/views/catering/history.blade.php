@@ -1,77 +1,249 @@
 @extends('layouts.app')
 
 @php
-    $statusMeta = [
-        'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700', 'fa-hourglass-half'],
-        'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700', 'fa-money-bill-wave'],
-        'diproses'            => ['Diproses', 'bg-blue-50 text-blue-700', 'fa-utensils'],
-        'selesai'             => ['Selesai', 'bg-green-50 text-green-700', 'fa-circle-check'],
-        'dibatalkan'          => ['Dibatalkan', 'bg-red-50 text-red-700', 'fa-circle-xmark'],
-    ];
+$statusMeta = [
+    'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700 border-yellow-200',  'fa-hourglass-half',  'border-yellow-400',  0],
+    'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700 border-amber-200',   'fa-money-bill-wave', 'border-orange-400',  1],
+    'diproses'            => ['Diproses',             'bg-blue-50 text-blue-700 border-blue-200',       'fa-utensils',        'border-blue-400',    2],
+    'selesai'             => ['Selesai',              'bg-green-50 text-green-700 border-green-200',    'fa-circle-check',    'border-green-500',   3],
+    'dibatalkan'          => ['Dibatalkan',           'bg-red-50 text-red-700 border-red-200',          'fa-circle-xmark',    'border-red-300',    -1],
+];
+
+$steps = [
+    ['key' => 'pengajuan',           'label' => 'Pengajuan'],
+    ['key' => 'menunggu_pembayaran', 'label' => 'Pembayaran'],
+    ['key' => 'diproses',            'label' => 'Diproses'],
+    ['key' => 'selesai',             'label' => 'Selesai'],
+];
+
+$countAktif     = $orders->whereIn('status', ['pengajuan', 'menunggu_pembayaran', 'diproses'])->count();
+$countSelesai   = $orders->where('status', 'selesai')->count();
+$countDibatalkan = $orders->where('status', 'dibatalkan')->count();
+
+$defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'dibatalkan');
 @endphp
 
 @section('content')
-<div class="px-4 sm:px-10 lg:px-[80px] py-8 lg:py-[50px] min-h-[70vh]">
+<div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px] min-h-[70vh]">
 
-    @if(session('success'))
-    <div class="bg-green-100 text-green-800 rounded-xl px-4 py-3 text-sm mb-4">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-    <div class="bg-pink-100 border border-red-300 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">{{ session('error') }}</div>
-    @endif
-
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="font-playfair text-[1.7rem] sm:text-[2.2rem] text-[#1a1a1a]">Riwayat Catering</h1>
+    {{-- HEADER --}}
+    <div class="flex items-start justify-between gap-4 mb-8">
+        <div>
+            <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Riwayat Catering</h1>
+            <p class="text-[#999] mt-1.5 text-[0.9rem]">Pantau status dan riwayat pesanan catering Anda</p>
+        </div>
         <a href="{{ route('catering.index') }}"
-           class="inline-flex items-center gap-2 px-5 py-2.5 bg-maroon text-white rounded-xl font-bold text-[0.85rem] no-underline hover:bg-maroon-dark transition-all whitespace-nowrap">
-            <i class="fas fa-plus"></i> Pesan Baru
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-maroon text-white rounded-xl font-bold text-[0.85rem] no-underline hover:bg-maroon-dark transition-all whitespace-nowrap shadow-[0_4px_14px_rgba(139,26,26,0.2)]">
+            <i class="fas fa-plus text-xs"></i> Pesan Baru
         </a>
     </div>
 
+    {{-- EMPTY STATE (no orders at all) --}}
     @if($orders->isEmpty())
-        <div class="text-center py-20 bg-maroon-50 rounded-2xl">
-            <div class="text-5xl mb-3">🍱</div>
-            <p class="text-[#888] mb-4">Anda belum punya pesanan catering.</p>
-            <a href="{{ route('catering.index') }}" class="text-maroon font-bold no-underline hover:underline">Mulai pesan catering →</a>
-        </div>
+    <div class="text-center py-20 bg-maroon-50 rounded-2xl">
+        <i class="fas fa-bowl-food text-[3rem] text-[#ddd] mb-4 block"></i>
+        <p class="text-[#888] mb-1 font-semibold">Belum ada pesanan catering</p>
+        <p class="text-[0.82rem] text-[#bbb] mb-5">Buat pesanan pertama Anda sekarang.</p>
+        <a href="{{ route('catering.index') }}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-maroon text-white rounded-xl font-bold text-[0.85rem] no-underline hover:bg-maroon-dark transition-all">
+            <i class="fas fa-utensils text-xs"></i> Mulai Pesan Catering
+        </a>
+    </div>
+
     @else
-    <div class="space-y-4">
+
+    @if(session('success'))
+    <div class="bg-green-100 text-green-800 rounded-xl px-5 py-[14px] text-[0.9rem] mb-6 flex items-center gap-[10px]">
+        <i class="fas fa-check-circle"></i> {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="bg-pink-100 text-red-700 rounded-xl px-5 py-[14px] text-[0.9rem] mb-6 flex items-center gap-[10px]">
+        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+    </div>
+    @endif
+
+    {{-- TABS (gaya pill, sama seperti Pesanan Saya) --}}
+    @php
+        $tabBadge = 'tab-badge absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-[5px] flex items-center justify-center rounded-full text-[0.68rem] font-extrabold leading-none bg-[#EF4444] text-white shadow-[0_2px_6px_rgba(239,68,68,0.45)] ring-[2.5px] ring-white pointer-events-none';
+        $tabBase  = 'status-tab relative inline-flex items-center px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all whitespace-nowrap flex-shrink-0';
+        $tabs = [
+            ['key' => 'aktif',      'label' => 'Aktif',      'count' => $countAktif],
+            ['key' => 'selesai',    'label' => 'Selesai',    'count' => $countSelesai],
+            ['key' => 'dibatalkan', 'label' => 'Dibatalkan', 'count' => $countDibatalkan],
+        ];
+    @endphp
+    <div class="relative mb-8">
+        <div class="flex gap-3 overflow-x-auto pb-2 pt-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-4 px-4 md:mx-0 md:px-0">
+            @foreach($tabs as $tab)
+            <button data-tab="{{ $tab['key'] }}"
+                class="{{ $tabBase }} {{ $defaultTab === $tab['key'] ? 'bg-[#8B1A1A] text-white border-[#8B1A1A]' : 'border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon' }}">
+                {{ $tab['label'] }}
+                @if($tab['count'] > 0)<span class="{{ $tabBadge }}">{{ $tab['count'] > 99 ? '99+' : $tab['count'] }}</span>@endif
+            </button>
+            @endforeach
+        </div>
+        <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 md:hidden"></div>
+    </div>
+
+    {{-- ORDER LIST --}}
+    <div class="space-y-4" id="orderList">
         @foreach($orders as $order)
-        @php [$label, $color, $icon] = $statusMeta[$order->status] ?? [ucfirst($order->status), 'bg-gray-50 text-gray-700', 'fa-circle']; @endphp
-        <div class="bg-white border border-maroon-200 rounded-[16px] p-5">
-            <div class="flex items-start justify-between gap-4 mb-3">
-                <div>
-                    <p class="text-[0.72rem] text-[#999] mb-0.5">#{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }} · {{ $order->created_at->translatedFormat('d M Y') }}</p>
-                    <h3 class="font-playfair text-[1.15rem] text-[#1a1a1a]">{{ $order->nama_acara }}</h3>
-                    <p class="text-[0.8rem] text-[#888]">{{ $order->package->name ?? 'Custom' }} · {{ $order->jumlah_pax }} pax</p>
+        @php
+            [$label, $badgeColor, $icon, $borderColor, $stepIndex] = $statusMeta[$order->status] ?? ['Tidak Diketahui', 'bg-gray-50 text-gray-700 border-gray-200', 'fa-circle', 'border-gray-300', -1];
+            $isCancelled = $order->status === 'dibatalkan';
+            $group = in_array($order->status, ['pengajuan', 'menunggu_pembayaran', 'diproses']) ? 'aktif'
+                   : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan');
+        @endphp
+
+        <div class="order-card bg-white rounded-[16px] border border-maroon-200 border-l-4 {{ $borderColor }} overflow-hidden transition-all duration-200 hover:shadow-[0_6px_24px_rgba(139,26,26,0.08)] {{ $defaultTab !== $group ? 'hidden' : '' }}"
+             data-group="{{ $group }}">
+
+            {{-- TOP: info utama --}}
+            <div class="p-5 pb-4">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="min-w-0">
+                        <p class="text-[0.7rem] text-[#bbb] mb-0.5 font-semibold tracking-wide uppercase">
+                            #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
+                            · {{ $order->created_at->translatedFormat('d M Y') }}
+                        </p>
+                        <h3 class="font-playfair text-[1.1rem] sm:text-[1.2rem] text-[#1a1a1a] truncate">{{ $order->nama_acara }}</h3>
+                        <p class="text-[0.8rem] text-[#999] mt-0.5">{{ $order->package->name ?? 'Custom' }}</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.72rem] font-extrabold whitespace-nowrap border {{ $badgeColor }} shrink-0">
+                        <i class="fas {{ $icon }} text-[0.65rem]"></i> {{ $label }}
+                    </span>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.72rem] font-extrabold whitespace-nowrap {{ $color }}">
-                    <i class="fas {{ $icon }}"></i> {{ $label }}
-                </span>
+
+                {{-- INFO GRID --}}
+                <div class="flex flex-wrap gap-3 sm:gap-5 mb-4">
+                    <div class="flex items-center gap-1.5 text-[0.8rem] text-[#666]">
+                        <i class="fas fa-calendar-days text-maroon/60 text-[0.75rem]"></i>
+                        <span>Acara: <strong class="text-[#333]">{{ \Carbon\Carbon::parse($order->tanggal_acara)->translatedFormat('d M Y') }}</strong></span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[0.8rem] text-[#666]">
+                        <i class="fas fa-users text-maroon/60 text-[0.75rem]"></i>
+                        <span><strong class="text-[#333]">{{ $order->jumlah_pax }}</strong> pax</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[0.8rem] text-[#666]">
+                        <i class="fas fa-location-dot text-maroon/60 text-[0.75rem]"></i>
+                        <span class="truncate max-w-[180px]">{{ Str::limit($order->lokasi_acara, 35) }}</span>
+                    </div>
+                </div>
+
+                {{-- PROGRESS STEPS --}}
+                @if(!$isCancelled)
+                <div class="flex items-center gap-0">
+                    @foreach($steps as $i => $step)
+                    @php
+                        $done    = $stepIndex > $i;
+                        $current = $stepIndex === $i;
+                        $future  = $stepIndex < $i;
+                    @endphp
+                    <div class="flex items-center {{ $i < count($steps) - 1 ? 'flex-1' : '' }}">
+                        <div class="flex flex-col items-center">
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[0.6rem] font-bold shrink-0
+                                {{ $done    ? 'bg-maroon text-white' : '' }}
+                                {{ $current ? 'bg-maroon text-white ring-4 ring-maroon/20' : '' }}
+                                {{ $future  ? 'bg-[#eee] text-[#bbb]' : '' }}">
+                                @if($done)<i class="fas fa-check"></i>@else{{ $i + 1 }}@endif
+                            </div>
+                            <span class="text-[0.6rem] mt-1 whitespace-nowrap font-semibold
+                                {{ $done || $current ? 'text-maroon' : 'text-[#ccc]' }}">
+                                {{ $step['label'] }}
+                            </span>
+                        </div>
+                        @if($i < count($steps) - 1)
+                        <div class="h-[2px] flex-1 mx-1 mb-[18px] {{ $stepIndex > $i ? 'bg-maroon' : 'bg-[#eee]' }}"></div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <div class="flex items-center gap-2 bg-red-50 rounded-lg px-3 py-2 text-[0.78rem] text-red-700">
+                    <i class="fas fa-circle-xmark"></i>
+                    <span>Pesanan dibatalkan</span>
+                    @if($order->alasan_pembatalan)
+                    <span class="text-red-400">· {{ Str::limit($order->alasan_pembatalan, 50) }}</span>
+                    @endif
+                </div>
+                @endif
             </div>
 
-            <div class="flex items-center justify-between gap-3 pt-3 border-t border-maroon-100">
+            {{-- BOTTOM: total + actions --}}
+            <div class="flex items-center justify-between gap-3 px-5 py-3 border-t border-maroon-100 bg-[#fdfafa]">
                 <div class="text-[0.85rem]">
-                    <span class="text-[#999]">Total: </span>
-                    <strong class="text-maroon">{{ $order->total ? 'Rp' . number_format($order->total, 0, ',', '.') : 'Menunggu penawaran' }}</strong>
+                    <span class="text-[#aaa] text-[0.75rem]">Total</span>
+                    <p class="font-extrabold text-maroon leading-none mt-0.5">
+                        {{ $order->total ? 'Rp' . number_format($order->total, 0, ',', '.') : 'Menunggu penawaran' }}
+                    </p>
                 </div>
                 <div class="flex gap-2">
                     @if($order->status === 'menunggu_pembayaran')
                     <a href="{{ route('catering.payment', $order->id) }}"
-                       class="px-4 py-2 bg-maroon text-white rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-dark transition-all">
-                        <i class="fas fa-credit-card mr-1"></i> Bayar
+                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-maroon text-white rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-dark transition-all shadow-[0_2px_8px_rgba(139,26,26,0.2)]">
+                        <i class="fas fa-credit-card text-[0.72rem]"></i> Bayar Sekarang
                     </a>
                     @endif
                     <a href="{{ route('catering.show', $order->id) }}"
-                       class="px-4 py-2 border-[1.5px] border-maroon text-maroon rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-50 transition-all">
-                        Detail
+                       class="inline-flex items-center gap-1.5 px-4 py-2 border-[1.5px] border-maroon text-maroon rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-50 transition-all">
+                        <i class="fas fa-eye text-[0.72rem]"></i> Detail
                     </a>
                 </div>
             </div>
+
         </div>
         @endforeach
+
+        {{-- Empty state per tab (shown by JS) --}}
+        <div id="empty-aktif"      class="hidden text-center py-14 bg-[#fafafa] rounded-2xl text-[#bbb]"><i class="fas fa-spinner text-2xl mb-3 block"></i><p class="text-sm">Tidak ada pesanan aktif</p></div>
+        <div id="empty-selesai"    class="hidden text-center py-14 bg-[#fafafa] rounded-2xl text-[#bbb]"><i class="fas fa-circle-check text-2xl mb-3 block"></i><p class="text-sm">Belum ada pesanan selesai</p></div>
+        <div id="empty-dibatalkan" class="hidden text-center py-14 bg-[#fafafa] rounded-2xl text-[#bbb]"><i class="fas fa-circle-xmark text-2xl mb-3 block"></i><p class="text-sm">Tidak ada pesanan dibatalkan</p></div>
     </div>
     @endif
 
 </div>
+
+@push('scripts')
+<script>
+const DEFAULT_TAB = '{{ $defaultTab }}';
+
+function deactivateTab(t) {
+    t.classList.remove('bg-[#8B1A1A]', 'text-white', 'border-[#8B1A1A]');
+    t.classList.add('bg-white', 'text-[#777]', 'border-maroon-200', 'hover:border-maroon', 'hover:text-maroon');
+}
+function activateTab(t) {
+    t.classList.add('bg-[#8B1A1A]', 'text-white', 'border-[#8B1A1A]');
+    t.classList.remove('bg-white', 'text-[#777]', 'border-maroon-200', 'hover:border-maroon', 'hover:text-maroon');
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.status-tab').forEach(t => {
+        t.dataset.tab === tab ? activateTab(t) : deactivateTab(t);
+    });
+
+    let visibleCount = 0;
+    document.querySelectorAll('.order-card').forEach(card => {
+        const show = card.dataset.group === tab;
+        card.classList.toggle('hidden', !show);
+        if (show) visibleCount++;
+    });
+
+    ['aktif', 'selesai', 'dibatalkan'].forEach(t => {
+        const el = document.getElementById('empty-' + t);
+        if (el) el.classList.add('hidden');
+    });
+    if (visibleCount === 0) {
+        const emptyEl = document.getElementById('empty-' + tab);
+        if (emptyEl) emptyEl.classList.remove('hidden');
+    }
+}
+
+document.querySelectorAll('.status-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+switchTab(DEFAULT_TAB);
+</script>
+@endpush
 @endsection
