@@ -3,10 +3,12 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\Setting;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
@@ -120,35 +122,69 @@ class CheckoutController extends Controller
 
     $total = $subtotal + $ongkir;
 
-    $order = Order::create([
-        'user_id'            => Auth::id(),
-        'nama_penerima'      => $nama_penerima,
-        'alamat'             => $alamat,
-        'detail_alamat'      => $user->detail_alamat,
-        'no_telepon'         => $no_telepon,
-        'metode_pembayaran'   => $request->metode_pembayaran,
-        'metode_pengiriman'   => $request->metode_pengiriman,
-        'catatan'             => $request->catatan,
-        'tanggal_pengiriman'  => $request->tanggal_pengiriman ?: null,
-        'waktu_pengiriman'    => $request->waktu_pengiriman ?: null,
-        'subtotal'            => $subtotal,
-        'ongkir'             => $ongkir,
-        'total'              => $total,
-        'status'             => in_array($request->metode_pembayaran, Order::ONLINE_PAYMENT_METHODS, true)
-            ? 'belum_bayar'
-            : 'pending',
-    ]);
+    try {
+        $order = DB::transaction(function () use ($request, $carts, $user, $nama_penerima, $no_telepon, $alamat, $subtotal, $ongkir, $total) {
 
-    foreach ($carts as $cart) {
-        OrderItem::create([
-            'order_id'   => $order->id,
-            'product_id' => $cart->product_id,
-            'quantity'   => $cart->quantity,
-            'price'      => $cart->product->price,
-        ]);
+            // Pass 1: validasi stok semua item (lock baris agar aman dari race condition)
+            $errors = [];
+            $lockedProducts = [];
+            foreach ($carts as $cart) {
+                $product = Product::lockForUpdate()->find($cart->product_id);
+                $lockedProducts[$cart->product_id] = $product;
+                if (!$product || $product->stock < $cart->quantity) {
+                    $errors[] = $product ? $product->name : "Produk #{$cart->product_id}";
+                }
+            }
+            if (!empty($errors)) {
+                throw new \RuntimeException('INSUFFICIENT_STOCK:' . implode('||', $errors));
+            }
+
+            // Buat order
+            $order = Order::create([
+                'user_id'            => Auth::id(),
+                'nama_penerima'      => $nama_penerima,
+                'alamat'             => $alamat,
+                'detail_alamat'      => $user->detail_alamat,
+                'no_telepon'         => $no_telepon,
+                'metode_pembayaran'  => $request->metode_pembayaran,
+                'metode_pengiriman'  => $request->metode_pengiriman,
+                'catatan'            => $request->catatan,
+                'tanggal_pengiriman' => $request->tanggal_pengiriman ?: null,
+                'waktu_pengiriman'   => $request->waktu_pengiriman ?: null,
+                'subtotal'           => $subtotal,
+                'ongkir'             => $ongkir,
+                'total'              => $total,
+                'status'             => in_array($request->metode_pembayaran, Order::ONLINE_PAYMENT_METHODS, true)
+                    ? 'belum_bayar'
+                    : 'pending',
+            ]);
+
+            // Pass 2: kurangi stok + buat OrderItem
+            foreach ($carts as $cart) {
+                $product = $lockedProducts[$cart->product_id];
+                $newStock = $product->stock - $cart->quantity;
+                $product->decrement('stock', $cart->quantity);
+                if ($newStock <= 0 && $product->status === 'ready') {
+                    $product->update(['status' => 'habis']);
+                }
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $cart->product_id,
+                    'quantity'   => $cart->quantity,
+                    'price'      => $cart->product->price,
+                ]);
+            }
+
+            Cart::where('user_id', Auth::id())->delete();
+            return $order;
+        });
+    } catch (\RuntimeException $e) {
+        if (str_starts_with($e->getMessage(), 'INSUFFICIENT_STOCK:')) {
+            $names = implode(', ', explode('||', substr($e->getMessage(), strlen('INSUFFICIENT_STOCK:'))));
+            return back()->withErrors(['stock' => "Stok tidak mencukupi untuk: {$names}. Silakan perbarui keranjang Anda."]);
+        }
+        throw $e;
     }
-
-    Cart::where('user_id', Auth::id())->delete();
 
     if (in_array($order->metode_pembayaran, Order::ONLINE_PAYMENT_METHODS, true)) {
         try {

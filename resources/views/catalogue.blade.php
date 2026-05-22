@@ -101,6 +101,13 @@
                         </span>
                         @endif
                     </div>
+                    <div class="absolute bottom-2 right-2">
+                        @if($product->status === 'habis')
+                            <span class="bg-red-800/90 backdrop-blur-sm text-white text-[0.6rem] sm:text-[0.68rem] font-bold px-2 py-0.5 rounded-[20px]">Habis</span>
+                        @else
+                            <span class="bg-white/90 backdrop-blur-sm text-maroon text-[0.6rem] sm:text-[0.68rem] font-bold px-2 py-0.5 rounded-[20px]">Stok: {{ $product->stock }}</span>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="p-3 sm:p-[18px]">

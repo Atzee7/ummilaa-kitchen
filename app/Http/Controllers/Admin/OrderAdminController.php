@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\FonnteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderAdminController extends Controller
 {
@@ -122,9 +123,13 @@ class OrderAdminController extends Controller
         $updateData = ['status' => $request->status];
         if ($request->status === 'dibatalkan') {
             $updateData['alasan_pembatalan'] = $request->alasan_pembatalan;
+            DB::transaction(function () use ($order, $updateData) {
+                Order::restoreStock($order->load('items'));
+                $order->update($updateData);
+            });
+        } else {
+            $order->update($updateData);
         }
-
-        $order->update($updateData);
         $order->load('user');
 
         $hasPhone = !empty(optional($order->user)->no_telepon);

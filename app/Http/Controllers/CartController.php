@@ -24,6 +24,11 @@ class CartController extends Controller
             'quantity'   => 'required|integer|min:1|max:' . self::MAX_QTY,
         ]);
 
+        $product = Product::findOrFail($request->product_id);
+        if ($product->status === 'habis' || $product->stock <= 0) {
+            return back()->withErrors(['quantity' => 'Maaf, produk ini sudah habis.'])->withInput();
+        }
+
         $cart = Cart::where('user_id', Auth::id())->where('product_id', $request->product_id)->first();
 
         if ($cart) {

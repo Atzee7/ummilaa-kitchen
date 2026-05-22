@@ -45,7 +45,7 @@ class ProductAdminController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price'       => 'required|numeric|min:0',
-            'stock'       => 'nullable|integer|min:0',
+            'stock'       => 'required|integer|min:0',
             'status'      => 'required|in:ready,habis',
             'badge'       => 'nullable|in:new,terlaris,unggulan',
             'image'       => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -66,6 +66,8 @@ class ProductAdminController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
+        $status = (int) $request->stock === 0 ? 'habis' : $request->status;
+
         Product::create([
             'name'        => $request->name,
             'category_id' => $request->category_id,
@@ -73,7 +75,7 @@ class ProductAdminController extends Controller
             'description' => $request->description,
             'price'       => $request->price,
             'stock'       => $request->stock,
-            'status'      => $request->status,
+            'status'      => $status,
             'badge'       => $request->badge,
             'image'       => $imagePath,
         ]);
@@ -99,7 +101,7 @@ class ProductAdminController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price'       => 'required|numeric|min:0',
-            'stock'       => 'nullable|integer|min:0',
+            'stock'       => 'required|integer|min:0',
             'status'      => 'required|in:ready,habis',
             'badge'       => 'nullable|in:new,terlaris,unggulan',
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -123,6 +125,8 @@ class ProductAdminController extends Controller
             $product->image = $request->file('image')->store('products', 'public');
         }
 
+        $status = (int) $request->stock === 0 ? 'habis' : $request->status;
+
         $product->update([
             'name'        => $request->name,
             'category_id' => $request->category_id,
@@ -130,7 +134,7 @@ class ProductAdminController extends Controller
             'description' => $request->description,
             'price'       => $request->price,
             'stock'       => $request->stock,
-            'status'      => $request->status,
+            'status'      => $status,
             'badge'       => $request->badge,
             'image'       => $product->image,
         ]);

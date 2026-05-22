@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -44,12 +45,36 @@ class Order extends Model
     public static function cancelExpiredUnpaidOrders(): int
     {
         $cutoff = now()->subMinutes(self::PAYMENT_TIMEOUT_MINUTES);
-        return self::where('status', 'belum_bayar')
+        $expiredOrders = self::with('items')
+            ->where('status', 'belum_bayar')
             ->where('created_at', '<', $cutoff)
-            ->update([
-                'status'            => 'dibatalkan',
-                'alasan_pembatalan' => 'Pembayaran melewati batas waktu (10 menit)',
-            ]);
+            ->get();
+
+        if ($expiredOrders->isEmpty()) return 0;
+
+        foreach ($expiredOrders as $order) {
+            DB::transaction(function () use ($order) {
+                static::restoreStock($order);
+                $order->update([
+                    'status'            => 'dibatalkan',
+                    'alasan_pembatalan' => 'Pembayaran melewati batas waktu (10 menit)',
+                ]);
+            });
+        }
+
+        return $expiredOrders->count();
+    }
+
+    public static function restoreStock(self $order): void
+    {
+        foreach ($order->items as $item) {
+            $product = \App\Models\Product::lockForUpdate()->find($item->product_id);
+            if (!$product) continue;
+            $product->increment('stock', $item->quantity);
+            if ($product->status === 'habis') {
+                $product->update(['status' => 'ready']);
+            }
+        }
     }
 
     public function scopeExcludeAutoCancelled($query)

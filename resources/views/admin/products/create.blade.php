@@ -56,8 +56,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Stok</label>
-                    <input type="number" name="stock" value="{{ old('stock', 0) }}" min="0"
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Stok <span class="text-red-500">*</span></label>
+                    <input type="number" id="inputStock" name="stock" value="{{ old('stock', 0) }}" min="0" required
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition">
                 </div>
             </div>
@@ -103,7 +103,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Status <span class="text-red-500">*</span></label>
-                    <select name="status" required
+                    <select id="selectStatus" name="status" required
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition bg-white">
                         <option value="ready"     {{ old('status') == 'ready'     ? 'selected' : '' }}>✅ Ready Stock</option>
                         <option value="habis"     {{ old('status') == 'habis'     ? 'selected' : '' }}>❌ Habis</option>
@@ -254,6 +254,15 @@ function tutupModal() {
         cropperInstance = null;
     }
 }
+
+document.getElementById('inputStock').addEventListener('input', function () {
+    const statusSelect = document.getElementById('selectStatus');
+    if (parseInt(this.value) === 0) {
+        statusSelect.value = 'habis';
+    } else if (statusSelect.value === 'habis') {
+        statusSelect.value = 'ready';
+    }
+});
 </script>
 @endpush
 @endsection
