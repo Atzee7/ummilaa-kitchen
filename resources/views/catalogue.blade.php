@@ -26,7 +26,7 @@
     </button>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-10 px-4 md:px-10 lg:px-[80px] py-6 lg:py-[60px] min-h-[80vh]">
+<div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-10 px-4 md:px-10 lg:px-[80px] py-6 lg:pt-[30px] lg:pb-[60px] min-h-[80vh]">
 
     {{-- SIDEBAR --}}
     <aside data-aos="fade-right" data-aos-duration="700" id="filter-sidebar" class="hidden lg:block lg:sticky lg:top-[90px] h-fit">
