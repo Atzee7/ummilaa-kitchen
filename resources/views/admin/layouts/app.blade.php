@@ -108,6 +108,33 @@
             Laporan
         </a>
 
+        {{-- CATERING --}}
+        <div class="text-[10px] font-bold tracking-[0.1em] uppercase text-white/55 px-3 pt-4 pb-1.5">Catering</div>
+
+        <a href="{{ route('admin.catering-packages.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
+               {{ $isActive('admin.catering-packages')
+                   ? 'bg-black/20 text-white [&>svg]:opacity-100 before:content-[\'\'] before:absolute before:left-0 before:top-[20%] before:bottom-[20%] before:w-[3px] before:bg-white before:rounded-r-[3px]'
+                   : 'text-white/55 hover:bg-white/[0.06] hover:text-white/90' }}">
+            <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+            </svg>
+            Paket Catering
+        </a>
+
+        <a href="{{ route('admin.catering-orders.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
+               {{ $isActive('admin.catering-orders')
+                   ? 'bg-black/20 text-white [&>svg]:opacity-100 before:content-[\'\'] before:absolute before:left-0 before:top-[20%] before:bottom-[20%] before:w-[3px] before:bg-white before:rounded-r-[3px]'
+                   : 'text-white/55 hover:bg-white/[0.06] hover:text-white/90' }}">
+            <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            Pesanan Catering
+        </a>
+
         {{-- PENGGUNA --}}
         <div class="text-[10px] font-bold tracking-[0.1em] uppercase text-white/55 px-3 pt-4 pb-1.5">Pengguna</div>
 

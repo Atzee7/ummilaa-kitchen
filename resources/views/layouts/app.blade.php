@@ -31,6 +31,8 @@
            class="font-bold text-base transition-colors duration-200 hover:text-maroon {{ request()->routeIs('about') ? 'text-maroon' : 'text-[#333]' }}">About Us</a>
         <a href="{{ route('catalogue') }}"
            class="font-bold text-base transition-colors duration-200 hover:text-maroon {{ request()->routeIs('catalogue') ? 'text-maroon' : 'text-[#333]' }}">Catalogue</a>
+        <a href="{{ route('catering.index') }}"
+           class="font-bold text-base transition-colors duration-200 hover:text-maroon {{ request()->routeIs('catering.*') ? 'text-maroon' : 'text-[#333]' }}">Catering</a>
         <a href="{{ route('contact') }}"
            class="font-bold text-base transition-colors duration-200 hover:text-maroon {{ request()->routeIs('contact') ? 'text-maroon' : 'text-[#333]' }}">Contact Us</a>
     </div>
@@ -53,6 +55,9 @@
             <div class="absolute top-[calc(100%+10px)] right-0 bg-white rounded-[14px] min-w-[200px] shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-maroon-200 p-2 opacity-0 invisible -translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[200]">
                 <a href="{{ route('orders') }}" class="flex items-center gap-[10px] px-[14px] py-[10px] rounded-[10px] text-[0.9rem] font-semibold text-[#444] hover:bg-maroon-100 hover:text-maroon transition-colors duration-150 no-underline">
                     <i class="fas fa-box w-4 text-maroon"></i> Pesanan Saya
+                </a>
+                <a href="{{ route('catering.history') }}" class="flex items-center gap-[10px] px-[14px] py-[10px] rounded-[10px] text-[0.9rem] font-semibold text-[#444] hover:bg-maroon-100 hover:text-maroon transition-colors duration-150 no-underline">
+                    <i class="fas fa-bowl-food w-4 text-maroon"></i> Riwayat Catering
                 </a>
                 <a href="{{ route('profile.user') }}" class="flex items-center gap-[10px] px-[14px] py-[10px] rounded-[10px] text-[0.9rem] font-semibold text-[#444] hover:bg-maroon-100 hover:text-maroon transition-colors duration-150 no-underline">
                     <i class="fas fa-user-edit w-4 text-maroon"></i> Profile
@@ -103,6 +108,9 @@
             <a href="{{ route('catalogue') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('catalogue') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
                 <i class="fas fa-utensils w-5 mr-2 text-maroon"></i> Catalogue
             </a>
+            <a href="{{ route('catering.index') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('catering.*') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
+                <i class="fas fa-bowl-food w-5 mr-2 text-maroon"></i> Catering
+            </a>
             <a href="{{ route('contact') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline transition-colors {{ request()->routeIs('contact') ? 'bg-maroon-100 text-maroon' : 'text-[#333] hover:bg-maroon-50 hover:text-maroon' }}">
                 <i class="fas fa-envelope w-5 mr-2 text-maroon"></i> Contact Us
             </a>
@@ -112,6 +120,9 @@
             @auth
             <a href="{{ route('orders') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline text-[#333] hover:bg-maroon-50 hover:text-maroon transition-colors">
                 <i class="fas fa-box w-5 mr-2 text-maroon"></i> Pesanan Saya
+            </a>
+            <a href="{{ route('catering.history') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline text-[#333] hover:bg-maroon-50 hover:text-maroon transition-colors">
+                <i class="fas fa-bowl-food w-5 mr-2 text-maroon"></i> Riwayat Catering
             </a>
             <a href="{{ route('profile.user') }}" class="py-3 px-4 rounded-xl font-bold text-[0.95rem] no-underline text-[#333] hover:bg-maroon-50 hover:text-maroon transition-colors">
                 <i class="fas fa-user-edit w-5 mr-2 text-maroon"></i> Profile

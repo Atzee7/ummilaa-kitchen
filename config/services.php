@@ -39,6 +39,10 @@ return [
         'token' => env('FONNTE_TOKEN'),
     ],
 
+    'catering' => [
+        'wa_number' => env('CATERING_WA_NUMBER'),
+    ],
+
     'midtrans' => [
         'server_key'    => env('MIDTRANS_SERVER_KEY'),
         'client_key'    => env('MIDTRANS_CLIENT_KEY'),

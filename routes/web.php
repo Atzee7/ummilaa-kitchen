@@ -15,6 +15,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\TestimonialController; // TAMBAHAN
+use App\Http\Controllers\CateringController;
 
 // Profile user
 Route::middleware('auth')->group(function () {
@@ -32,6 +33,18 @@ Route::middleware('auth')->group(function () {
 
 // Product detail (tanpa login)
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+// Catering — wajib login (urutan: checkout & riwayat sebelum param {id})
+Route::middleware('auth')->group(function () {
+    Route::get('/catering', [CateringController::class, 'index'])->name('catering.index');
+    Route::get('/catering/paket/{id}', [CateringController::class, 'showPackage'])->name('catering.package');
+    Route::get('/catering/checkout', [CateringController::class, 'checkout'])->name('catering.checkout');
+    Route::post('/catering/checkout', [CateringController::class, 'store'])->name('catering.store');
+    Route::get('/catering/riwayat', [CateringController::class, 'history'])->name('catering.history');
+    Route::get('/catering/riwayat/{id}', [CateringController::class, 'show'])->name('catering.show');
+    Route::get('/catering/riwayat/{id}/bayar', [CateringController::class, 'payment'])->name('catering.payment');
+    Route::delete('/catering/riwayat/{id}', [CateringController::class, 'cancel'])->name('catering.cancel');
+});
 
 // Cart — login tapi tidak perlu profile lengkap
 Route::middleware('auth')->group(function () {
@@ -115,6 +128,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/orders/{id}/modal', [App\Http\Controllers\Admin\OrderAdminController::class, 'modalContent'])->name('orders.modalContent');
         Route::patch('/orders/{id}/status', [App\Http\Controllers\Admin\OrderAdminController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::post('/orders/{id}/send-whatsapp', [App\Http\Controllers\Admin\OrderAdminController::class, 'sendWhatsapp'])->name('orders.sendWhatsapp');
+
+        // Catering — Paket & Pesanan
+        Route::resource('catering-packages', App\Http\Controllers\Admin\CateringPackageController::class)
+            ->except(['show']);
+        Route::get('/catering-orders', [App\Http\Controllers\Admin\CateringOrderAdminController::class, 'index'])->name('catering-orders.index');
+        Route::get('/catering-orders/{id}', [App\Http\Controllers\Admin\CateringOrderAdminController::class, 'show'])->name('catering-orders.show');
+        Route::post('/catering-orders/{id}/open-payment', [App\Http\Controllers\Admin\CateringOrderAdminController::class, 'openPayment'])->name('catering-orders.openPayment');
+        Route::post('/catering-orders/{id}/send-whatsapp', [App\Http\Controllers\Admin\CateringOrderAdminController::class, 'sendWhatsapp'])->name('catering-orders.sendWhatsapp');
+        Route::patch('/catering-orders/{id}/status', [App\Http\Controllers\Admin\CateringOrderAdminController::class, 'updateStatus'])->name('catering-orders.updateStatus');
 
         Route::get('/users', [UserAdminController::class, 'index'])->name('users.index');
         Route::get('/users/{id}', [UserAdminController::class, 'show'])->name('users.show');
