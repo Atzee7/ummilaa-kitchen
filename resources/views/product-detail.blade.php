@@ -107,14 +107,22 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
         @foreach($related as $r)
-        <a href="{{ route('product.show', $r->id) }}" class="rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 transition-all duration-300 cursor-pointer no-underline hover:shadow-[0_12px_36px_rgba(139,26,26,0.1)] hover:-translate-y-1">
-            <img src="{{ $r->image && Str::startsWith($r->image, 'products/') ? asset('storage/' . $r->image) : $r->image }}" alt="{{ $r->name }}" class="w-full h-[160px] object-cover">
+        <a href="{{ $r->status !== 'habis' ? route('product.show', $r->id) : '#' }}"
+           class="rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 transition-all duration-300 no-underline {{ $r->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_12px_36px_rgba(139,26,26,0.1)] hover:-translate-y-1' }}">
+            <div class="relative overflow-hidden h-[160px]">
+                <img src="{{ $r->image && Str::startsWith($r->image, 'products/') ? asset('storage/' . $r->image) : $r->image }}"
+                     alt="{{ $r->name }}"
+                     class="w-full h-full object-cover transition-transform duration-[400ms] {{ $r->status === 'habis' ? 'grayscale brightness-50' : 'hover:scale-[1.06]' }}">
+            </div>
             <div class="p-[14px]">
+                <span class="inline-flex items-center gap-1 text-[0.6rem] px-2 py-[2px] rounded-[20px] font-bold mb-1.5 {{ $r->status === 'ready' ? 'bg-green-100 text-green-800' : 'bg-pink-100 text-red-800' }}">
+                    ● @if($r->status === 'ready') Ready Stock @else Habis @endif
+                </span>
                 <h4 class="font-extrabold text-[#1a1a1a] text-[0.9rem] mb-1">{{ $r->name }}</h4>
                 <p class="text-[0.82rem] text-[#999] leading-[1.4] mb-2.5">{{ Str::limit($r->description, 55) }}</p>
                 <div class="flex justify-between items-center">
                     <span class="font-extrabold text-maroon text-[0.92rem]">Rp{{ number_format($r->price, 0, ',', '.') }}</span>
-                    <button class="bg-maroon text-white border-none rounded-lg w-[34px] h-[34px] flex items-center justify-center text-[0.8rem] cursor-pointer transition-all duration-200 hover:bg-maroon-dark">
+                    <button class="border-none rounded-lg w-[34px] h-[34px] flex items-center justify-center text-[0.8rem] transition-all duration-200 {{ $r->status === 'habis' ? 'bg-[#ccc] text-white cursor-not-allowed pointer-events-none' : 'bg-maroon text-white cursor-pointer hover:bg-maroon-dark' }}">
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
