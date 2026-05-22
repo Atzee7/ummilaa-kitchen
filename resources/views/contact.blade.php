@@ -80,7 +80,7 @@
             @foreach([
                 ['icon' => 'fas fa-bolt', 'label' => '< 5 Menit Respons'],
                 ['icon' => 'fas fa-star', 'label' => '4.9 / 5 Rating'],
-                ['icon' => 'fas fa-users', 'label' => '500+ Pelanggan Setia'],
+                ['icon' => 'fas fa-users', 'label' => 'Selalu Siap Melayani'],
             ] as $pill)
             <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f0e4df] text-[#666] px-5 py-2 rounded-full text-[0.8rem] font-medium">
                 <i class="{{ $pill['icon'] }} text-maroon text-[0.75rem]"></i>

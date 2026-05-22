@@ -40,8 +40,8 @@
         {{-- Heading --}}
         <h1 data-aos="fade-up" data-aos-duration="800" data-aos-delay="100"
             class="font-playfair text-[2.8rem] md:text-[3.6rem] lg:text-[4.4rem] leading-[1.15] text-[#1a1a1a] mb-6 tracking-[-1.5px]">
-            Dapur Penuh <em class="text-maroon not-italic">Cinta</em>,<br>
-            Rasa yang Tak Terlupakan
+            Makanan Enak,<br>
+            <em class="text-maroon not-italic">Harga Bersahabat</em>
         </h1>
 
         {{-- Divider --}}
@@ -79,7 +79,6 @@
             @foreach([
                 ['icon' => 'fas fa-leaf', 'label' => 'Bahan Segar Pilihan'],
                 ['icon' => 'fas fa-shield-alt', 'label' => 'Higienis & Terjamin'],
-                ['icon' => 'fas fa-heart', 'label' => 'Dibuat dengan Cinta'],
             ] as $pill)
             <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f0e4df] text-[#666] px-5 py-2 rounded-full text-[0.8rem] font-medium">
                 <i class="{{ $pill['icon'] }} text-maroon text-[0.75rem]"></i>
@@ -110,21 +109,20 @@
         {{-- Kiri: Teks --}}
         <div data-aos="fade-right" data-aos-duration="800">
             <h2 class="font-playfair text-[1.8rem] md:text-[2.6rem] text-[#1a1a1a] leading-[1.25] mb-6 tracking-[-0.5px]">
-                Berawal dari Dapur Rumahan,<br class="hidden md:block"> Kini Melayani <span class="text-maroon">Ratusan Pelanggan</span>
+                Berawal dari Dapur Rumahan,<br class="hidden md:block"> Tumbuh Bersama <span class="text-maroon">Pelanggan Kami</span>
             </h2>
             <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-4">
                 Ummilaa Kitchen lahir dari kecintaan mendalam terhadap dunia kuliner dan tekad untuk menghadirkan makanan berkualitas dengan harga yang bersahabat bagi masyarakat Malang.
             </p>
             <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-10">
-                Berawal dari dapur kecil di rumah sejak 2019, kini kami menawarkan berbagai produk — dimsum, crunchy series, perpentolan, risol — hingga layanan catering untuk berbagai acara spesial.
+                Berawal dari dapur kecil di rumah sejak 2025, kini kami menawarkan berbagai produk — dimsum, crunchy series, perpentolan, risol — hingga layanan catering untuk berbagai acara spesial.
             </p>
 
             {{-- Feature list --}}
             <div class="space-y-4">
                 @foreach([
                     ['icon' => 'fas fa-leaf', 'title' => 'Bahan Segar Setiap Hari', 'desc' => 'Dipilih langsung dari sumber terpercaya untuk menjaga kualitas rasa.'],
-                    ['icon' => 'fas fa-award', 'title' => 'Kualitas Terjaga Sejak 2019', 'desc' => 'Standar kebersihan dan cita rasa yang konsisten di setiap produk.'],
-                    ['icon' => 'fas fa-heart', 'title' => 'Dibuat dengan Sepenuh Hati', 'desc' => 'Setiap produk kami kerjakan dengan dedikasi dan penuh kasih sayang.'],
+                    ['icon' => 'fas fa-award', 'title' => 'Kualitas Terjaga Sejak 2025', 'desc' => 'Standar kebersihan dan cita rasa yang konsisten di setiap produk.'],
                 ] as $f)
                 <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-xl bg-[#fdf6f3] border border-[#f0e4df] flex items-center justify-center text-maroon flex-shrink-0 mt-0.5">

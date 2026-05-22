@@ -27,15 +27,9 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
 <div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px] min-h-[70vh]">
 
     {{-- HEADER --}}
-    <div class="flex items-start justify-between gap-4 mb-8">
-        <div>
-            <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Riwayat Catering</h1>
-            <p class="text-[#999] mt-1.5 text-[0.9rem]">Pantau status dan riwayat pesanan catering Anda</p>
-        </div>
-        <a href="{{ route('catering.index') }}"
-           class="inline-flex items-center gap-2 px-5 py-2.5 bg-maroon text-white rounded-xl font-bold text-[0.85rem] no-underline hover:bg-maroon-dark transition-all whitespace-nowrap shadow-[0_4px_14px_rgba(139,26,26,0.2)]">
-            <i class="fas fa-plus text-xs"></i> Pesan Baru
-        </a>
+    <div class="mb-8">
+        <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Riwayat Catering</h1>
+        <p class="text-[#999] mt-1.5 text-[0.9rem]">Pantau status dan riwayat pesanan catering Anda</p>
     </div>
 
     {{-- EMPTY STATE (no orders at all) --}}

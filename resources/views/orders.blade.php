@@ -9,10 +9,12 @@
     </div>
 
     @php
-        // Floating notification badge — pojok kanan-atas tab, gaya Shopee/Tokopedia
+        $hasAnyOrder = $groupedOrders->isNotEmpty();
+        $otherDates  = $groupedOrders->keys()->filter(fn($d) => $d !== $today)->sortDesc()->values();
         $tabBadge = 'tab-badge absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-[5px] flex items-center justify-center rounded-full text-[0.68rem] font-extrabold leading-none bg-[#EF4444] text-white shadow-[0_2px_6px_rgba(239,68,68,0.45)] ring-[2.5px] ring-white pointer-events-none';
         $tabBase  = 'status-tab relative inline-flex items-center px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all whitespace-nowrap flex-shrink-0';
     @endphp
+    @if($hasAnyOrder)
     <div class="relative mb-8">
     <div class="flex gap-3 overflow-x-auto pb-2 pt-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-4 px-4 md:mx-0 md:px-0">
         <button class="{{ $tabBase }} bg-[#8B1A1A] text-white border-[#8B1A1A]" data-status="semua">
@@ -62,15 +64,10 @@
         </div>
     @endif
 
-    @php
-        $hasAnyOrder = $groupedOrders->isNotEmpty();
-        // Kumpulkan semua tanggal selain hari ini, urut terbaru dulu
-        $otherDates = $groupedOrders->keys()->filter(fn($d) => $d !== $today)->sortDesc()->values();
-    @endphp
-
     <div id="ordersList">
 
-    {{-- ===== SECTION HARI INI (selalu tampil) ===== --}}
+    {{-- ===== SECTION HARI INI (hanya tampil jika ada pesanan) ===== --}}
+    @if($groupedOrders->has($today))
     <div class="date-group mb-8" data-date="{{ $today }}" data-is-today="1">
         <div class="flex items-center gap-3 mb-4">
             <h2 class="font-playfair text-[1.15rem] font-bold text-[#1a1a1a]">Hari ini</h2>
@@ -78,7 +75,6 @@
             <span class="text-[0.8rem] text-[#bbb]">{{ now()->translatedFormat('d F Y') }}</span>
         </div>
 
-        @if($groupedOrders->has($today))
         <div class="flex flex-col gap-5 date-group-cards">
         @foreach($groupedOrders[$today] as $order)
         <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}">
@@ -235,17 +231,8 @@
         </div>
         @endforeach
         </div>{{-- .date-group-cards --}}
-        @else
-        {{-- Hari ini kosong --}}
-        <div class="flex items-center gap-4 py-6 px-5 bg-[#fafafa] border border-dashed border-maroon-200 rounded-[18px] text-[#bbb]">
-            <i class="fas fa-clock text-[1.6rem]"></i>
-            <div>
-                <p class="font-bold text-[#999] text-[0.95rem]">Belum ada pesanan hari ini</p>
-                <p class="text-[0.82rem] mt-0.5">Yuk pesan sekarang!</p>
-            </div>
-        </div>
-        @endif
     </div>{{-- .date-group hari ini --}}
+    @endif
 
     {{-- ===== SECTION TANGGAL LAINNYA ===== --}}
     @foreach($otherDates as $date)
@@ -419,19 +406,19 @@
     </div>{{-- .date-group --}}
     @endforeach
 
-    @if(!$hasAnyOrder)
-    {{-- Empty state global (belum pernah pesan sama sekali) --}}
-    <div class="text-center py-[60px] px-10 text-[#bbb]">
-        <i class="fas fa-box-open text-[3.5rem] mb-5 block"></i>
-        <h3 class="text-[1.2rem] text-[#999] mb-3">Belum ada pesanan</h3>
-        <p>Yuk mulai pesan produk favorit dari Ummilaa Kitchen</p>
-        <a href="{{ route('catalogue') }}" class="inline-flex items-center gap-2 bg-maroon text-white px-7 py-[13px] rounded-xl font-bold text-[0.95rem] mt-2 no-underline hover:bg-maroon-dark transition-colors">
-            <i class="fas fa-utensils"></i> Belanja Sekarang
+    </div>{{-- #ordersList --}}
+    @else
+    {{-- Empty state global (gaya Riwayat Catering) --}}
+    <div class="text-center py-20 bg-maroon-50 rounded-2xl">
+        <i class="fas fa-box-open text-[3rem] text-[#ddd] mb-4 block"></i>
+        <p class="text-[#888] mb-1 font-semibold">Belum ada pesanan</p>
+        <p class="text-[0.82rem] text-[#bbb] mb-5">Yuk mulai pesan produk favorit dari Ummilaa Kitchen.</p>
+        <a href="{{ route('catalogue') }}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-maroon text-white rounded-xl font-bold text-[0.85rem] no-underline hover:bg-maroon-dark transition-all">
+            <i class="fas fa-utensils text-xs"></i> Belanja Sekarang
         </a>
     </div>
     @endif
-
-    </div>{{-- #ordersList --}}
 </div>
 @endsection
 
@@ -460,8 +447,7 @@
 
             // Show/hide date-group (kecuali "Hari ini" yang selalu tampil)
             document.querySelectorAll('.date-group').forEach(group => {
-                if (group.dataset.isToday === '1') return; // Hari ini selalu tampil
-                const cards = group.querySelectorAll('.order-card');
+const cards = group.querySelectorAll('.order-card');
                 const anyVisible = [...cards].some(c => !c.classList.contains('hidden'));
                 group.classList.toggle('hidden', !anyVisible);
             });

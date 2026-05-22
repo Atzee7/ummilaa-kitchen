@@ -40,10 +40,12 @@
                       shadow-[0_8px_24px_rgba(139,26,26,0.25)] hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200">
                 <i class="fas fa-pen-to-square text-sm"></i> Pesan Sekarang
             </a>
+            @auth
             <a href="{{ route('catering.history') }}"
                class="inline-flex items-center gap-2 text-maroon font-bold text-[0.92rem] no-underline hover:gap-3 transition-all duration-200">
                 Riwayat Pesanan <i class="fas fa-arrow-right text-sm"></i>
             </a>
+            @endauth
         </div>
 
     </div>
