@@ -30,7 +30,7 @@
         <p data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
            class="text-[#777] text-[0.97rem] leading-[1.8] mb-8">
             Kami hadir untuk mewujudkan acara Anda dengan cita rasa terbaik.<br class="hidden sm:block">
-            Pilih paket sesuai kebutuhan atau rancang menu custom bersama kami.
+            Pilih paket catering sesuai kebutuhan Anda.
         </p>
 
         <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="300"
@@ -61,7 +61,7 @@
     <div class="mx-4 sm:mx-10 lg:mx-[80px] py-20 text-center bg-maroon-50 rounded-2xl mb-10" data-aos="fade-up">
         <i class="fas fa-bowl-food text-[3rem] text-[#ccc] mb-4 block"></i>
         <p class="text-[#888] text-sm mb-1">Belum ada paket catering tersedia.</p>
-        <p class="text-[0.82rem] text-[#bbb]">Anda tetap bisa mengajukan pesanan custom.</p>
+        <p class="text-[0.82rem] text-[#bbb]">Silakan cek kembali nanti.</p>
     </div>
 
     @else
@@ -87,9 +87,9 @@
                 @foreach($packages as $package)
                 <div class="group shrink-0 w-[calc(50%-8px)] md:w-[calc(33.333%-11px)]
                             rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200
-                            cursor-pointer transition-all duration-300
-                            hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]"
-                     onclick="window.location='{{ route('catering.package', $package->id) }}'">
+                            transition-all duration-300
+                            hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]">
+                    <a href="{{ route('catering.package', $package->id) }}" class="no-underline block">
                     <div class="relative overflow-hidden aspect-[4/3] md:aspect-auto md:h-[200px] bg-maroon-50">
                         @if($package->image)
                             <img src="{{ asset('storage/' . $package->image) }}"
@@ -109,9 +109,9 @@
                     <div class="p-3 md:p-[18px]">
                         <h3 class="font-extrabold text-[#1a1a1a] text-[0.88rem] md:text-[1rem] mb-1 line-clamp-1">{{ $package->name }}</h3>
                         @if($package->description)
-                        <p class="hidden md:block text-[0.78rem] text-[#aaa] leading-relaxed mb-3 line-clamp-2">{{ $package->description }}</p>
+                        <p class="hidden md:block text-[0.78rem] text-[#aaa] leading-relaxed mb-2 line-clamp-2">{{ $package->description }}</p>
                         @else
-                        <div class="hidden md:block mb-3"></div>
+                        <div class="hidden md:block mb-2"></div>
                         @endif
                         <div class="flex items-center justify-between mt-2 md:mt-0">
                             <div>
@@ -121,10 +121,14 @@
                                     <span class="text-[0.65rem] md:text-[0.72rem] text-[#aaa] font-semibold">/ pax</span>
                                 </p>
                             </div>
-                            <button class="bg-maroon text-white border-none rounded-[10px] w-8 h-8 md:w-[38px] md:h-[38px] flex items-center justify-center text-[0.8rem] md:text-[0.85rem] transition-all duration-200 hover:bg-maroon-dark hover:scale-110 shrink-0">
-                                <i class="fas fa-arrow-right"></i>
-                            </button>
                         </div>
+                    </div>
+                    </a>
+                    <div class="px-3 pb-3 md:px-[18px] md:pb-[18px]">
+                        <a href="{{ route('catering.checkout', ['package' => $package->id]) }}"
+                           class="w-full py-2 bg-maroon text-white rounded-[10px] flex items-center justify-center gap-1.5 text-[0.78rem] md:text-[0.82rem] font-bold no-underline hover:opacity-90 transition-opacity">
+                            <i class="fas fa-pen-to-square text-[0.72rem]"></i> Pesan Paket Ini
+                        </a>
                     </div>
                 </div>
                 @endforeach
@@ -142,28 +146,6 @@
     </div>
     @endif
 
-    {{-- CTA CUSTOM --}}
-    <div class="mx-4 sm:mx-10 lg:mx-[80px] bg-maroon-50 border-[1.5px] border-maroon-200 rounded-[20px] p-6 sm:p-10
-                flex flex-col sm:flex-row items-center justify-between gap-6"
-         data-aos="fade-up" data-aos-duration="650">
-        <div>
-            <p class="text-[0.7rem] font-bold uppercase tracking-widest text-maroon mb-2">Tidak ada yang cocok?</p>
-            <h2 class="font-playfair text-[1.4rem] sm:text-[1.8rem] text-[#1a1a1a] mb-2 leading-snug">
-                Punya kebutuhan khusus?
-            </h2>
-            <p class="text-[#888] text-[0.88rem] leading-relaxed max-w-sm">
-                Ajukan pesanan catering custom — menu, jumlah, dan budget sesuai acara Anda.
-            </p>
-        </div>
-        <div class="shrink-0 text-center">
-            <a href="{{ route('catering.checkout') }}"
-               class="inline-flex items-center gap-2 px-7 py-3.5 bg-maroon text-white rounded-xl font-bold text-[0.9rem]
-                      no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
-                <i class="fas fa-pen-to-square"></i> Pesan Custom
-            </a>
-            <p class="text-[0.72rem] text-[#bbb] mt-2">Gratis konsultasi, tanpa komitmen</p>
-        </div>
-    </div>
 
 </div>
 

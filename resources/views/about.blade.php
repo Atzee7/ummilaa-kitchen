@@ -19,7 +19,7 @@
      HERO — 85vh, centered, elegant
 ================================================================ --}}
 <section class="relative bg-white flex flex-col justify-center overflow-hidden border-b border-[#f0eeec]"
-    style="min-height: 85vh">
+    style="min-height: 100vh">
 
     {{-- Faint corner ornaments --}}
     <div class="absolute top-10 left-10 w-24 h-24 border border-[#f0e8e8] rounded-full pointer-events-none opacity-60"></div>
@@ -75,7 +75,7 @@
 
         {{-- Pills --}}
         <div data-aos="fade-up" data-aos-duration="600" data-aos-delay="400"
-            class="flex flex-wrap items-center justify-center gap-3 mb-10">
+            class="flex flex-wrap items-center justify-center gap-3">
             @foreach([
                 ['icon' => 'fas fa-leaf', 'label' => 'Bahan Segar Pilihan'],
                 ['icon' => 'fas fa-shield-alt', 'label' => 'Higienis & Terjamin'],

@@ -37,7 +37,7 @@ class CateringController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'catering_package_id'  => 'nullable|exists:catering_packages,id',
+            'catering_package_id'  => 'required|exists:catering_packages,id',
             'nama_acara'           => 'required|string|max:255',
             'tanggal_acara'        => 'required|date|after_or_equal:today',
             'jumlah_pax'           => 'required|integer|min:1',
@@ -49,18 +49,16 @@ class CateringController extends Controller
         ]);
 
         // Validasi minimum pax sesuai paket yang dipilih
-        if (!empty($validated['catering_package_id'])) {
-            $pkg = \App\Models\CateringPackage::find($validated['catering_package_id']);
-            if ($pkg && $pkg->min_pax && (int) $validated['jumlah_pax'] < $pkg->min_pax) {
-                return back()
-                    ->withErrors(['jumlah_pax' => "Minimum pemesanan untuk paket \"{$pkg->name}\" adalah {$pkg->min_pax} pax."])
-                    ->withInput();
-            }
+        $pkg = \App\Models\CateringPackage::find($validated['catering_package_id']);
+        if ($pkg && $pkg->min_pax && (int) $validated['jumlah_pax'] < $pkg->min_pax) {
+            return back()
+                ->withErrors(['jumlah_pax' => "Minimum pemesanan untuk paket \"{$pkg->name}\" adalah {$pkg->min_pax} pax."])
+                ->withInput();
         }
 
         $order = CateringOrder::create([
             'user_id'             => auth()->id(),
-            'catering_package_id' => $validated['catering_package_id'] ?? null,
+            'catering_package_id' => $validated['catering_package_id'],
             'nama_acara'          => $validated['nama_acara'],
             'tanggal_acara'       => $validated['tanggal_acara'],
             'jumlah_pax'          => $validated['jumlah_pax'],

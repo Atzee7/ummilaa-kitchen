@@ -99,12 +99,6 @@
                           transition-all duration-200">
                     <i class="fas fa-pen-to-square text-sm"></i> Pesan Paket Ini
                 </a>
-                <a href="{{ route('catering.checkout') }}"
-                   class="w-full py-[13px] bg-white text-maroon border-2 border-maroon rounded-xl text-[0.88rem] font-bold
-                          flex items-center justify-center gap-2 no-underline
-                          hover:bg-maroon-100 transition-colors duration-200">
-                    <i class="fas fa-sliders text-sm"></i> Pesan Custom (Tanpa Paket)
-                </a>
             </div>
 
             {{-- Note --}}
