@@ -37,6 +37,7 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 // Catering — wajib login (urutan: checkout & riwayat sebelum param {id})
 Route::middleware('auth')->group(function () {
     Route::get('/catering', [CateringController::class, 'index'])->name('catering.index');
+    Route::get('/catering/paket/{id}', [CateringController::class, 'showPackage'])->name('catering.package');
     Route::get('/catering/checkout', [CateringController::class, 'checkout'])->name('catering.checkout');
     Route::post('/catering/checkout', [CateringController::class, 'store'])->name('catering.store');
     Route::get('/catering/riwayat', [CateringController::class, 'history'])->name('catering.history');

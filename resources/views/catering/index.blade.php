@@ -89,7 +89,7 @@
                             rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200
                             cursor-pointer transition-all duration-300
                             hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]"
-                     onclick="window.location='{{ route('catering.checkout', ['package' => $package->id]) }}'">
+                     onclick="window.location='{{ route('catering.package', $package->id) }}'">
                     <div class="relative overflow-hidden aspect-[4/3] md:aspect-auto md:h-[200px] bg-maroon-50">
                         @if($package->image)
                             <img src="{{ asset('storage/' . $package->image) }}"

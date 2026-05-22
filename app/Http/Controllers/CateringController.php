@@ -16,6 +16,12 @@ class CateringController extends Controller
         return view('catering.index', compact('packages'));
     }
 
+    public function showPackage($id)
+    {
+        $package = CateringPackage::active()->findOrFail($id);
+        return view('catering.package', compact('package'));
+    }
+
     public function checkout(Request $request)
     {
         $package = null;
