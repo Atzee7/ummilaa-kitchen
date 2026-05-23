@@ -49,12 +49,12 @@
             <div class="font-extrabold text-[#1a1a1a] text-[0.88rem] sm:text-[0.95rem] mb-4 sm:mb-5">Pesan Sekarang</div>
             <div class="flex items-center border-[1.5px] border-maroon-200 rounded-xl overflow-hidden mb-4 sm:mb-5">
                 <button class="w-9 h-9 sm:w-11 sm:h-11 bg-[#fafafa] border-none text-[1rem] sm:text-[1.1rem] font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors" onclick="changeQty(-1)">−</button>
-                <input class="flex-1 text-center border-none text-[0.9rem] sm:text-base font-bold font-sans outline-none text-[#1a1a1a] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" type="number" id="qty" value="1" min="1" max="{{ min($product->stock, 10) }}">
+                <input class="flex-1 text-center border-none text-[0.9rem] sm:text-base font-bold font-sans outline-none text-[#1a1a1a] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" type="number" id="qty" value="1" min="1" max="{{ $product->stock }}">
                 <button class="w-9 h-9 sm:w-11 sm:h-11 bg-[#fafafa] border-none text-[1rem] sm:text-[1.1rem] font-bold cursor-pointer text-maroon hover:bg-maroon-100 transition-colors" onclick="changeQty(1)">+</button>
             </div>
             <p id="qty-error-msg" style="display:none" class="text-[0.75rem] text-red-600 flex items-center gap-[6px] -mt-3 mb-3">
                 <i class="fas fa-exclamation-circle flex-shrink-0"></i>
-                <span>Maksimal pemesanan per produk adalah 10 item.</span>
+                <span id="qty-error-text"></span>
             </p>
             <div class="bg-maroon-50 rounded-xl px-3 sm:px-4 py-[10px] sm:py-[14px] mb-4 sm:mb-5">
                 <p class="text-[0.75rem] sm:text-[0.82rem] text-[#999] mb-0.5 sm:mb-1">Subtotal</p>
@@ -139,10 +139,12 @@
 <script>
 const price    = {{ $product->price }};
 const maxStock = {{ $product->stock }};
-const MAX_QTY  = Math.min(maxStock > 0 ? maxStock : 10, 10);
+const MAX_QTY  = maxStock > 0 ? maxStock : 0;
 
-function showQtyError() {
+function showQtyError(qty) {
     const el = document.getElementById('qty-error-msg');
+    const txt = document.getElementById('qty-error-text');
+    if (txt) txt.textContent = `Tidak dapat memesan ${qty} item, stok hanya tersisa ${MAX_QTY} item.`;
     if (el) el.style.display = 'flex';
 }
 
@@ -156,8 +158,8 @@ function changeQty(delta) {
     let val = parseInt(input.value) + delta;
     if (val < 1) val = 1;
     if (val > MAX_QTY) {
+        showQtyError(val);
         val = MAX_QTY;
-        showQtyError();
     } else {
         hideQtyError();
     }
@@ -175,8 +177,8 @@ document.getElementById('qty')?.addEventListener('input', function () {
     let val = parseInt(this.value);
     if (isNaN(val) || val < 1) val = 1;
     if (val > MAX_QTY) {
+        showQtyError(val);
         val = MAX_QTY;
-        showQtyError();
     } else {
         hideQtyError();
     }

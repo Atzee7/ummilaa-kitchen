@@ -7,24 +7,22 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    const MAX_QTY = 10;
-
     public function index()
     {
         $carts = Cart::with('product')->where('user_id', Auth::id())->get();
         $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
-        $maxQty = self::MAX_QTY;
-        return view('cart', compact('carts', 'subtotal', 'maxQty'));
+        return view('cart', compact('carts', 'subtotal'));
     }
 
     public function add(Request $request)
     {
+        $product = Product::findOrFail($request->input('product_id'));
+
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity'   => 'required|integer|min:1|max:' . self::MAX_QTY,
+            'quantity'   => 'required|integer|min:1|max:' . $product->stock,
         ]);
 
-        $product = Product::findOrFail($request->product_id);
         if ($product->status === 'habis' || $product->stock <= 0) {
             return back()->withErrors(['quantity' => 'Maaf, produk ini sudah habis.'])->withInput();
         }
@@ -33,11 +31,11 @@ class CartController extends Controller
 
         if ($cart) {
             $newTotal = $cart->quantity + $request->quantity;
-            if ($newTotal > self::MAX_QTY) {
-                $sisa = self::MAX_QTY - $cart->quantity;
+            if ($newTotal > $product->stock) {
+                $sisa = $product->stock - $cart->quantity;
                 $msg = $sisa > 0
-                    ? "Maksimal pemesanan per produk adalah " . self::MAX_QTY . " item. Anda masih bisa menambah {$sisa} item lagi."
-                    : "Anda sudah mencapai batas maksimal " . self::MAX_QTY . " item untuk produk ini.";
+                    ? "Stok produk ini hanya {$product->stock} item. Anda masih bisa menambah {$sisa} item lagi."
+                    : "Anda sudah mencapai batas stok yang tersedia ({$product->stock} item) untuk produk ini.";
                 return back()->withErrors(['quantity' => $msg])->withInput();
             }
             $cart->increment('quantity', $request->quantity);
@@ -56,15 +54,14 @@ class CartController extends Controller
     {
         $cart = Cart::with('product')->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         $quantity = max(1, (int) $request->quantity);
+        $stok = $cart->product->stock;
 
-        if ($quantity > self::MAX_QTY) {
+        if ($quantity > $stok) {
+            $msg = "Stok produk ini hanya {$stok} item.";
             if ($request->ajax()) {
-                return response()->json(
-                    ['error' => 'Maksimal pesanan per produk adalah ' . self::MAX_QTY . ' item.'],
-                    422
-                );
+                return response()->json(['error' => $msg], 422);
             }
-            return redirect()->back()->withErrors(['quantity' => 'Maksimal pesanan per produk adalah ' . self::MAX_QTY . ' item.']);
+            return redirect()->back()->withErrors(['quantity' => $msg]);
         }
 
         $cart->update(['quantity' => $quantity]);
