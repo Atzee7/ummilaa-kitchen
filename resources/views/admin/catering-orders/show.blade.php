@@ -6,6 +6,7 @@
         'pengajuan'           => ['Pengajuan', 'bg-yellow-100 text-yellow-700'],
         'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-100 text-amber-700'],
         'diproses'            => ['Diproses', 'bg-blue-100 text-blue-700'],
+        'dikirim'             => ['Dikirim', 'bg-purple-100 text-purple-700'],
         'selesai'             => ['Selesai', 'bg-green-100 text-green-700'],
         'dibatalkan'          => ['Dibatalkan', 'bg-red-100 text-red-700'],
     ];
@@ -52,6 +53,14 @@
                 <div>
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Acara</p>
                     <p class="font-semibold text-gray-700">{{ $order->tanggal_acara->translatedFormat('l, d F Y') }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Acara</p>
+                    <p class="font-semibold text-gray-700">{{ $order->jam_acara ? \Carbon\Carbon::parse($order->jam_acara)->format('H:i') : '-' }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Pengantaran</p>
+                    <p class="font-semibold text-gray-700">{{ $order->jam_pengantaran ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') : '-' }}</p>
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Jumlah Pax</p>
@@ -221,14 +230,15 @@
         @endif
 
         {{-- UPDATE STATUS --}}
-        @if(in_array($order->status, ['diproses', 'menunggu_pembayaran', 'selesai']))
+        @if(in_array($order->status, ['menunggu_pembayaran', 'diproses', 'dikirim', 'selesai']))
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Ubah Status</h3>
             <form method="POST" action="{{ route('admin.catering-orders.updateStatus', $order->id) }}">
                 @csrf @method('PATCH')
                 <select name="status" id="statusSelect" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 bg-white mb-4">
-                    <option value="diproses" {{ $order->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
-                    <option value="selesai"  {{ $order->status === 'selesai'  ? 'selected' : '' }}>Selesai</option>
+                    <option value="diproses"  {{ $order->status === 'diproses'  ? 'selected' : '' }}>Diproses</option>
+                    <option value="dikirim"   {{ $order->status === 'dikirim'   ? 'selected' : '' }}>Dikirim</option>
+                    <option value="selesai"   {{ $order->status === 'selesai'   ? 'selected' : '' }}>Selesai</option>
                     <option value="dibatalkan">Dibatalkan</option>
                 </select>
                 <div id="alasanSection" class="hidden mb-4">

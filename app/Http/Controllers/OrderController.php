@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -62,5 +64,30 @@ class OrderController extends Controller
 
         return redirect()->route('orders')
             ->with('success', 'Terima kasih! Pembayaran Anda akan segera kami konfirmasi.');
+    }
+
+    public function cancel(Request $request, $id)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($order->status !== 'belum_bayar') {
+            return redirect()->route('order.payment', $id)
+                ->with('error', 'Pesanan ini tidak dapat dibatalkan.');
+        }
+
+        $validated = $request->validate([
+            'alasan_pembatalan' => 'required|string|max:500',
+        ]);
+
+        DB::transaction(function () use ($order, $validated) {
+            Order::restoreStock($order->load('items'));
+            $order->update([
+                'status'            => 'dibatalkan',
+                'alasan_pembatalan' => $validated['alasan_pembatalan'],
+            ]);
+        });
+
+        return redirect()->route('orders')
+            ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }

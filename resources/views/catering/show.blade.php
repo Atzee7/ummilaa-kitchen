@@ -5,6 +5,7 @@
         'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700', 'fa-hourglass-half'],
         'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700', 'fa-money-bill-wave'],
         'diproses'            => ['Diproses', 'bg-blue-50 text-blue-700', 'fa-utensils'],
+        'dikirim'             => ['Sedang Dikirim', 'bg-purple-50 text-purple-700', 'fa-truck'],
         'selesai'             => ['Selesai', 'bg-green-50 text-green-700', 'fa-circle-check'],
         'dibatalkan'          => ['Dibatalkan', 'bg-red-50 text-red-700', 'fa-circle-xmark'],
     ];
@@ -24,6 +25,16 @@
         @endif
         @if(session('error'))
         <div class="bg-pink-100 border border-red-300 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">{{ session('error') }}</div>
+        @endif
+
+        @if($order->status === 'dikirim')
+        <div class="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
+            <i class="fas fa-truck text-purple-500 text-lg"></i>
+            <div>
+                <p class="font-bold text-purple-700 text-[0.9rem]">Pesanan Anda Sedang Diantarkan!</p>
+                <p class="text-[0.8rem] text-purple-600">Pesanan Anda sedang dalam perjalanan ke lokasi acara.</p>
+            </div>
+        </div>
         @endif
 
         {{-- HEADER --}}
@@ -46,6 +57,14 @@
                 <div>
                     <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Tanggal Acara</p>
                     <p class="font-bold text-[#1a1a1a]">{{ $order->tanggal_acara->translatedFormat('d M Y') }}</p>
+                </div>
+                <div>
+                    <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Jam Acara</p>
+                    <p class="font-bold text-[#1a1a1a]">{{ $order->jam_acara ? \Carbon\Carbon::parse($order->jam_acara)->format('H:i') : '-' }}</p>
+                </div>
+                <div>
+                    <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Jam Pengantaran</p>
+                    <p class="font-bold text-[#1a1a1a]">{{ $order->jam_pengantaran ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') : '-' }}</p>
                 </div>
                 <div>
                     <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Jumlah Pax</p>

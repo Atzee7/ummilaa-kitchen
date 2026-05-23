@@ -40,6 +40,8 @@ class CateringController extends Controller
             'catering_package_id'  => 'required|exists:catering_packages,id',
             'nama_acara'           => 'required|string|max:255',
             'tanggal_acara'        => 'required|date|after_or_equal:today',
+            'jam_acara'            => 'required|date_format:H:i',
+            'jam_pengantaran'      => 'required|date_format:H:i|after_or_equal:09:00|before_or_equal:16:00',
             'jumlah_pax'           => 'required|integer|min:1',
             'lokasi_acara'         => 'required|string|max:1000',
             'detail_lokasi_acara'  => 'nullable|string|max:500',
@@ -61,6 +63,8 @@ class CateringController extends Controller
             'catering_package_id' => $validated['catering_package_id'],
             'nama_acara'          => $validated['nama_acara'],
             'tanggal_acara'       => $validated['tanggal_acara'],
+            'jam_acara'           => $validated['jam_acara'],
+            'jam_pengantaran'     => $validated['jam_pengantaran'],
             'jumlah_pax'          => $validated['jumlah_pax'],
             'lokasi_acara'        => $validated['lokasi_acara'],
             'detail_lokasi_acara' => $validated['detail_lokasi_acara'] ?? null,
@@ -99,7 +103,7 @@ class CateringController extends Controller
 
         return view('catering.show', [
             'order'   => $order,
-            'waLink'  => session('wa_link') ?? $this->buildWhatsappLink($order),
+            'waLink'  => $this->buildWhatsappLink($order),
         ]);
     }
 
@@ -170,22 +174,37 @@ class CateringController extends Controller
 
     private function buildWhatsappLink(CateringOrder $order): string
     {
-        $number  = preg_replace('/\D/', '', (string) config('services.catering.wa_number'));
-        $paket   = $order->package?->name ?? 'Custom (tanpa paket)';
-        $tanggal = $order->tanggal_acara?->translatedFormat('l, d F Y');
-        $catatan = $order->catatan ? "\nCatatan: {$order->catatan}" : '';
+        $number         = preg_replace('/\D/', '', (string) config('services.catering.wa_number'));
+        $paket          = $order->package?->name ?? 'Custom (tanpa paket)';
+        $tanggal        = $order->tanggal_acara?->translatedFormat('l, d F Y');
+        $jamAcara       = $order->jam_acara ? \Carbon\Carbon::parse($order->jam_acara)->format('H:i') : '-';
+        $jamPengantaran = $order->jam_pengantaran ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') : '-';
+        $detailLokasi   = $order->detail_lokasi_acara ? "\n  Detail: {$order->detail_lokasi_acara}" : '';
+        $catatan        = $order->catatan ? "\n*Catatan:* {$order->catatan}" : '';
 
         $text = "Halo Admin Ummilaa Kitchen, saya ingin memesan *Catering*.\n\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "*DATA PEMESAN*\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
             . "*ID Pengajuan:* #{$order->id}\n"
-            . "*Nama Pemesan:* {$order->nama_pemesan}\n"
-            . "*No. Telepon:* {$order->no_telepon}\n"
+            . "*Nama:* {$order->nama_pemesan}\n"
+            . "*No. Telepon:* {$order->no_telepon}\n\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "*DETAIL ACARA*\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
             . "*Paket:* {$paket}\n"
             . "*Nama Acara:* {$order->nama_acara}\n"
             . "*Tanggal Acara:* {$tanggal}\n"
-            . "*Jumlah Pax:* {$order->jumlah_pax} porsi\n"
-            . "*Lokasi Acara:* {$order->lokasi_acara}"
+            . "*Jam Acara:* {$jamAcara} WIB\n"
+            . "*Jam Pengantaran:* {$jamPengantaran} WIB\n"
+            . "*Jumlah Pax:* {$order->jumlah_pax} porsi\n\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "*LOKASI ACARA*\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "{$order->lokasi_acara}{$detailLokasi}"
             . $catatan
-            . "\n\nMohon info ketersediaan & estimasi harganya ya. Terima kasih.";
+            . "\n\n━━━━━━━━━━━━━━━━━━━━━\n"
+            . "Mohon info ketersediaan & estimasi harganya ya. Terima kasih. 🙏";
 
         return 'https://wa.me/' . $number . '?text=' . rawurlencode($text);
     }

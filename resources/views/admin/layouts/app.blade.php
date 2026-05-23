@@ -133,6 +133,7 @@
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
             Pesanan Catering
+            <span id="catering-badge" class="hidden ml-auto bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center leading-none">0</span>
         </a>
 
         {{-- PENGGUNA --}}
@@ -311,6 +312,30 @@
             .catch(() => {});
     }
 
+    poll();
+    setInterval(poll, 15000);
+})();
+
+(function () {
+    const apiUrl = '{{ route("admin.api.catering-aktif") }}';
+    const badge  = document.getElementById('catering-badge');
+    if (!badge) return;
+
+    function poll() {
+        fetch(apiUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(data => {
+                if (data.badge_count > 0) {
+                    badge.textContent = data.badge_count > 99 ? '99+' : data.badge_count;
+                    badge.classList.remove('hidden');
+                    badge.classList.add('flex');
+                } else {
+                    badge.classList.add('hidden');
+                    badge.classList.remove('flex');
+                }
+            })
+            .catch(() => {});
+    }
     poll();
     setInterval(poll, 15000);
 })();

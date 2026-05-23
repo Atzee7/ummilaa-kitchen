@@ -2,21 +2,23 @@
 
 @php
 $statusMeta = [
-    'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700 border-yellow-200',  'fa-hourglass-half',  'border-yellow-400',  0],
-    'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700 border-amber-200',   'fa-money-bill-wave', 'border-orange-400',  1],
-    'diproses'            => ['Diproses',             'bg-blue-50 text-blue-700 border-blue-200',       'fa-utensils',        'border-blue-400',    2],
-    'selesai'             => ['Selesai',              'bg-green-50 text-green-700 border-green-200',    'fa-circle-check',    'border-green-500',   3],
-    'dibatalkan'          => ['Dibatalkan',           'bg-red-50 text-red-700 border-red-200',          'fa-circle-xmark',    'border-red-300',    -1],
+    'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700 border-yellow-200',   'fa-hourglass-half',  'border-yellow-400',  0],
+    'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700 border-amber-200',    'fa-money-bill-wave', 'border-orange-400',  1],
+    'diproses'            => ['Diproses',             'bg-blue-50 text-blue-700 border-blue-200',        'fa-utensils',        'border-blue-400',    2],
+    'dikirim'             => ['Sedang Dikirim',       'bg-purple-50 text-purple-700 border-purple-200',  'fa-truck',           'border-purple-400',  3],
+    'selesai'             => ['Selesai',              'bg-green-50 text-green-700 border-green-200',     'fa-circle-check',    'border-green-500',   4],
+    'dibatalkan'          => ['Dibatalkan',           'bg-red-50 text-red-700 border-red-200',           'fa-circle-xmark',    'border-red-300',    -1],
 ];
 
 $steps = [
     ['key' => 'pengajuan',           'label' => 'Pengajuan'],
     ['key' => 'menunggu_pembayaran', 'label' => 'Pembayaran'],
     ['key' => 'diproses',            'label' => 'Diproses'],
+    ['key' => 'dikirim',             'label' => 'Dikirim'],
     ['key' => 'selesai',             'label' => 'Selesai'],
 ];
 
-$countAktif     = $orders->whereIn('status', ['pengajuan', 'menunggu_pembayaran', 'diproses'])->count();
+$countAktif     = $orders->whereIn('status', ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim'])->count();
 $countSelesai   = $orders->where('status', 'selesai')->count();
 $countDibatalkan = $orders->where('status', 'dibatalkan')->count();
 
@@ -86,7 +88,7 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
         @php
             [$label, $badgeColor, $icon, $borderColor, $stepIndex] = $statusMeta[$order->status] ?? ['Tidak Diketahui', 'bg-gray-50 text-gray-700 border-gray-200', 'fa-circle', 'border-gray-300', -1];
             $isCancelled = $order->status === 'dibatalkan';
-            $group = in_array($order->status, ['pengajuan', 'menunggu_pembayaran', 'diproses']) ? 'aktif'
+            $group = in_array($order->status, ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim']) ? 'aktif'
                    : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan');
         @endphp
 

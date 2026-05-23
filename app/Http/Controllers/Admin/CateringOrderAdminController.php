@@ -19,17 +19,20 @@ class CateringOrderAdminController extends Controller
         $baseQuery = CateringOrder::query()->with(['user', 'package']);
 
         $query = (clone $baseQuery)->latest();
-        if ($status !== 'semua') {
+        if ($status === 'semua') {
+            $query->whereNotIn('status', ['selesai', 'dibatalkan']);
+        } else {
             $query->where('status', $status);
         }
 
         $orders = $query->paginate(10)->withQueryString();
 
         $counts = [
-            'semua'               => (clone $baseQuery)->count(),
+            'semua'               => (clone $baseQuery)->whereNotIn('status', ['selesai', 'dibatalkan'])->count(),
             'pengajuan'           => (clone $baseQuery)->where('status', 'pengajuan')->count(),
             'menunggu_pembayaran' => (clone $baseQuery)->where('status', 'menunggu_pembayaran')->count(),
             'diproses'            => (clone $baseQuery)->where('status', 'diproses')->count(),
+            'dikirim'             => (clone $baseQuery)->where('status', 'dikirim')->count(),
             'selesai'             => (clone $baseQuery)->where('status', 'selesai')->count(),
             'dibatalkan'          => (clone $baseQuery)->where('status', 'dibatalkan')->count(),
         ];
@@ -113,13 +116,16 @@ class CateringOrderAdminController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status'            => 'required|in:diproses,selesai,dibatalkan',
+            'status'            => 'required|in:diproses,dikirim,selesai,dibatalkan',
             'alasan_pembatalan' => 'required_if:status,dibatalkan|nullable|string|max:1000',
         ]);
 
         $order = CateringOrder::findOrFail($id);
 
         if ($order->status === 'pengajuan' && $request->status !== 'dibatalkan') {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Pesanan pengajuan hanya bisa dibatalkan.'], 422);
+            }
             return back()->withErrors(['status' => 'Pesanan pengajuan hanya bisa dibatalkan.']);
         }
 
@@ -129,10 +135,52 @@ class CateringOrderAdminController extends Controller
         }
 
         $order->update($updateData);
-
         $order->logHistory($request->status, $request->alasan_pembatalan ?? null);
 
+        $sentWa = false;
+        if ($request->status === 'dikirim' && !empty($order->no_telepon)) {
+            try {
+                (new FonnteService())->send($order->no_telepon, $this->buildDeliveryMessage($order));
+                $sentWa = true;
+            } catch (\Throwable $e) {
+                Log::error('Gagal kirim WA dikirim catering', ['id' => $order->id, 'error' => $e->getMessage()]);
+            }
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status'  => $request->status,
+                'sent_wa' => $sentWa,
+            ]);
+        }
+
         return back()->with('success', 'Status pesanan catering berhasil diperbarui.');
+    }
+
+    private function buildDeliveryMessage(CateringOrder $order): string
+    {
+        $tanggal        = $order->tanggal_acara->translatedFormat('l, d F Y');
+        $jamPengantaran = $order->jam_pengantaran
+            ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') . ' WIB'
+            : '-';
+        $mapsLink     = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($order->lokasi_acara);
+        $detailLokasi = $order->detail_lokasi_acara ? "\nDetail: {$order->detail_lokasi_acara}" : '';
+
+        return "🚚 *Pesanan Catering Sedang Diantarkan!*\n\n"
+            . "Halo *{$order->nama_pemesan}*, pesanan catering Anda sedang dalam perjalanan ke lokasi acara.\n\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "*DETAIL PESANAN*\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "🆔 ID Pesanan: #{$order->id}\n"
+            . "🎉 Acara: {$order->nama_acara}\n"
+            . "📅 Tanggal: {$tanggal}\n"
+            . "⏰ Jam Pengantaran: {$jamPengantaran}\n\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "*LOKASI TUJUAN*\n"
+            . "━━━━━━━━━━━━━━━━━━━━━\n"
+            . "{$order->lokasi_acara}{$detailLokasi}\n"
+            . "🗺️ Lihat di Maps: {$mapsLink}\n\n"
+            . "Mohon siapkan penerimaan ya! Terima kasih 🙏";
     }
 
     private function buildPaymentMessage(CateringOrder $order): string

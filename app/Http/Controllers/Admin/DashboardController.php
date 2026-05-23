@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CateringOrder;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\User;
@@ -86,5 +87,12 @@ class DashboardController extends Controller
                 'tanggal' => $o->created_at->format('d M Y'),
             ]),
         ]);
+    }
+
+    public function cateringAktifApi()
+    {
+        $activeStatuses = ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim'];
+        $count = CateringOrder::whereIn('status', $activeStatuses)->count();
+        return response()->json(['badge_count' => $count]);
     }
 }

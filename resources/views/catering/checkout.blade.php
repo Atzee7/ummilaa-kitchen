@@ -154,6 +154,43 @@
                         </div>
                         <div>
                             <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
+                                <i class="fas fa-clock text-maroon mr-1 text-[0.7rem]"></i>
+                                Jam Acara <span class="text-red-500">*</span>
+                            </label>
+                            <select name="jam_acara" required
+                                    class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] focus:outline-none focus:border-maroon bg-white transition-colors">
+                                <option value="" disabled {{ old('jam_acara') ? '' : 'selected' }}>Pilih jam acara</option>
+                                @for($h = 0; $h < 24; $h++)
+                                    @foreach(['00', '30'] as $m)
+                                        @php $val = str_pad($h, 2, '0', STR_PAD_LEFT) . ':' . $m; @endphp
+                                        <option value="{{ $val }}" {{ old('jam_acara') === $val ? 'selected' : '' }}>{{ $val }}</option>
+                                    @endforeach
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
+                                <i class="fas fa-truck text-maroon mr-1 text-[0.7rem]"></i>
+                                Jam Pengantaran <span class="text-red-500">*</span>
+                            </label>
+                            <select name="jam_pengantaran" required
+                                    class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] focus:outline-none focus:border-maroon bg-white transition-colors">
+                                <option value="" disabled {{ old('jam_pengantaran') ? '' : 'selected' }}>Pilih jam pengantaran</option>
+                                @for($h = 9; $h <= 16; $h++)
+                                    @foreach(['00', '30'] as $m)
+                                        @if($h === 16 && $m === '30') @continue @endif
+                                        @php $val = str_pad($h, 2, '0', STR_PAD_LEFT) . ':' . $m; @endphp
+                                        <option value="{{ $val }}" {{ old('jam_pengantaran') === $val ? 'selected' : '' }}>{{ $val }}</option>
+                                    @endforeach
+                                @endfor
+                            </select>
+                            <p class="text-[0.72rem] text-[#aaa] mt-1"><i class="fas fa-info-circle mr-1"></i>Pengantaran tersedia 09.00–16.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
                                 <i class="fas fa-users text-maroon mr-1 text-[0.7rem]"></i>
                                 Jumlah Pax (porsi) <span class="text-red-500">*</span>
                             </label>

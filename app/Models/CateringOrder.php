@@ -13,6 +13,7 @@ class CateringOrder extends Model
     protected $fillable = [
         'user_id', 'catering_package_id',
         'nama_acara', 'tanggal_acara', 'jumlah_pax', 'lokasi_acara', 'detail_lokasi_acara', 'catatan',
+        'jam_acara', 'jam_pengantaran',
         'admin_notes', 'nama_pemesan', 'no_telepon', 'total', 'status', 'alasan_pembatalan',
         'snap_token', 'midtrans_transaction_id', 'payment_type', 'paid_at', 'payment_expires_at',
     ];

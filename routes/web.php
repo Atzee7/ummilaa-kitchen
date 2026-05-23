@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/mark-paid', [OrderController::class, 'markPaid'])->name('orders.markPaid');
+    Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
     Route::post('/testimonial', [TestimonialController::class, 'store'])->name('testimonial.store'); // TAMBAHAN
 });
 
@@ -161,6 +162,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // API polling pesanan aktif
         Route::get('/api/pesanan-aktif', [App\Http\Controllers\Admin\DashboardController::class, 'pesananAktifApi'])->name('api.pesanan-aktif');
+        Route::get('/api/catering-aktif', [App\Http\Controllers\Admin\DashboardController::class, 'cateringAktifApi'])->name('api.catering-aktif');
     });
 });
 

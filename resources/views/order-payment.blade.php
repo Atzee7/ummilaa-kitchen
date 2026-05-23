@@ -131,8 +131,43 @@
             </a>
         </div>
 
+        @if($order->status === 'belum_bayar')
+        <div class="mt-3">
+            <button type="button" onclick="document.getElementById('modal-cancel').classList.remove('hidden')"
+                class="w-full py-[11px] border-[1.5px] border-red-300 text-red-600 rounded-xl font-bold text-[0.82rem] hover:bg-red-50 transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-times-circle text-[0.78rem]"></i> Batalkan Pesanan
+            </button>
+        </div>
+        @endif
+
     </div>
 </div>
+
+@if($order->status === 'belum_bayar')
+<div id="modal-cancel" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+        <h3 class="font-bold text-[1rem] text-[#1a1a1a] mb-1">Batalkan Pesanan?</h3>
+        <p class="text-[0.8rem] text-[#888] mb-4">Stok produk akan dikembalikan. Tindakan ini tidak dapat dibatalkan.</p>
+        <form method="POST" action="{{ route('order.cancel', $order->id) }}">
+            @csrf
+            <textarea name="alasan_pembatalan" rows="3" required maxlength="500"
+                placeholder="Masukkan alasan pembatalan..."
+                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-[0.82rem] focus:outline-none focus:border-maroon mb-4 resize-none"></textarea>
+            <div class="flex gap-2">
+                <button type="button" onclick="document.getElementById('modal-cancel').classList.add('hidden')"
+                    class="flex-1 py-2.5 border border-gray-200 text-[#666] rounded-xl text-[0.82rem] font-bold hover:bg-gray-50 transition-all">
+                    Kembali
+                </button>
+                <button type="submit"
+                    class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-[0.82rem] font-bold hover:bg-red-700 transition-all">
+                    Konfirmasi Batal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 @endsection
 
 @push('scripts')
