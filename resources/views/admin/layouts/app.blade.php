@@ -11,7 +11,7 @@
 
 {{-- ══════════════ SIDEBAR ══════════════ --}}
 <div id="sidebar-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 lg:hidden"></div>
-<aside id="admin-sidebar" class="fixed top-0 left-0 w-[260px] min-h-screen bg-[#8B1A1A] flex flex-col z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0">
+<aside id="admin-sidebar" class="fixed top-0 left-0 w-[260px] h-screen bg-[#8B1A1A] flex flex-col z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
     {{-- Brand --}}
     <div class="flex items-center gap-3 px-6 py-5 border-b border-white/[0.07]">
@@ -87,14 +87,6 @@
             <span id="order-badge" class="hidden ml-auto bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center leading-none">0</span>
         </a>
 
-        <a href="{{ route('admin.kasir.index') }}"
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative text-white/55 hover:bg-white/[0.06] hover:text-white/90">
-            <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-            Kasir
-        </a>
 
         <a href="{{ route('admin.laporan.index') }}"
            class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
