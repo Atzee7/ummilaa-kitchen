@@ -78,7 +78,7 @@ class CheckoutController extends Controller
     }
 
     $request->validate([
-        'metode_pembayaran'   => 'required|string',
+        'metode_pembayaran'   => 'required|in:Bayar Online',
         'metode_pengiriman'   => 'required|in:delivery,pickup',
         'catatan'             => 'nullable|string|max:500',
         'tanggal_pengiriman'  => [

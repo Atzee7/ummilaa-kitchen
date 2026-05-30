@@ -11,7 +11,7 @@ class Order extends Model
     protected $fillable = [
         'user_id', 'nama_penerima', 'alamat', 'detail_alamat', 'no_telepon',
         'metode_pembayaran', 'metode_pengiriman', 'catatan', 'tanggal_pengiriman', 'waktu_pengiriman',
-        'subtotal', 'ongkir', 'total', 'status', 'alasan_pembatalan',
+        'subtotal', 'ongkir', 'total', 'status', 'alasan_pembatalan', 'dibatalkan_oleh',
         'snap_token', 'midtrans_transaction_id', 'payment_type', 'paid_at',
     ];
 
@@ -58,6 +58,7 @@ class Order extends Model
                 $order->update([
                     'status'            => 'dibatalkan',
                     'alasan_pembatalan' => 'Pembayaran melewati batas waktu (10 menit)',
+                    'dibatalkan_oleh'   => 'system',
                 ]);
             });
         }
@@ -75,6 +76,22 @@ class Order extends Model
                 $product->update(['status' => 'ready']);
             }
         }
+    }
+
+    public function getPaymentLabel(): string
+    {
+        $labels = [
+            'qris'          => 'QRIS',
+            'bank_transfer' => 'Transfer Bank',
+            'credit_card'   => 'Kartu Kredit',
+            'gopay'         => 'GoPay',
+            'shopeepay'     => 'ShopeePay',
+            'echannel'      => 'Mandiri Bill',
+            'cstore'        => 'Convenience Store',
+        ];
+        return $this->payment_type
+            ? ($labels[$this->payment_type] ?? strtoupper($this->payment_type))
+            : $this->metode_pembayaran;
     }
 
     public function scopeExcludeAutoCancelled($query)

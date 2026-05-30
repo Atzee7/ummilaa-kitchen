@@ -110,7 +110,7 @@
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Metode Pembayaran</p>
-                    <p class="font-semibold text-gray-700 uppercase">{{ $order->metode_pembayaran }}</p>
+                    <p class="font-semibold text-gray-700 uppercase">{{ $order->getPaymentLabel() }}</p>
                 </div>
             </div>
         </div>

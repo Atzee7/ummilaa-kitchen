@@ -219,7 +219,7 @@
                         <i class="fas fa-credit-card text-maroon w-5 text-center"></i> Metode Pembayaran
                     </div>
                     <div class="flex flex-col gap-[10px]">
-                        @foreach([['Bayar Online','Kartu kredit, GoPay, OVO, ShopeePay, QRIS, VA semua bank — via Midtrans','bg-blue-600','fa-credit-card'],['COD','Bayar saat produk tiba / diambil','bg-green-700','fa-money-bill-wave']] as [$val,$desc,$color,$icon])
+                        @foreach([['Bayar Online','Kartu kredit, GoPay, OVO, ShopeePay, QRIS, VA semua bank — via Midtrans','bg-blue-600','fa-credit-card']] as [$val,$desc,$color,$icon])
                         <label class="payment-option flex items-center gap-[14px] px-[18px] py-[14px] rounded-[14px] border-[1.5px] border-maroon-200 cursor-pointer transition-all duration-200 hover:border-[#d4a0a0] hover:bg-[#fdf8f8]">
                             <input type="radio" name="metode_pembayaran" value="{{ $val }}" class="hidden">
                             <div class="w-[42px] h-[42px] rounded-[11px] {{ $color }} flex items-center justify-center text-base text-white flex-shrink-0">

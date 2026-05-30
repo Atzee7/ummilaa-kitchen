@@ -110,9 +110,20 @@
                 <i class="fas fa-credit-card text-maroon"></i>
                 <span class="text-[0.85rem] text-[#555] font-semibold">{{ $order->metode_pembayaran }}</span>
             </div>
+            @if($order->status === 'belum_bayar')
+            <a href="{{ route('order.payment', $order->id) }}" class="flex items-center justify-center gap-2 w-full mt-5 py-[13px] bg-maroon text-white rounded-xl font-bold text-[0.9rem] transition-all duration-200 hover:bg-maroon-dark no-underline">
+                <i class="fas fa-credit-card"></i> Lanjut Pembayaran
+            </a>
+            @else
             <a href="{{ route('catalogue') }}" class="flex items-center justify-center gap-2 w-full mt-5 py-[13px] bg-maroon text-white rounded-xl font-bold text-[0.9rem] transition-all duration-200 hover:bg-maroon-dark no-underline">
                 <i class="fas fa-utensils"></i> Belanja Lagi
             </a>
+            @endif
+            @if($order->status === 'selesai')
+            <a href="{{ route('order.invoice', $order->id) }}" class="flex items-center justify-center gap-2 w-full mt-3 py-[13px] border-[1.5px] border-maroon text-maroon rounded-xl font-bold text-[0.9rem] transition-all duration-200 hover:bg-maroon hover:text-white no-underline">
+                <i class="fas fa-file-invoice"></i> Unduh Invoice
+            </a>
+            @endif
         </div>
     </div>
 </div>

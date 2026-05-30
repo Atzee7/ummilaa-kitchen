@@ -19,7 +19,7 @@
      HERO — 85vh, centered, elegant
 ================================================================ --}}
 <section class="relative bg-white flex flex-col justify-center overflow-hidden border-b border-[#f0eeec]"
-    style="min-height: 100vh">
+    style="min-height: 85vh">
 
     {{-- Faint corner ornaments --}}
     <div class="absolute top-10 left-10 w-24 h-24 border border-[#f0e8e8] rounded-full pointer-events-none opacity-60"></div>
@@ -73,19 +73,6 @@
             </a>
         </div>
 
-        {{-- Pills --}}
-        <div data-aos="fade-up" data-aos-duration="600" data-aos-delay="400"
-            class="flex flex-wrap items-center justify-center gap-3">
-            @foreach([
-                ['icon' => 'fas fa-leaf', 'label' => 'Bahan Segar Pilihan'],
-                ['icon' => 'fas fa-shield-alt', 'label' => 'Higienis & Terjamin'],
-            ] as $pill)
-            <div class="inline-flex items-center gap-2 bg-[#fdf6f3] border border-[#f0e4df] text-[#666] px-5 py-2 rounded-full text-[0.8rem] font-medium">
-                <i class="{{ $pill['icon'] }} text-maroon text-[0.75rem]"></i>
-                {{ $pill['label'] }}
-            </div>
-            @endforeach
-        </div>
 
     </div>
 </section>
@@ -114,27 +101,10 @@
             <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-4">
                 Ummilaa Kitchen lahir dari kecintaan mendalam terhadap dunia kuliner dan tekad untuk menghadirkan makanan berkualitas dengan harga yang bersahabat bagi masyarakat Malang.
             </p>
-            <p class="text-[#777] leading-[1.95] text-[0.96rem] mb-10">
+            <p class="text-[#777] leading-[1.95] text-[0.96rem]">
                 Berawal dari dapur kecil di rumah sejak 2025, kini kami menawarkan berbagai produk — dimsum, crunchy series, perpentolan, risol — hingga layanan catering untuk berbagai acara spesial.
             </p>
 
-            {{-- Feature list --}}
-            <div class="space-y-4">
-                @foreach([
-                    ['icon' => 'fas fa-leaf', 'title' => 'Bahan Segar Setiap Hari', 'desc' => 'Dipilih langsung dari sumber terpercaya untuk menjaga kualitas rasa.'],
-                    ['icon' => 'fas fa-award', 'title' => 'Kualitas Terjaga Sejak 2025', 'desc' => 'Standar kebersihan dan cita rasa yang konsisten di setiap produk.'],
-                ] as $f)
-                <div class="flex items-start gap-4">
-                    <div class="w-9 h-9 rounded-xl bg-[#fdf6f3] border border-[#f0e4df] flex items-center justify-center text-maroon flex-shrink-0 mt-0.5">
-                        <i class="{{ $f['icon'] }} text-[0.82rem]"></i>
-                    </div>
-                    <div>
-                        <strong class="block text-[0.9rem] text-[#1a1a1a] mb-0.5">{{ $f['title'] }}</strong>
-                        <span class="text-[0.82rem] text-[#999] leading-relaxed">{{ $f['desc'] }}</span>
-                    </div>
-                </div>
-                @endforeach
-            </div>
         </div>
 
         {{-- Kanan: Gambar --}}
@@ -177,71 +147,6 @@
         </div>{{-- end grid --}}
     </div>{{-- end max-w --}}
 </section>
-
-
-
-{{-- ================================================================
-     VISI & MISI
-================================================================ --}}
-<section class="bg-white px-5 md:px-12 lg:px-[80px] py-[80px] lg:py-[100px]">
-    <div class="max-w-[1160px] mx-auto">
-
-        <div data-aos="fade-up" data-aos-duration="700" class="text-center mb-14">
-            <div class="flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[3px] uppercase text-maroon mb-3">
-                <span class="w-6 h-px bg-maroon"></span> Arah & Tujuan <span class="w-6 h-px bg-maroon"></span>
-            </div>
-            <h2 class="font-playfair text-[2rem] md:text-[2.4rem] text-[#1a1a1a] tracking-[-0.5px]">
-                Visi & <span class="text-maroon">Misi</span>
-            </h2>
-            <p class="text-[#aaa] text-[0.92rem] mt-3 max-w-[440px] mx-auto leading-relaxed">
-                Komitmen kami dalam menghadirkan yang terbaik untuk setiap pelanggan.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[900px] mx-auto">
-
-            {{-- Visi --}}
-            <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
-                class="group relative bg-white rounded-[24px] p-10 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
-                <div class="w-12 h-12 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.1rem] mb-6">
-                    <i class="fas fa-eye"></i>
-                </div>
-                <h3 class="font-playfair text-[1.4rem] text-[#1a1a1a] mb-4">Visi</h3>
-                <p class="text-[#777] leading-[1.9] text-[0.93rem]">
-                    Menjadi usaha kuliner UMKM terpercaya di Malang yang dikenal atas kualitas rasa, kebersihan, dan pelayanan terbaik kepada setiap pelanggan.
-                </p>
-            </div>
-
-            {{-- Misi --}}
-            <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="120"
-                class="group relative bg-white rounded-[24px] p-10 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
-                <div class="w-12 h-12 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.1rem] mb-6">
-                    <i class="fas fa-bullseye"></i>
-                </div>
-                <h3 class="font-playfair text-[1.4rem] text-[#1a1a1a] mb-5">Misi</h3>
-                <ul class="space-y-3">
-                    @foreach([
-                        'Menyajikan produk kuliner berkualitas dengan bahan pilihan yang segar dan higienis.',
-                        'Memberikan kemudahan akses pemesanan melalui platform digital.',
-                        'Menghadirkan pelayanan yang ramah, cepat, dan memuaskan.',
-                        'Terus berinovasi dalam menu dan layanan demi kebutuhan pelanggan.',
-                    ] as $misi)
-                    <li class="flex items-start gap-3 text-[#777] text-[0.88rem] leading-[1.75]">
-                        <div class="w-[18px] h-[18px] rounded-full bg-maroon flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-check text-white text-[0.55rem]"></i>
-                        </div>
-                        {{ $misi }}
-                    </li>
-                    @endforeach
-                </ul>
-            </div>
-
-        </div>
-    </div>
-</section>
-
 
 {{-- ================================================================
      TESTIMONI

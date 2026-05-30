@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/mark-paid', [OrderController::class, 'markPaid'])->name('orders.markPaid');
     Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+    Route::get('/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])->name('order.invoice');
     Route::post('/testimonial', [TestimonialController::class, 'store'])->name('testimonial.store'); // TAMBAHAN
 });
 

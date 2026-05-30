@@ -156,7 +156,7 @@
             </div>
             <div>
                 <p class="text-xs text-gray-400 mb-0.5">Pembayaran</p>
-                <p class="font-semibold text-gray-700 uppercase text-xs">{{ $order->metode_pembayaran }}</p>
+                <p class="font-semibold text-gray-700 uppercase text-xs">{{ $order->getPaymentLabel() }}</p>
             </div>
         </div>
     </div>

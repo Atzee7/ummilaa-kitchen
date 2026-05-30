@@ -17,7 +17,6 @@
 
     <div class="max-w-xl mx-auto">
 
-        @if($order->metode_pembayaran === 'Bayar Online')
         {{-- ===== BAYAR ONLINE via MIDTRANS SNAP ===== --}}
         <div class="bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5">
             <div class="flex items-center gap-3 mb-5 pb-4 border-b border-maroon-200">
@@ -64,32 +63,6 @@
             </div>
         </div>
 
-        @else
-        {{-- ===== COD ===== --}}
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5">
-            <div class="flex items-center gap-3 mb-5 pb-4 border-b border-maroon-200">
-                <div class="w-9 h-9 bg-green-700 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-money-bill-wave text-white text-[0.85rem]"></i>
-                </div>
-                <div>
-                    <h2 class="font-bold text-[#1a1a1a] text-[0.92rem]">Cash on Delivery (COD)</h2>
-                    <p class="text-[0.75rem] text-[#999]">Bayar saat pesanan diterima</p>
-                </div>
-            </div>
-
-            <div class="bg-green-50 border border-green-200 rounded-xl px-4 py-4 mb-4 flex items-center justify-between">
-                <div>
-                    <p class="text-[0.75rem] font-bold text-green-700 mb-0.5">Siapkan uang pas</p>
-                    <p class="text-green-800 text-[1.1rem] sm:text-[1.3rem] font-extrabold">Rp{{ number_format($order->total, 0, ',', '.') }}</p>
-                </div>
-                <i class="fas fa-hand-holding-usd text-green-500 text-2xl"></i>
-            </div>
-
-            <p class="text-[0.82rem] text-[#888] leading-relaxed">
-                Pesanan Anda sedang menunggu konfirmasi. Pembayaran dilakukan kepada kurir saat tiba atau kasir saat Anda ambil di toko.
-            </p>
-        </div>
-        @endif
 
         {{-- STATUS PESANAN --}}
         <div class="bg-maroon-50 border-[1.5px] border-maroon-200 rounded-[18px] p-5 mb-5">

@@ -42,6 +42,8 @@ class OrderAdminController extends Controller
 
         if ($status === 'semua') {
             $query->whereNotIn('status', ['selesai', 'dibatalkan']);
+        } elseif ($status === 'dibatalkan') {
+            $query->where('status', 'dibatalkan')->where('dibatalkan_oleh', 'admin');
         } else {
             $query->where('status', $status);
         }
@@ -55,7 +57,7 @@ class OrderAdminController extends Controller
             'dikirim'      => (clone $baseQuery)->where('status', 'dikirim')->count(),
             'siap_diambil' => (clone $baseQuery)->where('status', 'siap_diambil')->count(),
             'selesai'      => (clone $baseQuery)->where('status', 'selesai')->count(),
-            'dibatalkan'   => (clone $baseQuery)->where('status', 'dibatalkan')->count(),
+            'dibatalkan'   => (clone $baseQuery)->where('status', 'dibatalkan')->where('dibatalkan_oleh', 'admin')->count(),
         ];
 
         $scheduledOrders = Order::query()
@@ -123,6 +125,7 @@ class OrderAdminController extends Controller
         $updateData = ['status' => $request->status];
         if ($request->status === 'dibatalkan') {
             $updateData['alasan_pembatalan'] = $request->alasan_pembatalan;
+            $updateData['dibatalkan_oleh']   = 'admin';
             DB::transaction(function () use ($order, $updateData) {
                 Order::restoreStock($order->load('items'));
                 $order->update($updateData);

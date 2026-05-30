@@ -84,10 +84,25 @@ class OrderController extends Controller
             $order->update([
                 'status'            => 'dibatalkan',
                 'alasan_pembatalan' => $validated['alasan_pembatalan'],
+                'dibatalkan_oleh'   => 'user',
             ]);
         });
 
         return redirect()->route('orders')
             ->with('success', 'Pesanan berhasil dibatalkan.');
+    }
+
+    public function downloadInvoice($id)
+    {
+        $order = Order::with(['items.product', 'user'])
+            ->where('user_id', Auth::id())
+            ->where('status', 'selesai')
+            ->findOrFail($id);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoice', compact('order'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'Invoice-UMK-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+        return $pdf->download($filename);
     }
 }

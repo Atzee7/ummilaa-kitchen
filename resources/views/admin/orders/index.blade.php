@@ -165,7 +165,7 @@
                         </span>
                     @endif
                 </td>
-                <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->metode_pembayaran }}</td>
+                <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->getPaymentLabel() }}</td>
                 <td class="py-4 px-6">
                     <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $statusLabel }}</span>
                 </td>
@@ -308,7 +308,7 @@
                             </span>
                         @endif
                     </td>
-                    <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->metode_pembayaran }}</td>
+                    <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->getPaymentLabel() }}</td>
                     <td class="py-4 px-6">
                         <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc2 }}">{{ $statusLabel2 }}</span>
                     </td>

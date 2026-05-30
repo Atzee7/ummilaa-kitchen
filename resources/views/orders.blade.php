@@ -105,15 +105,12 @@
             </div>
 
             @if($order->status === 'belum_bayar')
-            <div class="px-6 pt-3 -mb-1 flex items-center justify-between flex-wrap gap-2">
+            <div class="px-6 pt-3 -mb-1">
                 <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg text-[0.78rem] text-amber-800">
                     <i class="fas fa-hourglass-half"></i>
                     <span>Bayar dalam</span>
                     <strong class="font-mono payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
                 </span>
-                <a href="{{ route('order.payment', $order->id) }}" class="text-[0.78rem] font-bold text-maroon hover:underline">
-                    Bayar sekarang <i class="fas fa-arrow-right text-[0.7rem]"></i>
-                </a>
             </div>
             @endif
 
@@ -182,7 +179,8 @@
                         @endif
                     @endif
                     <a href="{{ route('orders.show', $order->id) }}" class="inline-flex items-center gap-1.5 bg-maroon text-white px-3 sm:px-5 py-[7px] sm:py-[10px] rounded-[10px] font-bold text-[0.75rem] sm:text-[0.85rem] no-underline hover:bg-maroon-dark hover:-translate-y-px transition-all">
-                        <i class="fas fa-eye text-[0.7rem]"></i> Lihat Detail
+                        <i class="fas fa-{{ $order->status === 'belum_bayar' ? 'credit-card' : 'eye' }} text-[0.7rem]"></i>
+                        {{ $order->status === 'belum_bayar' ? 'Lihat Detail & Bayar' : 'Lihat Detail' }}
                     </a>
                 </div>
             </div>
@@ -282,15 +280,12 @@
             </div>
 
             @if($order->status === 'belum_bayar')
-            <div class="px-6 pt-3 -mb-1 flex items-center justify-between flex-wrap gap-2">
+            <div class="px-6 pt-3 -mb-1">
                 <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg text-[0.78rem] text-amber-800">
                     <i class="fas fa-hourglass-half"></i>
                     <span>Bayar dalam</span>
                     <strong class="font-mono payment-countdown" data-expires-at="{{ $order->paymentExpiresAt()->toIso8601String() }}">--:--</strong>
                 </span>
-                <a href="{{ route('order.payment', $order->id) }}" class="text-[0.78rem] font-bold text-maroon hover:underline">
-                    Bayar sekarang <i class="fas fa-arrow-right text-[0.7rem]"></i>
-                </a>
             </div>
             @endif
 
@@ -359,7 +354,8 @@
                         @endif
                     @endif
                     <a href="{{ route('orders.show', $order->id) }}" class="inline-flex items-center gap-1.5 bg-maroon text-white px-3 sm:px-5 py-[7px] sm:py-[10px] rounded-[10px] font-bold text-[0.75rem] sm:text-[0.85rem] no-underline hover:bg-maroon-dark hover:-translate-y-px transition-all">
-                        <i class="fas fa-eye text-[0.7rem]"></i> Lihat Detail
+                        <i class="fas fa-{{ $order->status === 'belum_bayar' ? 'credit-card' : 'eye' }} text-[0.7rem]"></i>
+                        {{ $order->status === 'belum_bayar' ? 'Lihat Detail & Bayar' : 'Lihat Detail' }}
                     </a>
                 </div>
             </div>
