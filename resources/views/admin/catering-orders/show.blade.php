@@ -55,10 +55,6 @@
                     <p class="font-semibold text-gray-700">{{ $order->tanggal_acara->translatedFormat('l, d F Y') }}</p>
                 </div>
                 <div>
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Acara</p>
-                    <p class="font-semibold text-gray-700">{{ $order->jam_acara ? \Carbon\Carbon::parse($order->jam_acara)->format('H:i') : '-' }}</p>
-                </div>
-                <div>
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Pengantaran</p>
                     <p class="font-semibold text-gray-700">{{ $order->jam_pengantaran ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') : '-' }}</p>
                 </div>
@@ -212,6 +208,29 @@
         </div>
         @endif
 
+        {{-- BATALKAN dari menunggu_pembayaran --}}
+        @if($order->status === 'menunggu_pembayaran')
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h3 class="font-playfair text-lg font-bold text-red-700 mb-2">Batalkan Pesanan</h3>
+            <p class="text-xs text-gray-400 mb-4">Batalkan jika customer tidak jadi membayar atau deal batal.</p>
+            <form method="POST" action="{{ route('admin.catering-orders.updateStatus', $order->id) }}">
+                @csrf @method('PATCH')
+                <input type="hidden" name="status" value="dibatalkan">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                    Alasan Pembatalan <span class="text-red-500">*</span>
+                </label>
+                <textarea name="alasan_pembatalan" rows="3" required
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 resize-none mb-3"
+                    placeholder="Masukkan alasan pembatalan..."></textarea>
+                <button type="submit"
+                    onclick="return confirm('Yakin ingin membatalkan pesanan ini?')"
+                    class="w-full py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition bg-red-700">
+                    Batalkan Pesanan
+                </button>
+            </form>
+        </div>
+        @endif
+
         {{-- INFO PEMBAYARAN + KIRIM WA (status menunggu_pembayaran) --}}
         @if($order->status === 'menunggu_pembayaran')
         <div class="bg-white rounded-2xl shadow-sm p-6">
@@ -230,7 +249,7 @@
         @endif
 
         {{-- UPDATE STATUS --}}
-        @if(in_array($order->status, ['menunggu_pembayaran', 'diproses', 'dikirim', 'selesai']))
+        @if(in_array($order->status, ['diproses', 'dikirim', 'selesai']))
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Ubah Status</h3>
             <form method="POST" action="{{ route('admin.catering-orders.updateStatus', $order->id) }}">

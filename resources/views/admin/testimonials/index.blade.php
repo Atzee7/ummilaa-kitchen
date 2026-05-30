@@ -76,9 +76,15 @@
                         </td>
 
                         <td class="px-6 py-4">
-                            <span class="text-sm font-bold px-3 py-1 rounded-lg bg-[#fdf5f5] text-[#8B1A1A]">
-                                #{{ str_pad($t->order_id, 5, '0', STR_PAD_LEFT) }}
-                            </span>
+                            @if($t->catering_order_id)
+                                <span class="text-sm font-bold px-3 py-1 rounded-lg bg-orange-50 text-orange-700">
+                                    Catering #{{ str_pad($t->catering_order_id, 5, '0', STR_PAD_LEFT) }}
+                                </span>
+                            @else
+                                <span class="text-sm font-bold px-3 py-1 rounded-lg bg-[#fdf5f5] text-[#8B1A1A]">
+                                    Katalog #{{ str_pad($t->order_id, 5, '0', STR_PAD_LEFT) }}
+                                </span>
+                            @endif
                         </td>
 
                         <td class="px-6 py-4">

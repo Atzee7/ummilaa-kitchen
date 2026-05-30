@@ -8,7 +8,8 @@ class AboutController extends Controller
 {
     public function index()
     {
-        $testimonials = Testimonial::where('status', 'approved')
+        $testimonials = Testimonial::with('order', 'cateringOrder')
+                        ->where('status', 'approved')
                         ->latest()
                         ->get();
         return view('about', compact('testimonials'));

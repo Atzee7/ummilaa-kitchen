@@ -41,7 +41,7 @@
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="font-semibold text-gray-800 mb-5 pb-3 border-b border-gray-100">Harga (Referensi)</h3>
             <p class="text-xs text-gray-400 mb-4">Harga ini hanya tampil sebagai estimasi. Total final tetap ditentukan admin saat membuka pembayaran.</p>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Harga / Pax (Rp) <span class="text-red-500">*</span></label>
                     <input type="number" name="price_per_pax" value="{{ old('price_per_pax') }}" required min="0" placeholder="0"
@@ -51,6 +51,12 @@
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Minimum Pax</label>
                     <input type="number" name="min_pax" value="{{ old('min_pax') }}" min="1" placeholder="opsional"
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Maksimum Pax</label>
+                    <input type="number" name="max_pax" value="{{ old('max_pax') }}" min="1" placeholder="opsional"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition">
+                    @error('max_pax')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>

@@ -44,6 +44,11 @@ class CateringOrder extends Model
         return $this->hasMany(CateringOrderHistory::class)->latest();
     }
 
+    public function testimonial()
+    {
+        return $this->hasOne(Testimonial::class, 'catering_order_id');
+    }
+
     public function logHistory(string $status, ?string $notes = null): void
     {
         $this->histories()->create(['status' => $status, 'notes' => $notes]);

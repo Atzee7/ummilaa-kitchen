@@ -14,6 +14,7 @@ use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\LaporanCateringController;
 use App\Http\Controllers\TestimonialController; // TAMBAHAN
 use App\Http\Controllers\CateringController;
 
@@ -148,6 +149,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
+
+        Route::get('/laporan-catering', [LaporanCateringController::class, 'index'])->name('laporan-catering.index');
+        Route::get('/laporan-catering/export', [LaporanCateringController::class, 'export'])->name('laporan-catering.export');
         // Kasir / Pembelian Langsung
         Route::get('/kasir', [App\Http\Controllers\Admin\KasirController::class, 'index'])->name('kasir.index');
         Route::post('/kasir', [App\Http\Controllers\Admin\KasirController::class, 'store'])->name('kasir.store');

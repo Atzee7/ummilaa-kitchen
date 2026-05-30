@@ -2,9 +2,18 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
 .form-section { border-left: 3px solid #8B1A1A; padding-left: 1rem; }
 .field-group { background: #fafafa; border: 1.5px solid #f0e8e8; border-radius: 14px; padding: 1.25rem; }
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+    color: #ef4444 !important;
+    background: #fef2f2 !important;
+    text-decoration: line-through;
+    cursor: not-allowed;
+    opacity: 1 !important;
+}
 </style>
 @endpush
 
@@ -42,6 +51,39 @@
         </div>
         @endif
 
+        {{-- Ringkasan aturan --}}
+        <div class="bg-maroon-50 border-[1.5px] border-maroon-200 rounded-2xl p-5 mb-6">
+            <p class="text-[0.8rem] font-extrabold text-maroon uppercase tracking-widest mb-3 flex items-center gap-2">
+                <i class="fas fa-circle-info"></i> Ketentuan Pemesanan
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="flex items-start gap-2 text-[0.8rem] text-[#555]">
+                    <i class="fas fa-location-dot text-maroon mt-0.5 w-4 shrink-0"></i>
+                    <span>Radius layanan <strong>5 km</strong> dari toko</span>
+                </div>
+                <div class="flex items-start gap-2 text-[0.8rem] text-[#555]">
+                    <i class="fas fa-calendar-days text-maroon mt-0.5 w-4 shrink-0"></i>
+                    <span>Pemesanan minimal <strong>H-3</strong> dari tanggal acara</span>
+                </div>
+                <div class="flex items-start gap-2 text-[0.8rem] text-[#555]">
+                    <i class="fas fa-calendar-check text-maroon mt-0.5 w-4 shrink-0"></i>
+                    <span>Hanya <strong>1 catering</strong> per hari</span>
+                </div>
+                <div class="flex items-start gap-2 text-[0.8rem] text-[#555]">
+                    <i class="fas fa-truck text-maroon mt-0.5 w-4 shrink-0"></i>
+                    <span>Pengantaran pukul <strong>09.00–16.00</strong> WIB</span>
+                </div>
+                <div class="flex items-start gap-2 text-[0.8rem] text-[#555]">
+                    <i class="fas fa-users text-maroon mt-0.5 w-4 shrink-0"></i>
+                    <span>Pax sesuai batas <strong>min & maks</strong> paket</span>
+                </div>
+                <div class="flex items-start gap-2 text-[0.8rem] text-[#555]">
+                    <i class="fas fa-comment-dots text-maroon mt-0.5 w-4 shrink-0"></i>
+                    <span>Harga dikonfirmasi admin via <strong>WhatsApp</strong></span>
+                </div>
+            </div>
+        </div>
+
         <form method="POST" action="{{ route('catering.store') }}" class="space-y-6">
             @csrf
 
@@ -64,6 +106,7 @@
                         @foreach($packages as $p)
                             <option value="{{ $p->id }}"
                                     data-min-pax="{{ $p->min_pax ?? 1 }}"
+                                    data-max-pax="{{ $p->max_pax ?? '' }}"
                                     data-name="{{ $p->name }}"
                                     data-price="{{ number_format($p->price_per_pax, 0, ',', '.') }}"
                                     data-min-label="{{ $p->min_pax ? 'Min. ' . $p->min_pax . ' pax' : '' }}"
@@ -98,10 +141,19 @@
                                 <p class="text-maroon font-bold text-[0.82rem]">
                                     Rp{{ number_format($p->price_per_pax, 0, ',', '.') }}<span class="text-[#bbb] font-semibold text-[0.72rem]">/pax</span>
                                 </p>
-                                @if($p->min_pax)
-                                <span class="inline-block mt-1 text-[0.68rem] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                                    Min. {{ $p->min_pax }} pax
-                                </span>
+                                @if($p->min_pax || $p->max_pax)
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    @if($p->min_pax)
+                                    <span class="text-[0.68rem] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                                        Min. {{ $p->min_pax }} pax
+                                    </span>
+                                    @endif
+                                    @if($p->max_pax)
+                                    <span class="text-[0.68rem] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                                        Maks. {{ $p->max_pax }} pax
+                                    </span>
+                                    @endif
+                                </div>
                                 @endif
                             </div>
 
@@ -148,29 +200,15 @@
                                 <i class="fas fa-calendar text-maroon mr-1 text-[0.7rem]"></i>
                                 Tanggal Acara <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="tanggal_acara" value="{{ old('tanggal_acara') }}" required
-                                   min="{{ now()->format('Y-m-d') }}"
-                                   class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] focus:outline-none focus:border-maroon bg-white transition-colors">
+                            <input type="text" name="tanggal_acara" id="tanggalAcaraInput"
+                                   value="{{ old('tanggal_acara') }}" required readonly
+                                   placeholder="Pilih tanggal acara"
+                                   class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] placeholder:text-[#ccc] focus:outline-none focus:border-maroon bg-white transition-colors cursor-pointer">
+                            <p class="text-[0.72rem] text-[#aaa] mt-1"><i class="fas fa-info-circle mr-1"></i>Minimal 3 hari & maks. 30 hari · Tanggal <span class="text-red-500 font-semibold">merah</span> sudah dipesan</p>
+                            @error('tanggal_acara')
+                                <p class="text-[0.73rem] text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <div>
-                            <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
-                                <i class="fas fa-clock text-maroon mr-1 text-[0.7rem]"></i>
-                                Jam Acara <span class="text-red-500">*</span>
-                            </label>
-                            <select name="jam_acara" required
-                                    class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] focus:outline-none focus:border-maroon bg-white transition-colors">
-                                <option value="" disabled {{ old('jam_acara') ? '' : 'selected' }}>Pilih jam acara</option>
-                                @for($h = 0; $h < 24; $h++)
-                                    @foreach(['00', '30'] as $m)
-                                        @php $val = str_pad($h, 2, '0', STR_PAD_LEFT) . ':' . $m; @endphp
-                                        <option value="{{ $val }}" {{ old('jam_acara') === $val ? 'selected' : '' }}>{{ $val }}</option>
-                                    @endforeach
-                                @endfor
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <div>
                             <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
                                 <i class="fas fa-truck text-maroon mr-1 text-[0.7rem]"></i>
@@ -189,21 +227,22 @@
                             </select>
                             <p class="text-[0.72rem] text-[#aaa] mt-1"><i class="fas fa-info-circle mr-1"></i>Pengantaran tersedia 09.00–16.00</p>
                         </div>
-                        <div>
-                            <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
-                                <i class="fas fa-users text-maroon mr-1 text-[0.7rem]"></i>
-                                Jumlah Pax (porsi) <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" name="jumlah_pax" id="jumlahPaxInput" value="{{ old('jumlah_pax') }}"
-                                   required min="1" placeholder="contoh: 50"
-                                   class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] placeholder:text-[#ccc] focus:outline-none focus:border-maroon bg-white transition-colors">
-                            <p id="paxHint" class="hidden text-[0.73rem] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 mt-1.5 font-semibold">
-                                <i class="fas fa-triangle-exclamation mr-1"></i><span id="paxHintText"></span>
-                            </p>
-                            @error('jumlah_pax')
-                                <p class="text-[0.73rem] text-red-500 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[0.78rem] font-bold text-[#555] mb-1.5">
+                            <i class="fas fa-users text-maroon mr-1 text-[0.7rem]"></i>
+                            Jumlah Pax (porsi) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" name="jumlah_pax" id="jumlahPaxInput" value="{{ old('jumlah_pax') }}"
+                               required min="1" placeholder="contoh: 50"
+                               class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] placeholder:text-[#ccc] focus:outline-none focus:border-maroon bg-white transition-colors">
+                        <p id="paxHint" class="hidden text-[0.73rem] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 mt-1.5 font-semibold">
+                            <i class="fas fa-triangle-exclamation mr-1"></i><span id="paxHintText"></span>
+                        </p>
+                        @error('jumlah_pax')
+                            <p class="text-[0.73rem] text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -263,6 +302,7 @@
                     </div>
 
                     {{-- Result chip --}}
+                    <p class="text-[0.72rem] text-[#aaa]"><i class="fas fa-circle-info mr-1"></i>Layanan catering hanya tersedia dalam radius <strong>5 km</strong> dari toko. Area yang dapat dipilih ditunjukkan oleh lingkaran pada peta.</p>
                     <div class="px-4 py-3 bg-maroon-50 border border-maroon-100 rounded-xl flex items-start gap-2.5 min-h-[44px]">
                         <i class="fas fa-map-pin text-maroon mt-0.5 shrink-0 text-[0.82rem]"></i>
                         <span id="mapResultText" class="text-[0.8rem] text-[#666] leading-relaxed">
@@ -284,6 +324,8 @@
                             placeholder="RT/RW, nomor gedung, patokan, nama venue, lantai, dll."
                             class="w-full px-4 py-3 rounded-xl border-[1.5px] border-maroon-200 text-sm text-[#333] placeholder:text-[#ccc] focus:outline-none focus:border-maroon resize-none bg-white transition-colors">{{ old('detail_lokasi_acara') }}</textarea>
                     </div>
+                    <input type="hidden" name="lat" id="latInput" value="{{ old('lat') }}">
+                    <input type="hidden" name="lng" id="lngInput" value="{{ old('lng') }}">
                 </div>
             </div>
 
@@ -402,15 +444,23 @@
         const selected = hiddenSelect.options[hiddenSelect.selectedIndex];
         if (!selected) return;
         const minPax = parseInt(selected.dataset.minPax || '1', 10);
+        const maxPax = selected.dataset.maxPax ? parseInt(selected.dataset.maxPax, 10) : null;
         paxInput.min = minPax;
-        if (minPax > 1) {
-            paxHintText.textContent = 'Minimum ' + minPax + ' pax untuk paket ini';
+        if (maxPax) paxInput.max = maxPax; else paxInput.removeAttribute('max');
+
+        const parts = [];
+        if (minPax > 1) parts.push('Minimum ' + minPax + ' pax');
+        if (maxPax) parts.push('Maksimum ' + maxPax + ' pax');
+
+        if (parts.length > 0) {
+            paxHintText.textContent = parts.join(' · ') + ' untuk paket ini';
             paxHint.classList.remove('hidden');
         } else {
             paxHint.classList.add('hidden');
         }
         const cur = parseInt(paxInput.value, 10);
         if (!isNaN(cur) && cur > 0 && cur < minPax) paxInput.value = minPax;
+        if (maxPax && !isNaN(cur) && cur > maxPax) paxInput.value = maxPax;
     };
 
     updateMinPax();
@@ -420,12 +470,31 @@
 <script>
 // ── Leaflet map ───────────────────────────────────────────────────────────
 (function () {
-    const defaultLat = -7.9666;
-    const defaultLng = 112.6326;
+    const STORE_LAT = -7.963536;
+    const STORE_LNG = 112.669380;
+    const MAX_KM    = 5;
 
-    const map = L.map('cateringMap').setView([defaultLat, defaultLng], 13);
+    function hitungJarak(lat1, lng1, lat2, lng2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    const map = L.map('cateringMap').setView([STORE_LAT, STORE_LNG], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.circle([STORE_LAT, STORE_LNG], {
+        radius: MAX_KM * 1000,
+        color: '#8B1A1A',
+        weight: 1.5,
+        fillColor: '#8B1A1A',
+        fillOpacity: 0.07,
     }).addTo(map);
 
     const markerIcon = L.divIcon({
@@ -439,13 +508,26 @@
     if (oldAlamat) document.getElementById('mapResultText').textContent = oldAlamat;
 
     map.on('click', async function(e) {
-        setMarker(e.latlng.lat, e.latlng.lng);
-        await reverseGeocode(e.latlng.lat, e.latlng.lng);
+        await trySetLocation(e.latlng.lat, e.latlng.lng);
     });
 
     function setMarker(lat, lng) {
         if (marker) map.removeLayer(marker);
         marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map);
+    }
+
+    async function trySetLocation(lat, lng) {
+        const jarak = hitungJarak(STORE_LAT, STORE_LNG, lat, lng);
+        if (jarak > MAX_KM) {
+            document.getElementById('mapResultText').textContent =
+                `⚠️ Lokasi terlalu jauh (${jarak.toFixed(1)} km dari toko). Layanan catering hanya tersedia dalam radius ${MAX_KM} km.`;
+            return false;
+        }
+        setMarker(lat, lng);
+        await reverseGeocode(lat, lng);
+        document.getElementById('latInput').value = lat;
+        document.getElementById('lngInput').value = lng;
+        return true;
     }
 
     async function reverseGeocode(lat, lng) {
@@ -471,9 +553,8 @@
             if (data.length > 0) {
                 const lat = parseFloat(data[0].lat);
                 const lng = parseFloat(data[0].lon);
-                map.setView([lat, lng], 16);
-                setMarker(lat, lng);
-                await reverseGeocode(lat, lng);
+                const ok = await trySetLocation(lat, lng);
+                if (ok) map.setView([lat, lng], 16);
             } else {
                 document.getElementById('mapResultText').textContent = 'Lokasi tidak ditemukan. Coba kata kunci lain.';
             }
@@ -495,9 +576,8 @@
         navigator.geolocation.getCurrentPosition(
             async function(pos) {
                 const lat = pos.coords.latitude, lng = pos.coords.longitude;
-                map.setView([lat, lng], 16);
-                setMarker(lat, lng);
-                await reverseGeocode(lat, lng);
+                const ok = await trySetLocation(lat, lng);
+                if (ok) map.setView([lat, lng], 16);
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-location-arrow"></i> Lokasi Saya';
             },
@@ -518,14 +598,30 @@
     window.resetCateringMap = function() {
         if (marker) { map.removeLayer(marker); marker = null; }
         document.getElementById('lokasiAcaraInput').value = '';
+        document.getElementById('latInput').value = '';
+        document.getElementById('lngInput').value = '';
         document.getElementById('mapResultText').textContent = 'Klik pada peta untuk menentukan lokasi acara';
         document.getElementById('mapSearchInput').value = '';
-        map.setView([defaultLat, defaultLng], 13);
+        map.setView([STORE_LAT, STORE_LNG], 13);
     };
 
     document.getElementById('mapSearchInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); searchCateringLocation(); }
     });
 })();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+<script>
+flatpickr("#tanggalAcaraInput", {
+    locale: "id",
+    dateFormat: "Y-m-d",
+    minDate: "{{ now()->addDays(3)->format('Y-m-d') }}",
+    maxDate: "{{ now()->addDays(30)->format('Y-m-d') }}",
+    disable: @json($bookedDates),
+    allowInput: false,
+    disableMobile: false,
+});
 </script>
 @endpush

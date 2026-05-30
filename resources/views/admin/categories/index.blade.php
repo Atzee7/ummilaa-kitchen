@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('title', 'Kategori')
+@section('title', 'Kategori Katalog')
 
 @section('content')
 <div class="flex items-center justify-between mb-8">
     <div>
-        <h2 class="font-playfair text-3xl font-bold text-gray-800">Kategori</h2>
-        <p class="text-gray-500 mt-1">Kelola kategori produk</p>
+        <h2 class="font-playfair text-3xl font-bold text-gray-800">Kategori Katalog</h2>
+        <p class="text-gray-500 mt-1">Kelola kategori produk katalog</p>
     </div>
     <button onclick="document.getElementById('modalTambah').classList.remove('hidden')"
         class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition bg-[#8B1A1A]">

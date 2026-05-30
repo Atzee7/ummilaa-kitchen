@@ -191,7 +191,7 @@
                             </div>
                             <div>
                                 <strong class="block text-[#1a1a1a] text-[0.85rem]">{{ $t->nama }}</strong>
-                                <span class="text-[#bbb] text-[0.74rem]">Pelanggan Setia</span>
+                                <span class="text-[#bbb] text-[0.74rem]">{{ $t->catering_order_id ? 'Pesanan Catering' : 'Pesanan Katalog' }}</span>
                             </div>
                             <div class="ml-auto bg-[#fdf6f3] text-maroon text-[0.7rem] font-bold px-2.5 py-1 rounded-full border border-[#f0e4df]">
                                 {{ $t->rating }}/5

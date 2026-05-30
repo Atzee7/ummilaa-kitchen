@@ -58,10 +58,9 @@
             @php
                 [$label, $color] = $statusMeta[$order->status] ?? [ucfirst($order->status), 'bg-gray-100 text-gray-700'];
                 $nextAction = match($order->status) {
-                    'menunggu_pembayaran' => ['diproses', '→ Proses',  'bg-blue-600 hover:bg-blue-700 text-white'],
-                    'diproses'            => ['dikirim',  '→ Kirim',   'bg-purple-600 hover:bg-purple-700 text-white'],
-                    'dikirim'             => ['selesai',  '→ Selesai', 'bg-green-600 hover:bg-green-700 text-white'],
-                    default               => null,
+                    'diproses' => ['dikirim',  '→ Kirim',   'bg-purple-600 hover:bg-purple-700 text-white'],
+                    'dikirim'  => ['selesai',  '→ Selesai', 'bg-green-600 hover:bg-green-700 text-white'],
+                    default    => null,
                 };
             @endphp
             <tr id="catering-row-{{ $order->id }}" data-status="{{ $order->status }}"
@@ -71,7 +70,10 @@
                     <p class="font-semibold text-gray-800">{{ $order->nama_acara }}</p>
                     <p class="text-xs text-gray-400 mt-0.5">{{ $order->package->name ?? 'Custom' }}</p>
                 </td>
-                <td class="py-4 px-6 text-gray-600">{{ $order->nama_pemesan }}</td>
+                <td class="py-4 px-6">
+                    <p class="text-gray-700">{{ $order->nama_pemesan }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ $order->created_at->translatedFormat('d M Y, H:i') }}</p>
+                </td>
                 <td class="py-4 px-6 text-gray-600">
                     {{ $order->tanggal_acara->translatedFormat('d M Y') }}
                     @if($order->jam_pengantaran)
@@ -127,9 +129,8 @@ const CATERING_STATUS_LABEL = {
     diproses: 'Diproses', dikirim: 'Dikirim', selesai: 'Selesai', dibatalkan: 'Dibatalkan',
 };
 const CATERING_NEXT = {
-    menunggu_pembayaran: { status: 'diproses', label: '→ Proses',  color: 'bg-blue-600 hover:bg-blue-700 text-white' },
-    diproses:            { status: 'dikirim',  label: '→ Kirim',   color: 'bg-purple-600 hover:bg-purple-700 text-white' },
-    dikirim:             { status: 'selesai',  label: '→ Selesai', color: 'bg-green-600 hover:bg-green-700 text-white' },
+    diproses: { status: 'dikirim',  label: '→ Kirim',   color: 'bg-purple-600 hover:bg-purple-700 text-white' },
+    dikirim:  { status: 'selesai',  label: '→ Selesai', color: 'bg-green-600 hover:bg-green-700 text-white' },
 };
 
 function quickCateringStatus(orderId, newStatus, triggerEl) {

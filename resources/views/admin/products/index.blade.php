@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('title', 'Produk')
+@section('title', 'Produk Katalog')
 
 @section('content')
 <div class="flex items-center justify-between mb-8">
     <div>
-        <h2 class="font-playfair text-3xl font-bold text-gray-800">Produk</h2>
-        <p class="text-gray-500 mt-1">Kelola semua produk Ummilaa Kitchen</p>
+        <h2 class="font-playfair text-3xl font-bold text-gray-800">Produk Katalog</h2>
+        <p class="text-gray-500 mt-1">Kelola semua produk katalog Ummilaa Kitchen</p>
     </div>
     <a href="{{ route('admin.products.create') }}"
         class="px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition bg-[#8B1A1A]">

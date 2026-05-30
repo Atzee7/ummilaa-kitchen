@@ -9,7 +9,7 @@ class TestimonialAdminController extends Controller
 {
     public function index()
     {
-        $testimonials = Testimonial::with('user', 'order')
+        $testimonials = Testimonial::with('user', 'order', 'cateringOrder')
                         ->orderBy('created_at', 'desc')
                         ->get();
 

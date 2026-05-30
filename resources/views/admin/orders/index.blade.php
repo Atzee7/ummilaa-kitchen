@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Pesanan')
+@section('title', 'Pesanan Katalog')
 
 @section('content')
 <div id="wa-toast" class="hidden mb-5 px-4 py-3 rounded-xl text-sm flex items-center gap-2.5 relative overflow-hidden" style="transition: opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;">
@@ -8,10 +8,10 @@
 
 <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
     <div>
-        <h2 class="font-playfair text-3xl font-bold text-gray-800">Pesanan</h2>
+        <h2 class="font-playfair text-3xl font-bold text-gray-800">Pesanan Katalog</h2>
         <p class="text-gray-500 mt-1">
             @if($date === today()->format('Y-m-d'))
-                Pesanan hari ini
+                Pesanan katalog hari ini
             @else
                 Pesanan — {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}
             @endif

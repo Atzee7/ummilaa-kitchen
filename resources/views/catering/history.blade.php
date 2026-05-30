@@ -174,12 +174,24 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
                         {{ $order->total ? 'Rp' . number_format($order->total, 0, ',', '.') : 'Menunggu penawaran' }}
                     </p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex items-center gap-2">
                     @if($order->status === 'menunggu_pembayaran')
                     <a href="{{ route('catering.payment', $order->id) }}"
                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-maroon text-white rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-dark transition-all shadow-[0_2px_8px_rgba(139,26,26,0.2)]">
                         <i class="fas fa-credit-card text-[0.72rem]"></i> Bayar Sekarang
                     </a>
+                    @endif
+                    @if($order->status === 'selesai')
+                        @if($order->testimonial)
+                            <span class="inline-flex items-center gap-1 text-green-700 text-[0.78rem] font-bold">
+                                <i class="fas fa-check-circle"></i> Sudah Diulas
+                            </span>
+                        @else
+                            <button onclick="toggleCateringForm({{ $order->id }})"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-maroon border-[1.5px] border-maroon rounded-lg font-bold text-[0.8rem] hover:bg-maroon-50 transition-all cursor-pointer">
+                                <i class="fas fa-star text-[0.72rem]"></i> Tulis Ulasan
+                            </button>
+                        @endif
                     @endif
                     <a href="{{ route('catering.show', $order->id) }}"
                        class="inline-flex items-center gap-1.5 px-4 py-2 border-[1.5px] border-maroon text-maroon rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-50 transition-all">
@@ -187,6 +199,42 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
                     </a>
                 </div>
             </div>
+
+            {{-- FORM ULASAN --}}
+            @if($order->status === 'selesai' && !$order->testimonial)
+            <div class="hidden px-5 py-5 border-t border-maroon-200 bg-[#fffaf9]" id="form-catering-{{ $order->id }}">
+                <form action="{{ route('testimonial.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="catering_order_id" value="{{ $order->id }}">
+                    <p class="font-bold text-[#1a1a1a] mb-2">Beri Rating</p>
+                    <div class="star-rating flex flex-row-reverse justify-end gap-1.5 mb-3">
+                        @for($i = 5; $i >= 1; $i--)
+                            <input type="radio" name="rating" id="cstar{{ $i }}-{{ $order->id }}" value="{{ $i }}" class="sr-only">
+                            <label for="cstar{{ $i }}-{{ $order->id }}" class="text-[#ddd] text-[1.8rem] cursor-pointer transition-colors duration-150 select-none">★</label>
+                        @endfor
+                    </div>
+                    @error('rating')
+                        <p class="text-red-600 text-[0.82rem] mb-2 -mt-1"><i class="fas fa-exclamation-circle"></i> Silakan pilih rating bintang terlebih dahulu.</p>
+                    @enderror
+                    <p class="font-bold text-[#1a1a1a] mb-2">Komentar</p>
+                    <textarea name="komentar" rows="3"
+                        class="w-full border-[1.5px] border-maroon-200 rounded-[10px] p-3 font-sans text-[0.88rem] resize-y outline-none focus:border-maroon transition-colors box-border"
+                        placeholder="Ceritakan pengalaman kamu menggunakan layanan catering Ummilaa Kitchen...">{{ old('komentar') }}</textarea>
+                    @error('komentar')
+                        <p class="text-red-600 text-[0.82rem] mt-1"><i class="fas fa-exclamation-circle"></i> Komentar tidak boleh kosong.</p>
+                    @enderror
+                    <div class="mt-3">
+                        <button type="submit" class="bg-maroon text-white border-none px-6 py-[10px] rounded-[10px] font-bold text-[0.85rem] cursor-pointer hover:bg-maroon-dark transition">
+                            <i class="fas fa-paper-plane"></i> Kirim Ulasan
+                        </button>
+                        <button type="button" onclick="toggleCateringForm({{ $order->id }})"
+                            class="bg-transparent border-none text-[#999] text-[0.85rem] cursor-pointer ml-[10px]">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+            @endif
 
         </div>
         @endforeach
@@ -240,6 +288,18 @@ document.querySelectorAll('.status-tab').forEach(tab => {
 });
 
 switchTab(DEFAULT_TAB);
+
+function toggleCateringForm(id) {
+    const el = document.getElementById('form-catering-' + id);
+    if (el) el.classList.toggle('hidden');
+}
 </script>
+<style>
+.star-rating label:hover ~ label,
+.star-rating label:hover,
+.star-rating input:checked ~ label {
+    color: #f59e0b;
+}
+</style>
 @endpush
 @endsection

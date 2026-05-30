@@ -25,11 +25,6 @@
                 </div>
             @endif
 
-            @if($package->min_pax)
-            <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-maroon text-[0.78rem] font-extrabold px-4 py-1.5 rounded-full shadow-sm">
-                <i class="fas fa-users text-[0.7rem] mr-1"></i> Min. {{ $package->min_pax }} pax
-            </span>
-            @endif
         </div>
 
         {{-- KOLOM KANAN: Info (sticky) --}}
@@ -79,14 +74,18 @@
             @endif
 
             {{-- Info chips --}}
-            <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="grid grid-cols-3 gap-3 mb-6">
                 <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center">
-                    <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Harga per Pax</p>
+                    <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Harga / Pax</p>
                     <p class="font-extrabold text-maroon text-[0.9rem]">Rp{{ number_format($package->price_per_pax, 0, ',', '.') }}</p>
                 </div>
                 <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center">
-                    <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Minimum Order</p>
-                    <p class="font-extrabold text-[#1a1a1a] text-[0.9rem]">{{ $package->min_pax ? $package->min_pax . ' pax' : 'Tidak ada' }}</p>
+                    <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Min. Order</p>
+                    <p class="font-extrabold text-[#1a1a1a] text-[0.9rem]">{{ $package->min_pax ? $package->min_pax . ' pax' : '-' }}</p>
+                </div>
+                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center">
+                    <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Maks. Order</p>
+                    <p class="font-extrabold text-[#1a1a1a] text-[0.9rem]">{{ $package->max_pax ? $package->max_pax . ' pax' : '-' }}</p>
                 </div>
             </div>
 

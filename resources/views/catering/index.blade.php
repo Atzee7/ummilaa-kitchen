@@ -56,6 +56,74 @@
     <div class="border-t-[1.5px] border-maroon-200"></div>
 </div>
 
+{{-- KETENTUAN PEMESANAN --}}
+<div class="px-4 sm:px-10 lg:px-[80px] mb-12" data-aos="fade-up" data-aos-duration="650">
+    <div class="mb-6">
+        <div class="inline-flex items-center gap-2 bg-maroon-100 text-maroon px-4 py-1.5 rounded-full text-[0.72rem] font-extrabold tracking-widest uppercase mb-2">
+            <i class="fas fa-circle-info text-[0.65rem]"></i> Ketentuan Pemesanan
+        </div>
+        <h2 class="font-playfair text-[1.4rem] text-[#1a1a1a]">Pastikan Anda Memahami Aturan Berikut</h2>
+        <p class="text-[0.85rem] text-[#999] mt-1">Baca ketentuan ini sebelum mengajukan pesanan catering.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
+                <i class="fas fa-location-dot text-maroon text-[1rem]"></i>
+            </div>
+            <div>
+                <p class="font-extrabold text-[#1a1a1a] text-[0.88rem] mb-0.5">Radius Layanan</p>
+                <p class="text-[0.8rem] text-[#777] leading-relaxed">Layanan catering hanya tersedia dalam radius <strong>5 km</strong> dari lokasi toko kami.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
+                <i class="fas fa-calendar-days text-maroon text-[1rem]"></i>
+            </div>
+            <div>
+                <p class="font-extrabold text-[#1a1a1a] text-[0.88rem] mb-0.5">Jadwal Pemesanan</p>
+                <p class="text-[0.8rem] text-[#777] leading-relaxed">Pemesanan dilakukan minimal <strong>H-3</strong> dari tanggal acara.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
+                <i class="fas fa-calendar-check text-maroon text-[1rem]"></i>
+            </div>
+            <div>
+                <p class="font-extrabold text-[#1a1a1a] text-[0.88rem] mb-0.5">Satu Catering per Hari</p>
+                <p class="text-[0.8rem] text-[#777] leading-relaxed">Setiap tanggal hanya bisa diisi <strong>1 pesanan catering</strong>. Tanggal yang sudah dipesan tidak tersedia.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
+                <i class="fas fa-truck text-maroon text-[1rem]"></i>
+            </div>
+            <div>
+                <p class="font-extrabold text-[#1a1a1a] text-[0.88rem] mb-0.5">Jam Pengantaran</p>
+                <p class="text-[0.8rem] text-[#777] leading-relaxed">Pengantaran tersedia pukul <strong>09.00–16.00 WIB</strong> sesuai waktu yang disepakati.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
+                <i class="fas fa-users text-maroon text-[1rem]"></i>
+            </div>
+            <div>
+                <p class="font-extrabold text-[#1a1a1a] text-[0.88rem] mb-0.5">Kapasitas Pax</p>
+                <p class="text-[0.8rem] text-[#777] leading-relaxed">Jumlah pax wajib sesuai batas <strong>minimum & maksimum</strong> yang ditentukan pada setiap paket.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
+                <i class="fas fa-comment-dots text-maroon text-[1rem]"></i>
+            </div>
+            <div>
+                <p class="font-extrabold text-[#1a1a1a] text-[0.88rem] mb-0.5">Alur Pembayaran</p>
+                <p class="text-[0.8rem] text-[#777] leading-relaxed">Harga final dikonfirmasi admin via <strong>WhatsApp</strong>. Pembayaran dilakukan setelah harga disepakati.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- PACKAGES --}}
 <div class="pb-16">
 
@@ -101,11 +169,6 @@
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <i class="fas fa-bowl-food text-4xl text-[#c5b8ae]"></i>
                             </div>
-                        @endif
-                        @if($package->min_pax)
-                        <span class="absolute top-2 left-2 md:top-3 md:left-3 bg-white/90 backdrop-blur-sm text-maroon text-[0.65rem] md:text-[0.72rem] font-extrabold px-2 md:px-3 py-0.5 md:py-1 rounded-full">
-                            Min. {{ $package->min_pax }} pax
-                        </span>
                         @endif
                     </div>
                     <div class="p-3 md:p-[18px]">

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CateringPackage extends Model
 {
     protected $fillable = [
-        'name', 'description', 'price_per_pax', 'min_pax', 'image', 'is_active',
+        'name', 'description', 'price_per_pax', 'min_pax', 'max_pax', 'image', 'is_active',
     ];
 
     protected $casts = [

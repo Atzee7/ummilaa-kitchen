@@ -129,6 +129,13 @@ class CateringOrderAdminController extends Controller
             return back()->withErrors(['status' => 'Pesanan pengajuan hanya bisa dibatalkan.']);
         }
 
+        if ($order->status === 'menunggu_pembayaran' && $request->status !== 'dibatalkan') {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Menunggu pembayaran dari customer. Status tidak bisa diubah secara manual.'], 422);
+            }
+            return back()->withErrors(['status' => 'Menunggu pembayaran dari customer. Status tidak bisa diubah secara manual.']);
+        }
+
         $updateData = ['status' => $request->status];
         if ($request->status === 'dibatalkan') {
             $updateData['alasan_pembatalan'] = $request->alasan_pembatalan;

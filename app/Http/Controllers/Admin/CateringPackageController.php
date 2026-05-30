@@ -35,9 +35,14 @@ class CateringPackageController extends Controller
             'description'   => 'nullable|string',
             'price_per_pax' => 'required|integer|min:0',
             'min_pax'       => 'nullable|integer|min:1',
+            'max_pax'       => 'nullable|integer|min:1',
             'is_active'     => 'nullable|boolean',
             'image'         => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        if ($request->filled('max_pax') && $request->filled('min_pax') && $request->max_pax < $request->min_pax) {
+            return back()->withErrors(['max_pax' => 'Maksimum pax tidak boleh kurang dari minimum pax.'])->withInput();
+        }
 
         $imagePath = $request->file('image')->store('catering', 'public');
 
@@ -46,6 +51,7 @@ class CateringPackageController extends Controller
             'description'   => $request->description,
             'price_per_pax' => $request->price_per_pax,
             'min_pax'       => $request->min_pax,
+            'max_pax'       => $request->max_pax,
             'is_active'     => $request->boolean('is_active'),
             'image'         => $imagePath,
         ]);
@@ -65,9 +71,14 @@ class CateringPackageController extends Controller
             'description'   => 'nullable|string',
             'price_per_pax' => 'required|integer|min:0',
             'min_pax'       => 'nullable|integer|min:1',
+            'max_pax'       => 'nullable|integer|min:1',
             'is_active'     => 'nullable|boolean',
             'image'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        if ($request->filled('max_pax') && $request->filled('min_pax') && $request->max_pax < $request->min_pax) {
+            return back()->withErrors(['max_pax' => 'Maksimum pax tidak boleh kurang dari minimum pax.'])->withInput();
+        }
 
         if ($request->hasFile('image')) {
             if ($catering_package->image) Storage::disk('public')->delete($catering_package->image);
@@ -79,6 +90,7 @@ class CateringPackageController extends Controller
             'description'   => $request->description,
             'price_per_pax' => $request->price_per_pax,
             'min_pax'       => $request->min_pax,
+            'max_pax'       => $request->max_pax,
             'is_active'     => $request->boolean('is_active'),
             'image'         => $catering_package->image,
         ]);

@@ -59,10 +59,6 @@
                     <p class="font-bold text-[#1a1a1a]">{{ $order->tanggal_acara->translatedFormat('d M Y') }}</p>
                 </div>
                 <div>
-                    <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Jam Acara</p>
-                    <p class="font-bold text-[#1a1a1a]">{{ $order->jam_acara ? \Carbon\Carbon::parse($order->jam_acara)->format('H:i') : '-' }}</p>
-                </div>
-                <div>
                     <p class="text-[0.72rem] text-[#999] uppercase tracking-wider mb-0.5">Jam Pengantaran</p>
                     <p class="font-bold text-[#1a1a1a]">{{ $order->jam_pengantaran ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') : '-' }}</p>
                 </div>

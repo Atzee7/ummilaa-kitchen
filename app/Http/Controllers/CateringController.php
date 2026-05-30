@@ -31,7 +31,14 @@ class CateringController extends Controller
 
         $packages = CateringPackage::active()->latest()->get();
 
-        return view('catering.checkout', compact('package', 'packages'));
+        $bookedDates = CateringOrder::whereNotIn('status', ['dibatalkan'])
+            ->pluck('tanggal_acara')
+            ->map(fn($d) => $d->format('Y-m-d'))
+            ->unique()
+            ->values()
+            ->toArray();
+
+        return view('catering.checkout', compact('package', 'packages', 'bookedDates'));
     }
 
     public function store(Request $request)
@@ -39,22 +46,51 @@ class CateringController extends Controller
         $validated = $request->validate([
             'catering_package_id'  => 'required|exists:catering_packages,id',
             'nama_acara'           => 'required|string|max:255',
-            'tanggal_acara'        => 'required|date|after_or_equal:today',
-            'jam_acara'            => 'required|date_format:H:i',
+            'tanggal_acara'        => 'required|date|after_or_equal:' . now()->addDays(3)->format('Y-m-d') . '|before_or_equal:' . now()->addDays(30)->format('Y-m-d'),
             'jam_pengantaran'      => 'required|date_format:H:i|after_or_equal:09:00|before_or_equal:16:00',
             'jumlah_pax'           => 'required|integer|min:1',
             'lokasi_acara'         => 'required|string|max:1000',
+            'lat'                  => 'required|numeric',
+            'lng'                  => 'required|numeric',
             'detail_lokasi_acara'  => 'nullable|string|max:500',
             'catatan'              => 'nullable|string|max:1000',
             'nama_pemesan'         => 'required|string|max:255',
             'no_telepon'           => 'required|string|max:30',
         ]);
 
-        // Validasi minimum pax sesuai paket yang dipilih
+        // Validasi jarak maksimal 5km dari toko
+        $jarak = $this->hitungJarak(
+            \App\Http\Controllers\CheckoutController::OUTLET_LAT,
+            \App\Http\Controllers\CheckoutController::OUTLET_LNG,
+            (float) $validated['lat'],
+            (float) $validated['lng']
+        );
+        if ($jarak > 5) {
+            return back()
+                ->withErrors(['lokasi_acara' => 'Lokasi acara terlalu jauh (' . number_format($jarak, 1) . ' km). Layanan catering hanya tersedia dalam radius 5 km dari toko.'])
+                ->withInput();
+        }
+
+        // Validasi tanggal tidak sudah dibooked
+        $alreadyBooked = CateringOrder::whereNotIn('status', ['dibatalkan'])
+            ->whereDate('tanggal_acara', $validated['tanggal_acara'])
+            ->exists();
+        if ($alreadyBooked) {
+            return back()
+                ->withErrors(['tanggal_acara' => 'Tanggal tersebut sudah dipesan. Silakan pilih tanggal lain.'])
+                ->withInput();
+        }
+
+        // Validasi minimum & maksimum pax sesuai paket yang dipilih
         $pkg = \App\Models\CateringPackage::find($validated['catering_package_id']);
         if ($pkg && $pkg->min_pax && (int) $validated['jumlah_pax'] < $pkg->min_pax) {
             return back()
                 ->withErrors(['jumlah_pax' => "Minimum pemesanan untuk paket \"{$pkg->name}\" adalah {$pkg->min_pax} pax."])
+                ->withInput();
+        }
+        if ($pkg && $pkg->max_pax && (int) $validated['jumlah_pax'] > $pkg->max_pax) {
+            return back()
+                ->withErrors(['jumlah_pax' => "Maksimum pemesanan untuk paket \"{$pkg->name}\" adalah {$pkg->max_pax} pax."])
                 ->withInput();
         }
 
@@ -63,7 +99,6 @@ class CateringController extends Controller
             'catering_package_id' => $validated['catering_package_id'],
             'nama_acara'          => $validated['nama_acara'],
             'tanggal_acara'       => $validated['tanggal_acara'],
-            'jam_acara'           => $validated['jam_acara'],
             'jam_pengantaran'     => $validated['jam_pengantaran'],
             'jumlah_pax'          => $validated['jumlah_pax'],
             'lokasi_acara'        => $validated['lokasi_acara'],
@@ -85,7 +120,7 @@ class CateringController extends Controller
     {
         CateringOrder::cancelExpiredUnpaidOrders();
 
-        $orders = CateringOrder::with('package')
+        $orders = CateringOrder::with('package', 'testimonial')
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
@@ -97,7 +132,7 @@ class CateringController extends Controller
     {
         CateringOrder::cancelExpiredUnpaidOrders();
 
-        $order = CateringOrder::with(['package', 'costItems', 'histories'])
+        $order = CateringOrder::with(['package', 'costItems', 'histories', 'testimonial'])
             ->where('user_id', auth()->id())
             ->findOrFail($id);
 
@@ -172,12 +207,21 @@ class CateringController extends Controller
             ->with('success', 'Pesanan catering berhasil dibatalkan.');
     }
 
+    private function hitungJarak(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $r    = 6371;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a    = sin($dLat / 2) ** 2 +
+                cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+        return $r * 2 * atan2(sqrt($a), sqrt(1 - $a));
+    }
+
     private function buildWhatsappLink(CateringOrder $order): string
     {
         $number         = preg_replace('/\D/', '', (string) config('services.catering.wa_number'));
         $paket          = $order->package?->name ?? 'Custom (tanpa paket)';
         $tanggal        = $order->tanggal_acara?->translatedFormat('l, d F Y');
-        $jamAcara       = $order->jam_acara ? \Carbon\Carbon::parse($order->jam_acara)->format('H:i') : '-';
         $jamPengantaran = $order->jam_pengantaran ? \Carbon\Carbon::parse($order->jam_pengantaran)->format('H:i') : '-';
         $detailLokasi   = $order->detail_lokasi_acara ? "\n  Detail: {$order->detail_lokasi_acara}" : '';
         $catatan        = $order->catatan ? "\n*Catatan:* {$order->catatan}" : '';
@@ -195,7 +239,6 @@ class CateringController extends Controller
             . "*Paket:* {$paket}\n"
             . "*Nama Acara:* {$order->nama_acara}\n"
             . "*Tanggal Acara:* {$tanggal}\n"
-            . "*Jam Acara:* {$jamAcara} WIB\n"
             . "*Jam Pengantaran:* {$jamPengantaran} WIB\n"
             . "*Jumlah Pax:* {$order->jumlah_pax} porsi\n\n"
             . "━━━━━━━━━━━━━━━━━━━━━\n"

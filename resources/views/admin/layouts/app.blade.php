@@ -71,9 +71,6 @@
             Kategori
         </a>
 
-        {{-- TRANSAKSI --}}
-        <div class="text-[10px] font-bold tracking-[0.1em] uppercase text-white/55 px-3 pt-4 pb-1.5">Transaksi</div>
-
         <a href="{{ route('admin.orders.index') }}"
            class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
                {{ $isActive('admin.orders')
@@ -86,7 +83,6 @@
             Pesanan
             <span id="order-badge" class="hidden ml-auto bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center leading-none">0</span>
         </a>
-
 
         <a href="{{ route('admin.laporan.index') }}"
            class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
@@ -112,7 +108,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
             </svg>
-            Paket Catering
+            Paket
         </a>
 
         <a href="{{ route('admin.catering-orders.index') }}"
@@ -124,12 +120,24 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
-            Pesanan Catering
+            Pesanan
             <span id="catering-badge" class="hidden ml-auto bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center leading-none">0</span>
         </a>
 
-        {{-- PENGGUNA --}}
-        <div class="text-[10px] font-bold tracking-[0.1em] uppercase text-white/55 px-3 pt-4 pb-1.5">Pengguna</div>
+        <a href="{{ route('admin.laporan-catering.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
+               {{ $isActive('admin.laporan-catering')
+                   ? 'bg-black/20 text-white [&>svg]:opacity-100 before:content-[\'\'] before:absolute before:left-0 before:top-[20%] before:bottom-[20%] before:w-[3px] before:bg-white before:rounded-r-[3px]'
+                   : 'text-white/55 hover:bg-white/[0.06] hover:text-white/90' }}">
+            <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Laporan
+        </a>
+
+        {{-- LAINNYA --}}
+        <div class="text-[10px] font-bold tracking-[0.1em] uppercase text-white/55 px-3 pt-4 pb-1.5">Lainnya</div>
 
         <a href="{{ route('admin.users.index') }}"
            class="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-sm font-semibold no-underline transition-all duration-200 relative
