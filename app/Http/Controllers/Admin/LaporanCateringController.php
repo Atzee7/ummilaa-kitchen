@@ -13,10 +13,6 @@ class LaporanCateringController extends Controller
     private function getDateRange(string $periode, ?string $tanggalMulai, ?string $tanggalSelesai): array
     {
         switch ($periode) {
-            case 'hari_ini':
-                return [Carbon::today(), Carbon::today()->endOfDay()];
-            case 'minggu_ini':
-                return [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()];
             case 'tahun_ini':
                 return [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()];
             case 'custom':
@@ -30,7 +26,7 @@ class LaporanCateringController extends Controller
 
     public function index(Request $request)
     {
-        $periode        = $request->get('periode', 'hari_ini');
+        $periode        = $request->get('periode', 'bulan_ini');
         $tanggalMulai   = $request->get('tanggal_mulai');
         $tanggalSelesai = $request->get('tanggal_selesai');
 
@@ -43,7 +39,6 @@ class LaporanCateringController extends Controller
             ->get();
 
         $ordersGrouped = $orders->groupBy(function ($order) use ($periode) {
-            if ($periode === 'hari_ini')  return $order->created_at->format('H');
             if ($periode === 'tahun_ini') return $order->created_at->format('Y-m');
             return $order->created_at->format('Y-m-d');
         });
@@ -59,22 +54,7 @@ class LaporanCateringController extends Controller
             ->pluck('jumlah', 'status');
 
         $grafikBase = CateringOrder::where('status', 'selesai')->whereBetween('created_at', [$start, $end]);
-        if ($periode === 'hari_ini') {
-            $rawJam = (clone $grafikBase)
-                ->selectRaw("DATE_FORMAT(created_at, '%H') as tanggal, SUM(total) as pendapatan, COUNT(*) as jumlah")
-                ->groupBy('tanggal')->orderBy('tanggal')->get()
-                ->keyBy('tanggal');
-
-            $grafikData = collect();
-            for ($h = 0; $h <= 23; $h++) {
-                $key = str_pad($h, 2, '0', STR_PAD_LEFT);
-                $grafikData->push((object)[
-                    'tanggal'    => $key,
-                    'pendapatan' => $rawJam->get($key)->pendapatan ?? 0,
-                    'jumlah'     => $rawJam->get($key)->jumlah     ?? 0,
-                ]);
-            }
-        } elseif ($periode === 'tahun_ini') {
+        if ($periode === 'tahun_ini') {
             $grafikData = (clone $grafikBase)
                 ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as tanggal, SUM(total) as pendapatan, COUNT(*) as jumlah")
                 ->groupBy('tanggal')->orderBy('tanggal')->get();

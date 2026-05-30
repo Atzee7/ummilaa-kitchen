@@ -293,6 +293,37 @@ function toggleCateringForm(id) {
     const el = document.getElementById('form-catering-' + id);
     if (el) el.classList.toggle('hidden');
 }
+
+document.querySelectorAll('form[action*="testimonial"]').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        this.querySelectorAll('.field-error').forEach(el => el.remove());
+
+        const ratingInputs = this.querySelectorAll('input[name="rating"]');
+        const hasRating = [...ratingInputs].some(inp => inp.checked);
+        const komentar = this.querySelector('textarea[name="komentar"]');
+        const hasKomentar = komentar.value.trim() !== '';
+
+        let hasError = false;
+
+        if (!hasRating) {
+            hasError = true;
+            const errEl = document.createElement('p');
+            errEl.className = 'field-error text-red-600 text-[0.82rem] mb-2';
+            errEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Silakan pilih rating bintang terlebih dahulu.';
+            this.querySelector('.star-rating').insertAdjacentElement('afterend', errEl);
+        }
+
+        if (!hasKomentar) {
+            hasError = true;
+            const errEl = document.createElement('p');
+            errEl.className = 'field-error text-red-600 text-[0.82rem] mt-1';
+            errEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Komentar tidak boleh kosong.';
+            komentar.insertAdjacentElement('afterend', errEl);
+        }
+
+        if (hasError) e.preventDefault();
+    });
+});
 </script>
 <style>
 .star-rating label:hover ~ label,

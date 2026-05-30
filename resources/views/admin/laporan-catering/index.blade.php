@@ -24,7 +24,7 @@
             <label class="block text-xs font-semibold text-gray-500 mb-1">Periode</label>
             <select name="periode" onchange="toggleCustom(this.value)"
                 class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-200 w-full min-w-[160px]">
-                @foreach(['hari_ini' => 'Hari Ini', 'minggu_ini' => 'Minggu Ini', 'bulan_ini' => 'Bulan Ini', 'tahun_ini' => 'Tahun Ini', 'custom' => 'Custom'] as $val => $label)
+                @foreach(['bulan_ini' => 'Bulan Ini', 'tahun_ini' => 'Tahun Ini', 'custom' => 'Custom'] as $val => $label)
                     <option value="{{ $val }}" {{ $periode === $val ? 'selected' : '' }}>{{ $label }}</option>
                 @endforeach
             </select>
@@ -176,25 +176,19 @@
             <tbody>
                 @forelse($ordersGrouped as $grupKey => $grupOrders)
                     @php
-                        $jamAkhir    = str_pad((int)$grupKey + 1, 2, '0', STR_PAD_LEFT);
                         $grupTotal   = $grupOrders->sum('total');
                         $grupJumlah  = $grupOrders->count();
                         $grupPax     = $grupOrders->sum('jumlah_pax');
 
-                        if ($periode === 'hari_ini') {
-                            $grupLabel    = 'Pukul ' . $grupKey . ':00 – ' . $jamAkhir . ':00';
-                            $grupSubLabel = null;
-                            $ikonSvg      = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>';
-                        } elseif ($periode === 'tahun_ini') {
+                        if ($periode === 'tahun_ini') {
                             $grupLabel    = \Carbon\Carbon::createFromFormat('Y-m', $grupKey)->translatedFormat('F Y');
                             $grupSubLabel = null;
-                            $ikonSvg      = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>';
                         } else {
                             $tgl          = \Carbon\Carbon::parse($grupKey);
                             $grupLabel    = $tgl->translatedFormat('l');
                             $grupSubLabel = $tgl->translatedFormat('d F Y');
-                            $ikonSvg      = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>';
                         }
+                        $ikonSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>';
                     @endphp
                     {{-- Header grup --}}
                     <tr class="bg-[#fdf8f8] border-t-2 border-b border-[#e8d5d5]">
@@ -272,7 +266,6 @@
 
     const bulanSingkat = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
     const grafikLabels = grafikLabelsRaw.map(lbl => {
-        if (periodeAktif === 'hari_ini') return lbl + ':00';
         if (periodeAktif === 'tahun_ini') {
             const [, m] = lbl.split('-');
             return bulanSingkat[parseInt(m, 10) - 1] ?? lbl;
