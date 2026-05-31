@@ -21,6 +21,8 @@ class CateringOrderAdminController extends Controller
         $query = (clone $baseQuery)->latest();
         if ($status === 'semua') {
             $query->whereNotIn('status', ['selesai', 'dibatalkan']);
+        } elseif ($status === 'dibatalkan') {
+            $query->where('status', 'dibatalkan')->where('cancelled_by', 'admin');
         } else {
             $query->where('status', $status);
         }
@@ -35,7 +37,7 @@ class CateringOrderAdminController extends Controller
             'diproses'            => (clone $baseQuery)->where('status', 'diproses')->count(),
             'dikirim'             => (clone $baseQuery)->where('status', 'dikirim')->count(),
             'selesai'             => (clone $baseQuery)->where('status', 'selesai')->count(),
-            'dibatalkan'          => (clone $baseQuery)->where('status', 'dibatalkan')->count(),
+            'dibatalkan'          => (clone $baseQuery)->where('status', 'dibatalkan')->where('cancelled_by', 'admin')->count(),
         ];
 
         return view('admin.catering-orders.index', compact('orders', 'status', 'counts'));
@@ -147,6 +149,7 @@ class CateringOrderAdminController extends Controller
         $updateData = ['status' => $request->status];
         if ($request->status === 'dibatalkan') {
             $updateData['alasan_pembatalan'] = $request->alasan_pembatalan;
+            $updateData['cancelled_by']      = 'admin';
         }
 
         $order->update($updateData);

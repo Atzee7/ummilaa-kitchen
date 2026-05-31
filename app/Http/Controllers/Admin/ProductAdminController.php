@@ -66,7 +66,19 @@ class ProductAdminController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        $status = (int) $request->stock === 0 ? 'habis' : $request->status;
+        $stock  = (int) $request->stock;
+        $status = $request->status;
+
+        if ($status === 'habis' && $stock > 0) {
+            return back()
+                ->withErrors(['stock' => 'Stok harus 0 jika status Habis.'])
+                ->withInput();
+        }
+        if ($status === 'ready' && $stock === 0) {
+            return back()
+                ->withErrors(['stock' => 'Stok tidak boleh 0 jika status Ready.'])
+                ->withInput();
+        }
 
         Product::create([
             'name'        => $request->name,
@@ -74,7 +86,7 @@ class ProductAdminController extends Controller
             'category'    => Category::find($request->category_id)->name,
             'description' => $request->description,
             'price'       => $request->price,
-            'stock'       => $request->stock,
+            'stock'       => $stock,
             'status'      => $status,
             'badge'       => $request->badge,
             'image'       => $imagePath,
@@ -125,7 +137,19 @@ class ProductAdminController extends Controller
             $product->image = $request->file('image')->store('products', 'public');
         }
 
-        $status = (int) $request->stock === 0 ? 'habis' : $request->status;
+        $stock  = (int) $request->stock;
+        $status = $request->status;
+
+        if ($status === 'habis' && $stock > 0) {
+            return back()
+                ->withErrors(['stock' => 'Stok harus 0 jika status Habis.'])
+                ->withInput();
+        }
+        if ($status === 'ready' && $stock === 0) {
+            return back()
+                ->withErrors(['stock' => 'Stok tidak boleh 0 jika status Ready.'])
+                ->withInput();
+        }
 
         $product->update([
             'name'        => $request->name,
@@ -133,7 +157,7 @@ class ProductAdminController extends Controller
             'category'    => Category::find($request->category_id)->name,
             'description' => $request->description,
             'price'       => $request->price,
-            'stock'       => $request->stock,
+            'stock'       => $stock,
             'status'      => $status,
             'badge'       => $request->badge,
             'image'       => $product->image,

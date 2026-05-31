@@ -91,7 +91,7 @@ class DashboardController extends Controller
 
     public function cateringAktifApi()
     {
-        $activeStatuses = ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim'];
+        $activeStatuses = ['pengajuan', 'menunggu_pembayaran', 'terkonfirmasi', 'diproses', 'dikirim'];
         $count = CateringOrder::whereIn('status', $activeStatuses)->count();
         return response()->json(['badge_count' => $count]);
     }

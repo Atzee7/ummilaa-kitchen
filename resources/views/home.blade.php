@@ -102,6 +102,56 @@
     @endif
 </section>
 
+{{-- CATERING CTA --}}
+<section class="px-5 md:px-10 lg:px-[80px] py-[50px] lg:py-[60px] border-t border-[#f0eeec]">
+    <div class="max-w-[1160px] mx-auto">
+        <div data-aos="fade-up" data-aos-duration="700"
+             class="relative rounded-[24px] overflow-hidden border border-[#eddede] bg-white shadow-[0_4px_24px_rgba(139,26,26,0.06)]">
+
+            {{-- Left accent bar --}}
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-maroon to-[#c94040]"></div>
+
+            <div class="pl-10 pr-8 md:pr-12 py-10 md:py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+
+                {{-- Text side --}}
+                <div class="text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 bg-[#fdf0f0] px-3 py-1.5 rounded-full mb-4">
+                        <i class="fas fa-utensils text-maroon text-[0.72rem]"></i>
+                        <span class="text-maroon text-[0.72rem] font-bold tracking-[1.5px] uppercase">Layanan Catering</span>
+                    </div>
+                    <h2 class="font-playfair text-[1.6rem] md:text-[2rem] text-[#1a1a1a] mb-2">
+                        Punya Acara <span class="text-maroon">Spesial?</span>
+                    </h2>
+                    <p class="text-[#888] text-[0.92rem] max-w-[460px] leading-relaxed">
+                        Dari syukuran, arisan, hingga pesta — kami siapkan hidangan lezat langsung ke lokasi Anda.
+                    </p>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-2 mt-5">
+                        <span class="inline-flex items-center gap-1.5 text-[0.78rem] text-[#666] bg-[#f7f7f7] px-3 py-1.5 rounded-full border border-[#eee]">
+                            <i class="fas fa-bowl-food text-maroon/70 text-[0.68rem]"></i> Berbagai Paket
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 text-[0.78rem] text-[#666] bg-[#f7f7f7] px-3 py-1.5 rounded-full border border-[#eee]">
+                            <i class="fas fa-location-dot text-maroon/70 text-[0.68rem]"></i> Radius 5 km
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 text-[0.78rem] text-[#666] bg-[#f7f7f7] px-3 py-1.5 rounded-full border border-[#eee]">
+                            <i class="fab fa-whatsapp text-maroon/70 text-[0.68rem]"></i> Diskusi via WhatsApp
+                        </span>
+                    </div>
+                </div>
+
+                {{-- CTA side --}}
+                <div class="flex-shrink-0 flex flex-col items-center gap-2.5">
+                    <a href="{{ route('catering.index') }}"
+                       class="inline-flex items-center gap-2.5 bg-maroon text-white px-8 py-[14px] rounded-xl font-bold text-[0.92rem] no-underline shadow-[0_8px_24px_rgba(139,26,26,0.25)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(139,26,26,0.35)] transition-all duration-200 whitespace-nowrap">
+                        <i class="fas fa-utensils text-sm"></i>
+                        Lihat Paket Catering
+                    </a>
+                    <p class="text-[0.75rem] text-[#bbb]">Konsultasi gratis via WhatsApp</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div class="h-px bg-gradient-to-r from-transparent via-maroon-200 to-transparent mx-5 md:mx-10 lg:mx-[80px]"></div>
 
 {{-- AREA PENGIRIMAN --}}

@@ -104,9 +104,9 @@
             <div class="chevron">&#10095;&#10095;</div>
             <div class="brand-name">Ummilaa Kitchen</div>
             <div class="brand-address">
-                Jl. Kapi Anala 1 Blok 15N No. 18<br>
-                Sawojajar 2, Kota Malang<br>
-                08.00 – 20.00 WIB
+                Jl. Kapi Anala I 7 No.15M, Sawojajar A<br>
+                Sekarpuro, Kec. Pakis, Kab. Malang<br>
+                07.00 – 19.00 WIB
             </div>
         </div>
     </div>
@@ -146,8 +146,8 @@
         <div class="bill-right">
             <div class="bill-label">Lokasi Pengambilan:</div>
             <div class="bill-info" style="text-align:right;">
-                Jl. Kapi Anala 1 Blok 15N No. 18<br>
-                Sawojajar 2, Kota Malang
+                Jl. Kapi Anala I 7 No.15M, Sawojajar A<br>
+                Sekarpuro, Kec. Pakis, Kab. Malang
             </div>
         </div>
         @elseif($order->tanggal_pengiriman)

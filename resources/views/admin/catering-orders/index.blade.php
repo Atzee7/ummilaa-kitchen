@@ -189,7 +189,7 @@ function updateCateringRowUI(orderId, newStatus) {
     cell.innerHTML = html;
 
     const oldStatus = row.dataset.status;
-    const activeStatuses = ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim'];
+    const activeStatuses = ['pengajuan', 'menunggu_pembayaran', 'terkonfirmasi', 'diproses', 'dikirim'];
     if (oldStatus && oldStatus !== newStatus) {
         const oldSpan = document.getElementById(`tab-count-${oldStatus}`);
         if (oldSpan) { const n = parseInt(oldSpan.textContent) || 0; if (n > 0) oldSpan.textContent = n - 1; }
@@ -219,6 +219,22 @@ function updateCateringRowUI(orderId, newStatus) {
         setTimeout(() => row.remove(), 420);
     }
 }
+
+(function () {
+    const apiUrl = '{{ route("admin.api.catering-aktif") }}';
+    let knownCount = {{ $counts['semua'] }};
+
+    setInterval(function () {
+        fetch(apiUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(data => {
+                if (data.badge_count > knownCount) {
+                    location.reload();
+                }
+            })
+            .catch(() => {});
+    }, 15000);
+})();
 
 function showCateringToast(msg) {
     const toast = document.createElement('div');

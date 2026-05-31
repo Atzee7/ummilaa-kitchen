@@ -200,20 +200,21 @@
             <h4 class="text-base font-bold mb-[14px]">Menu</h4>
             <a href="{{ route('home') }}" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white">Home</a>
             <a href="{{ route('catalogue') }}" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white">Catalogue</a>
+            <a href="{{ route('catering.index') }}" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white">Catering</a>
             <a href="{{ route('about') }}" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white">About Us</a>
             <a href="{{ route('contact') }}" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white">Contact</a>
         </div>
         <div>
             <h4 class="text-base font-bold mb-[14px]">Kontak</h4>
-            <a href="#" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white"><i class="fab fa-instagram mr-1"></i> @ummilaakitchen</a>
-            <a href="#" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white"><i class="fab fa-whatsapp mr-1"></i> WhatsApp</a>
+            <a href="https://www.instagram.com/ummilaa_kitchen?igsh=MWw3dWNqanNuc2w4OA==" target="_blank" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white"><i class="fab fa-instagram mr-1"></i> @ummilaa_kitchen</a>
+            <a href="https://wa.me/6285122791793" target="_blank" class="block text-[0.9rem] opacity-80 mb-2 hover:opacity-100 transition-opacity no-underline text-white"><i class="fab fa-whatsapp mr-1"></i> WhatsApp</a>
         </div>
     </div>
-    <div class="border-t border-white/20 pt-4 text-center text-[0.85rem] opacity-70">© 2025 Ummilaa Kitchen. All rights reserved.</div>
+    <div class="border-t border-white/20 pt-4 text-center text-[0.85rem] opacity-70">© 2026 Ummilaa Kitchen. All rights reserved.</div>
 </footer>
 
 {{-- WA BUTTON --}}
-<a href="#" class="fixed bottom-6 right-6 bg-maroon text-white w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-[1.6rem] lg:text-[1.9rem] shadow-[0_4px_14px_rgba(0,0,0,0.25)] z-[999] hover:scale-110 transition-transform duration-200 no-underline">
+<a href="https://wa.me/6285122791793" target="_blank" class="fixed bottom-6 right-6 bg-maroon text-white w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-[1.6rem] lg:text-[1.9rem] shadow-[0_4px_14px_rgba(0,0,0,0.25)] z-[999] hover:scale-110 transition-transform duration-200 no-underline">
     <i class="fab fa-whatsapp"></i>
 </a>
 

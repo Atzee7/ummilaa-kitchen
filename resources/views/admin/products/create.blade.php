@@ -58,7 +58,13 @@
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Stok <span class="text-red-500">*</span></label>
                     <input type="number" id="inputStock" name="stock" value="{{ old('stock', 0) }}" min="0" required
+                        onfocus="if(+this.value===0) this.value=''"
+                        onblur="if(this.value==='') this.value=0"
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-red-800 transition">
+                    <p id="stock-error-msg" class="text-red-500 text-xs mt-1 hidden"></p>
+                    @error('stock')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -261,6 +267,25 @@ document.getElementById('inputStock').addEventListener('input', function () {
         statusSelect.value = 'habis';
     } else if (statusSelect.value === 'habis') {
         statusSelect.value = 'ready';
+    }
+});
+
+document.querySelector('form').addEventListener('submit', function (e) {
+    const stock  = parseInt(document.getElementById('inputStock').value) || 0;
+    const status = document.getElementById('selectStatus').value;
+    const errEl  = document.getElementById('stock-error-msg');
+    if (status === 'habis' && stock > 0) {
+        e.preventDefault();
+        errEl.textContent = 'Stok harus 0 jika status Habis.';
+        errEl.classList.remove('hidden');
+        document.getElementById('inputStock').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (status === 'ready' && stock === 0) {
+        e.preventDefault();
+        errEl.textContent = 'Stok tidak boleh 0 jika status Ready.';
+        errEl.classList.remove('hidden');
+        document.getElementById('inputStock').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+        errEl.classList.add('hidden');
     }
 });
 </script>

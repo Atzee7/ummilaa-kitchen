@@ -94,7 +94,7 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
                    : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan');
         @endphp
 
-        <div class="order-card bg-white rounded-[16px] border border-maroon-200 border-l-4 {{ $borderColor }} overflow-hidden transition-all duration-200 hover:shadow-[0_6px_24px_rgba(139,26,26,0.08)] {{ $defaultTab !== $group ? 'hidden' : '' }}"
+        <div class="order-card bg-white rounded-[16px] border border-maroon-200 overflow-hidden transition-all duration-200 hover:shadow-[0_6px_24px_rgba(139,26,26,0.08)] {{ $defaultTab !== $group ? 'hidden' : '' }}"
              data-group="{{ $group }}">
 
             {{-- TOP: info utama --}}

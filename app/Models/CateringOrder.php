@@ -14,7 +14,7 @@ class CateringOrder extends Model
         'user_id', 'catering_package_id',
         'nama_acara', 'tanggal_acara', 'jumlah_pax', 'lokasi_acara', 'detail_lokasi_acara', 'catatan',
         'jam_acara', 'jam_pengantaran',
-        'admin_notes', 'nama_pemesan', 'no_telepon', 'total', 'status', 'alasan_pembatalan',
+        'admin_notes', 'nama_pemesan', 'no_telepon', 'total', 'status', 'alasan_pembatalan', 'cancelled_by',
         'snap_token', 'midtrans_transaction_id', 'payment_type', 'paid_at', 'payment_expires_at',
     ];
 
@@ -88,6 +88,7 @@ class CateringOrder extends Model
             $order->update([
                 'status'            => 'dibatalkan',
                 'alasan_pembatalan' => 'Pembayaran melewati batas waktu (10 menit)',
+                'cancelled_by'      => 'admin',
             ]);
             $order->logHistory('dibatalkan', 'Pembayaran melewati batas waktu (10 menit)');
         }

@@ -64,7 +64,7 @@
         {{-- CTA --}}
         <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="320"
             class="flex flex-wrap gap-3 items-center justify-center mb-12">
-            <a href="https://wa.me/6281234567890" target="_blank"
+            <a href="https://wa.me/6285122791793" target="_blank"
                 class="inline-flex items-center gap-2 bg-maroon text-white px-8 py-[14px] rounded-full font-bold text-[0.88rem] tracking-wide no-underline transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_12px_36px_rgba(139,26,26,0.3)] shadow-[0_4px_18px_rgba(139,26,26,0.22)]">
                 <i class="fab fa-whatsapp text-[1rem]"></i> Chat WhatsApp
             </a>
@@ -111,7 +111,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1100px] mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-[900px] mx-auto">
 
             {{-- Alamat --}}
             <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="0"
@@ -121,7 +121,7 @@
                     <i class="fas fa-map-marker-alt"></i>
                 </div>
                 <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-3">Alamat</h4>
-                <p class="text-[#777] text-[0.85rem] leading-[1.75]">Jalan kapi anala 1 blok 15n no 18 Sawojajar 2, Kota Malang, Jawa Timur</p>
+                <p class="text-[#777] text-[0.85rem] leading-[1.75]">Jl. Kapi Anala I 7 No.15M, Sawojajar A, Sekarpuro, Kec. Pakis, Kab. Malang, Jawa Timur 65154</p>
             </div>
 
             {{-- WhatsApp --}}
@@ -132,23 +132,11 @@
                     <i class="fab fa-whatsapp"></i>
                 </div>
                 <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-3">WhatsApp</h4>
-                <a href="https://wa.me/6281234567890" target="_blank"
-                    class="text-[#777] text-[0.85rem] no-underline hover:text-maroon transition-colors leading-[1.75] block mb-3">+62 812-3456-7890</a>
+                <a href="https://wa.me/6285122791793" target="_blank"
+                    class="text-[#777] text-[0.85rem] no-underline hover:text-maroon transition-colors leading-[1.75] block mb-3">+62 851-2279-1793</a>
                 <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-[0.72rem] font-bold px-3 py-1 rounded-full border border-green-100">
                     <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
                 </span>
-            </div>
-
-            {{-- Email --}}
-            <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="200"
-                class="group relative bg-white rounded-[24px] p-8 border border-[#f0eeec] shadow-[0_2px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_56px_rgba(139,26,26,0.1)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-maroon to-[#c0392b] scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100 rounded-t-[24px]"></div>
-                <div class="w-12 h-12 bg-[#fdf6f3] border border-[#f0e4df] rounded-[14px] flex items-center justify-center text-maroon text-[1.1rem] mb-5">
-                    <i class="fas fa-envelope"></i>
-                </div>
-                <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-3">Email</h4>
-                <a href="mailto:ummilaakitchen@gmail.com"
-                    class="text-[#777] text-[0.85rem] no-underline hover:text-maroon transition-colors leading-[1.75] block break-all">ummilaakitchen@gmail.com</a>
             </div>
 
             {{-- Jam Buka --}}
@@ -159,7 +147,7 @@
                     <i class="fas fa-clock"></i>
                 </div>
                 <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a] mb-3">Jam Buka</h4>
-                <p class="text-[#777] text-[0.85rem] leading-[1.75]">Sen–Sab: 08.00 – 20.00<br>Minggu: 09.00 – 17.00 WIB</p>
+                <p class="text-[#777] text-[0.85rem] leading-[1.75]">Selasa: 07.00 – 19.00<br>Rabu–Minggu: 12.00 – 19.00<br>Senin: Tutup</p>
             </div>
 
         </div>
@@ -209,7 +197,7 @@
                         <i class="fas fa-map-marker-alt text-[0.82rem]"></i>
                     </div>
                     <div>
-                        <p class="text-[0.88rem] text-[#444] leading-[1.6] font-semibold">Jalan kapi anala 1 blok 15n no 18 Sawojajar 2 Malang</p>
+                        <p class="text-[0.88rem] text-[#444] leading-[1.6] font-semibold">Jl. Kapi Anala I 7 No.15M, Sawojajar A, Sekarpuro, Kec. Pakis, Kab. Malang</p>
                         <p class="text-[0.78rem] text-[#999] mt-1">Klik marker pada peta untuk informasi lengkap</p>
                     </div>
                 </div>
@@ -226,7 +214,7 @@
                     </div>
                     <h3 class="font-playfair text-[1.3rem] text-[#1a1a1a] mb-2">Butuh Bantuan Cepat?</h3>
                     <p class="text-[#777] text-[0.85rem] leading-[1.75] mb-5">Tim kami siap menjawab pertanyaan seputar menu, pemesanan, dan pengiriman.</p>
-                    <a href="https://wa.me/6281234567890" target="_blank"
+                    <a href="https://wa.me/6285122791793" target="_blank"
                         class="flex items-center justify-center gap-2 w-full py-3.5 bg-[#25D366] text-white rounded-full font-bold text-[0.88rem] no-underline hover:bg-[#1da851] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,211,102,0.3)] transition-all duration-200">
                         <i class="fab fa-whatsapp text-[1.1rem]"></i> Hubungi via WhatsApp
                     </a>
@@ -242,24 +230,24 @@
                         <h4 class="font-playfair text-[1.1rem] text-[#1a1a1a]">Ikuti Kami</h4>
                     </div>
                     <div class="flex flex-col gap-3">
-                        <a href="https://instagram.com/ummilaakitchen" target="_blank"
+                        <a href="https://www.instagram.com/ummilaa_kitchen?igsh=MWw3dWNqanNuc2w4OA==" target="_blank"
                             class="flex items-center gap-4 p-4 rounded-[16px] border border-[#f0eeec] bg-[#fdf6f3] no-underline transition-all duration-200 hover:border-maroon hover:shadow-[0_4px_16px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 group/item">
                             <div class="w-10 h-10 rounded-[12px] flex items-center justify-center text-[1rem] text-white flex-shrink-0 bg-[linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)]">
                                 <i class="fab fa-instagram"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <strong class="block text-[0.88rem] text-[#1a1a1a] font-extrabold">@ummilaakitchen</strong>
+                                <strong class="block text-[0.88rem] text-[#1a1a1a] font-extrabold">@ummilaa_kitchen</strong>
                                 <span class="text-[0.76rem] text-[#999]">Foto & Update Terbaru</span>
                             </div>
                             <i class="fas fa-arrow-right text-[#ccc] text-[0.78rem] transition-all group-hover/item:text-maroon group-hover/item:translate-x-0.5"></i>
                         </a>
-                        <a href="https://wa.me/6281234567890" target="_blank"
+                        <a href="https://wa.me/6285122791793" target="_blank"
                             class="flex items-center gap-4 p-4 rounded-[16px] border border-[#f0eeec] bg-[#f0fdf4] no-underline transition-all duration-200 hover:border-green-400 hover:shadow-[0_4px_16px_rgba(37,211,102,0.1)] hover:-translate-y-0.5 group/item">
                             <div class="w-10 h-10 rounded-[12px] flex items-center justify-center text-[1rem] text-white flex-shrink-0 bg-[#25D366]">
                                 <i class="fab fa-whatsapp"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <strong class="block text-[0.88rem] text-[#1a1a1a] font-extrabold">+62 812-3456-7890</strong>
+                                <strong class="block text-[0.88rem] text-[#1a1a1a] font-extrabold">+62 851-2279-1793</strong>
                                 <span class="text-[0.76rem] text-[#999]">Pesan Langsung</span>
                             </div>
                             <i class="fas fa-arrow-right text-[#ccc] text-[0.78rem] transition-all group-hover/item:text-green-600 group-hover/item:translate-x-0.5"></i>
@@ -278,12 +266,16 @@
                     </div>
                     <div class="space-y-0">
                         <div class="flex justify-between items-center py-3 border-b border-[#f0eeec]">
-                            <span class="text-[0.84rem] text-[#777]">Senin – Sabtu</span>
-                            <span class="text-[0.84rem] font-bold text-[#1a1a1a]">08.00 – 20.00</span>
+                            <span class="text-[0.84rem] text-[#777]">Selasa</span>
+                            <span class="text-[0.84rem] font-bold text-[#1a1a1a]">07.00 – 19.00</span>
                         </div>
                         <div class="flex justify-between items-center py-3 border-b border-[#f0eeec]">
-                            <span class="text-[0.84rem] text-[#777]">Minggu</span>
-                            <span class="text-[0.84rem] font-bold text-[#1a1a1a]">09.00 – 17.00</span>
+                            <span class="text-[0.84rem] text-[#777]">Rabu – Minggu</span>
+                            <span class="text-[0.84rem] font-bold text-[#1a1a1a]">12.00 – 19.00</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-[#f0eeec]">
+                            <span class="text-[0.84rem] text-[#777]">Senin</span>
+                            <span class="text-[0.84rem] font-bold text-red-500">Tutup</span>
                         </div>
                         <div class="flex justify-between items-center pt-3">
                             <span class="text-[0.84rem] text-[#777]">Status</span>
@@ -311,7 +303,7 @@
     const lat = -7.963536;
     const lng = 112.669380;
     const namaLokasi = "Ummilaa Kitchen";
-    const alamat = "Jalan kapi anala 1 blok 15n no 18 Sawojajar 2 Malang";
+    const alamat = "Jl. Kapi Anala I 7 No.15M, Sawojajar A, Sekarpuro, Kec. Pakis, Kab. Malang";
 
     const map = L.map('map').setView([lat, lng], 16);
 

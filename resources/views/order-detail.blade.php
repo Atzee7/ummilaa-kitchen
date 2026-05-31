@@ -82,10 +82,10 @@
                     <span class="text-[#999] flex-shrink-0">Lokasi Pengambilan</span><strong class="text-[#1a1a1a] font-bold sm:text-right">Toko Ummilaa Kitchen</strong>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
-                    <span class="text-[#999] flex-shrink-0">Alamat Toko</span><strong class="text-[#1a1a1a] font-bold sm:text-right">Jalan Kapi Anala 1 Blok 15N No. 18, Sawojajar 2, Kota Malang</strong>
+                    <span class="text-[#999] flex-shrink-0">Alamat Toko</span><strong class="text-[#1a1a1a] font-bold sm:text-right">Jl. Kapi Anala I 7 No.15M, Sawojajar A, Sekarpuro, Kec. Pakis, Kab. Malang</strong>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
-                    <span class="text-[#999] flex-shrink-0">Jam Operasional</span><strong class="text-[#1a1a1a] font-bold">08.00 – 20.00 WIB</strong>
+                    <span class="text-[#999] flex-shrink-0">Jam Operasional</span><strong class="text-[#1a1a1a] font-bold">07.00 – 19.00 WIB</strong>
                 </div>
                 @endif
                 @if($order->tanggal_pengiriman)

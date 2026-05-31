@@ -203,6 +203,7 @@ class CateringController extends Controller
         $order->update([
             'status'            => 'dibatalkan',
             'alasan_pembatalan' => $validated['alasan_pembatalan'],
+            'cancelled_by'      => 'user',
         ]);
 
         $order->logHistory('dibatalkan', 'Dibatalkan oleh pemesan: ' . $validated['alasan_pembatalan']);
