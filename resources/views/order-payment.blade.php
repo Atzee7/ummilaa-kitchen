@@ -96,7 +96,7 @@
         <div class="flex gap-3">
             <a href="{{ route('orders') }}"
                class="flex-1 flex items-center justify-center gap-2 py-[11px] sm:py-[14px] border-[1.5px] border-maroon text-maroon rounded-xl font-bold text-[0.82rem] sm:text-[0.9rem] no-underline hover:bg-maroon-50 transition-all">
-                <i class="fas fa-list text-[0.78rem]"></i> Pesanan Saya
+                <i class="fas fa-list text-[0.78rem]"></i> Riwayat Katalog
             </a>
             <a href="{{ route('home') }}"
                class="flex-1 flex items-center justify-center gap-2 py-[11px] sm:py-[14px] bg-maroon text-white rounded-xl font-bold text-[0.82rem] sm:text-[0.9rem] no-underline hover:bg-maroon-dark transition-all">

@@ -54,7 +54,7 @@
                 </a>
                 <a href="{{ route('orders') }}" class="flex-1 flex items-center justify-center lg:justify-start gap-2 px-3 lg:px-4 py-3 lg:py-[11px] rounded-xl text-[0.78rem] lg:text-[0.9rem] font-semibold text-[#555] no-underline transition-all hover:bg-maroon-100 hover:text-maroon border border-[#f0f0f0] lg:border-none">
                     <i class="fas fa-box text-maroon text-[0.7rem] lg:text-sm lg:w-4"></i>
-                    <span class="hidden sm:inline lg:inline">Pesanan Saya</span>
+                    <span class="hidden sm:inline lg:inline">Riwayat Katalog</span>
                 </a>
                 <a href="{{ route('cart') }}" class="flex-1 flex items-center justify-center lg:justify-start gap-2 px-3 lg:px-4 py-3 lg:py-[11px] rounded-xl text-[0.78rem] lg:text-[0.9rem] font-semibold text-[#555] no-underline transition-all hover:bg-maroon-100 hover:text-maroon border border-[#f0f0f0] lg:border-none">
                     <i class="fas fa-shopping-cart text-maroon text-[0.7rem] lg:text-sm lg:w-4"></i>

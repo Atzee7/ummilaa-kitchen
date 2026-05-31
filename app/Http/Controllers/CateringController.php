@@ -151,6 +151,10 @@ class CateringController extends Controller
             ->findOrFail($id);
 
         if (!$order->isPayable()) {
+            // Jika sudah dibayar/diproses, redirect tanpa error (Midtrans finish URL)
+            if (in_array($order->status, ['terkonfirmasi', 'diproses', 'dikirim', 'selesai'])) {
+                return redirect()->route('catering.show', $order->id);
+            }
             return redirect()
                 ->route('catering.show', $order->id)
                 ->with('error', 'Pesanan ini belum bisa dibayar.');

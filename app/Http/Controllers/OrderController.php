@@ -16,23 +16,20 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
+        $aktifStatuses = ['belum_bayar', 'pending', 'pembayaran', 'diproses', 'dikirim', 'siap_diambil'];
         $counts = [
-            'semua'        => $orders->count(),
-            'belum_bayar'  => $orders->where('status', 'belum_bayar')->count(),
-            'pending'      => $orders->where('status', 'pending')->count(),
-            'diproses'     => $orders->where('status', 'diproses')->count(),
-            'dikirim'      => $orders->where('status', 'dikirim')->count(),
-            'siap_diambil' => $orders->where('status', 'siap_diambil')->count(),
-            'selesai'      => $orders->where('status', 'selesai')->count(),
-            'dibatalkan'   => $orders->where('status', 'dibatalkan')->count(),
+            'aktif'      => $orders->whereIn('status', $aktifStatuses)->count(),
+            'selesai'    => $orders->where('status', 'selesai')->count(),
+            'dibatalkan' => $orders->where('status', 'dibatalkan')->count(),
         ];
+        $defaultTab = $counts['aktif'] > 0 ? 'aktif' : ($counts['selesai'] > 0 ? 'selesai' : 'dibatalkan');
 
         $groupedOrders = $orders->groupBy(fn($order) => $order->created_at->format('Y-m-d'));
 
         $today     = now()->format('Y-m-d');
         $yesterday = now()->subDay()->format('Y-m-d');
 
-        return view('orders', compact('groupedOrders', 'today', 'yesterday', 'counts'));
+        return view('orders', compact('groupedOrders', 'today', 'yesterday', 'counts', 'defaultTab'));
     }
 
     public function show($id)

@@ -10,7 +10,7 @@ use App\Models\User;
 
 class DashboardController extends Controller
 {
-    private array $activeStatuses = ['pending', 'diproses', 'dikirim', 'siap_diambil'];
+    private array $activeStatuses = ['pending', 'pembayaran', 'diproses', 'dikirim', 'siap_diambil'];
 
     public function index()
     {

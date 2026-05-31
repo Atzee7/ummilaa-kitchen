@@ -3,7 +3,7 @@
 @section('content')
 <div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px]">
     <a href="{{ route('orders') }}" class="inline-flex items-center gap-2 text-maroon font-bold text-[0.9rem] mb-7 transition-all duration-200 hover:gap-3 no-underline">
-        <i class="fas fa-arrow-left"></i> Kembali ke Pesanan Saya
+        <i class="fas fa-arrow-left"></i> Kembali ke Riwayat Katalog
     </a>
 
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-10">
@@ -18,6 +18,7 @@
             @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
             @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
             @elseif($order->status === 'selesai') bg-green-100 text-green-800
+            @elseif($order->status === 'pembayaran') bg-teal-50 text-teal-700
             @else bg-pink-100 text-red-700 @endif">
             @if($order->status === 'belum_bayar') <i class="fas fa-hourglass-half"></i> Belum Bayar
             @elseif($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu
@@ -25,6 +26,7 @@
             @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
             @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
             @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai
+            @elseif($order->status === 'pembayaran') <i class="fas fa-credit-card"></i> Sudah Bayar
             @else <i class="fas fa-times-circle"></i> Dibatalkan @endif
         </span>
     </div>
@@ -53,10 +55,12 @@
                 @endforeach
             </div>
 
-            {{-- PENGIRIMAN --}}
+            {{-- PENGIRIMAN / PENGAMBILAN --}}
+            @php $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery'; @endphp
             <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7">
                 <div class="font-extrabold text-[#1a1a1a] text-[0.97rem] mb-5 pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
-                    <i class="fas fa-map-marker-alt text-maroon"></i> Info Pengiriman
+                    <i class="fas {{ $isDelivery ? 'fa-map-marker-alt' : 'fa-store' }} text-maroon"></i>
+                    {{ $isDelivery ? 'Info Pengiriman' : 'Info Pengambilan' }}
                 </div>
                 <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
                     <span class="text-[#999]">Penerima</span><strong class="text-[#1a1a1a] font-bold">{{ $order->nama_penerima }}</strong>
@@ -64,6 +68,7 @@
                 <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
                     <span class="text-[#999]">No. Telepon</span><strong class="text-[#1a1a1a] font-bold">{{ $order->no_telepon }}</strong>
                 </div>
+                @if($isDelivery)
                 <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
                     <span class="text-[#999] flex-shrink-0">Alamat</span><strong class="text-[#1a1a1a] font-bold sm:text-right">{{ $order->alamat }}</strong>
                 </div>
@@ -72,9 +77,20 @@
                     <span class="text-[#999] flex-shrink-0">Detail Alamat</span><strong class="text-[#1a1a1a] font-bold sm:text-right">{{ $order->detail_alamat }}</strong>
                 </div>
                 @endif
+                @else
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
+                    <span class="text-[#999] flex-shrink-0">Lokasi Pengambilan</span><strong class="text-[#1a1a1a] font-bold sm:text-right">Toko Ummilaa Kitchen</strong>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
+                    <span class="text-[#999] flex-shrink-0">Alamat Toko</span><strong class="text-[#1a1a1a] font-bold sm:text-right">Jalan Kapi Anala 1 Blok 15N No. 18, Sawojajar 2, Kota Malang</strong>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem] gap-0.5 sm:gap-0">
+                    <span class="text-[#999] flex-shrink-0">Jam Operasional</span><strong class="text-[#1a1a1a] font-bold">08.00 – 20.00 WIB</strong>
+                </div>
+                @endif
                 @if($order->tanggal_pengiriman)
                 <div class="flex flex-col sm:flex-row sm:justify-between py-[10px] text-[0.9rem] gap-0.5 sm:gap-0">
-                    <span class="text-[#999]">Jadwal Pengiriman</span>
+                    <span class="text-[#999]">{{ $isDelivery ? 'Jadwal Pengiriman' : 'Jadwal Pengambilan' }}</span>
                     <strong class="text-[#1a1a1a] font-bold">
                         {{ $order->tanggal_pengiriman->isToday() ? 'Hari ini' : $order->tanggal_pengiriman->translatedFormat('l, d F Y') }}@if($order->waktu_pengiriman) · {{ $order->waktu_pengiriman }}@endif
                     </strong>

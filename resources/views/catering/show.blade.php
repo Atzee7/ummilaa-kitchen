@@ -2,7 +2,7 @@
 
 @php
     $statusMeta = [
-        'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700', 'fa-hourglass-half'],
+        'pengajuan'           => ['Menunggu Pengajuan', 'bg-yellow-50 text-yellow-700', 'fa-hourglass-half'],
         'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700', 'fa-money-bill-wave'],
         'diproses'            => ['Diproses', 'bg-blue-50 text-blue-700', 'fa-utensils'],
         'dikirim'             => ['Sedang Dikirim', 'bg-purple-50 text-purple-700', 'fa-truck'],

@@ -5,6 +5,7 @@
     $statusMeta = [
         'pengajuan'           => ['Pengajuan', 'bg-yellow-100 text-yellow-700'],
         'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-100 text-amber-700'],
+        'terkonfirmasi'       => ['Pembayaran Masuk', 'bg-teal-100 text-teal-700'],
         'diproses'            => ['Diproses', 'bg-blue-100 text-blue-700'],
         'dikirim'             => ['Dikirim', 'bg-purple-100 text-purple-700'],
         'selesai'             => ['Selesai', 'bg-green-100 text-green-700'],
@@ -14,6 +15,7 @@
         'semua'               => 'Aktif',
         'pengajuan'           => 'Pengajuan',
         'menunggu_pembayaran' => 'Menunggu Bayar',
+        'terkonfirmasi'       => 'Terkonfirmasi',
         'diproses'            => 'Diproses',
         'dikirim'             => 'Dikirim',
         'selesai'             => 'Selesai',
@@ -58,9 +60,10 @@
             @php
                 [$label, $color] = $statusMeta[$order->status] ?? [ucfirst($order->status), 'bg-gray-100 text-gray-700'];
                 $nextAction = match($order->status) {
-                    'diproses' => ['dikirim',  '→ Kirim',   'bg-purple-600 hover:bg-purple-700 text-white'],
-                    'dikirim'  => ['selesai',  '→ Selesai', 'bg-green-600 hover:bg-green-700 text-white'],
-                    default    => null,
+                    'terkonfirmasi' => ['diproses', '→ Mulai Proses', 'bg-blue-600 hover:bg-blue-700 text-white'],
+                    'diproses'      => ['dikirim',  '→ Kirim',        'bg-purple-600 hover:bg-purple-700 text-white'],
+                    'dikirim'       => ['selesai',  '→ Selesai',      'bg-green-600 hover:bg-green-700 text-white'],
+                    default         => null,
                 };
             @endphp
             <tr id="catering-row-{{ $order->id }}" data-status="{{ $order->status }}"
@@ -119,6 +122,7 @@ const CSRF_CATERING = '{{ csrf_token() }}';
 const CATERING_STATUS_BADGE = {
     pengajuan:           'bg-yellow-100 text-yellow-700',
     menunggu_pembayaran: 'bg-amber-100 text-amber-700',
+    terkonfirmasi:       'bg-teal-100 text-teal-700',
     diproses:            'bg-blue-100 text-blue-700',
     dikirim:             'bg-purple-100 text-purple-700',
     selesai:             'bg-green-100 text-green-700',
@@ -126,11 +130,13 @@ const CATERING_STATUS_BADGE = {
 };
 const CATERING_STATUS_LABEL = {
     pengajuan: 'Pengajuan', menunggu_pembayaran: 'Menunggu Pembayaran',
+    terkonfirmasi: 'Pembayaran Masuk',
     diproses: 'Diproses', dikirim: 'Dikirim', selesai: 'Selesai', dibatalkan: 'Dibatalkan',
 };
 const CATERING_NEXT = {
-    diproses: { status: 'dikirim',  label: '→ Kirim',   color: 'bg-purple-600 hover:bg-purple-700 text-white' },
-    dikirim:  { status: 'selesai',  label: '→ Selesai', color: 'bg-green-600 hover:bg-green-700 text-white' },
+    terkonfirmasi: { status: 'diproses', label: '→ Mulai Proses', color: 'bg-blue-600 hover:bg-blue-700 text-white' },
+    diproses:      { status: 'dikirim',  label: '→ Kirim',        color: 'bg-purple-600 hover:bg-purple-700 text-white' },
+    dikirim:       { status: 'selesai',  label: '→ Selesai',      color: 'bg-green-600 hover:bg-green-700 text-white' },
 };
 
 function quickCateringStatus(orderId, newStatus, triggerEl) {

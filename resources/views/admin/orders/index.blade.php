@@ -28,10 +28,10 @@
 </div>
 
 @php
-    $tabs = ['semua','pending','diproses','dikirim','siap_diambil','selesai','dibatalkan'];
+    $tabs = ['semua','pembayaran','diproses','dikirim','siap_diambil','selesai','dibatalkan'];
     $tabColor = [
         'semua'        => 'bg-gray-100 text-gray-700',
-        'pending'      => 'bg-yellow-100 text-yellow-700',
+        'pembayaran'   => 'bg-teal-100 text-teal-700',
         'diproses'     => 'bg-blue-100 text-blue-700',
         'dikirim'      => 'bg-purple-100 text-purple-700',
         'siap_diambil' => 'bg-orange-100 text-orange-700',
@@ -40,7 +40,7 @@
     ];
     $tabLabel = [
         'semua'        => 'Aktif',
-        'pending'      => 'Menunggu',
+        'pembayaran'   => 'Pembayaran',
         'diproses'     => 'Sedang Dimasak',
         'dikirim'      => 'Dikirim',
         'siap_diambil' => 'Siap Diambil',
@@ -85,7 +85,6 @@
                 <th class="text-left py-4 px-6 text-gray-500 font-semibold">Total</th>
                 <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pengiriman</th>
                 <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pembayaran</th>
-                <th class="text-left py-4 px-6 text-gray-500 font-semibold">Status</th>
                 <th class="text-left py-4 px-6 text-gray-500 font-semibold">Tanggal</th>
                 <th class="text-left py-4 px-6 text-gray-500 font-semibold">Aksi</th>
             </tr>
@@ -96,6 +95,7 @@
                 $sc = match($order->status) {
                     'belum_bayar'  => 'bg-amber-100 text-amber-700',
                     'pending'      => 'bg-yellow-100 text-yellow-700',
+                    'pembayaran'   => 'bg-teal-100 text-teal-700',
                     'diproses'     => 'bg-blue-100 text-blue-700',
                     'dikirim'      => 'bg-purple-100 text-purple-700',
                     'siap_diambil' => 'bg-orange-100 text-orange-700',
@@ -106,6 +106,7 @@
                 $statusLabel = match($order->status) {
                     'belum_bayar'  => 'Belum Bayar',
                     'pending'      => 'Menunggu',
+                    'pembayaran'   => 'Pembayaran',
                     'diproses'     => 'Sedang Dimasak',
                     'dikirim'      => 'Dikirim',
                     'siap_diambil' => 'Siap Diambil',
@@ -115,7 +116,7 @@
                 };
                 $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
                 $nextStatus = match(true) {
-                    $order->status === 'pending'                          => 'diproses',
+                    $order->status === 'pembayaran'                        => 'diproses',
                     $order->status === 'diproses' && $isDelivery          => 'dikirim',
                     $order->status === 'diproses' && !$isDelivery         => 'siap_diambil',
                     $order->status === 'dikirim'                          => 'selesai',
@@ -123,7 +124,7 @@
                     default                                               => null,
                 };
                 $nextLabel = match(true) {
-                    $order->status === 'pending'                          => '→ Sedang Dimasak',
+                    $order->status === 'pembayaran'                        => '→ Mulai Masak',
                     $order->status === 'diproses' && $isDelivery          => '→ Kirim',
                     $order->status === 'diproses' && !$isDelivery         => '→ Siap Diambil',
                     $order->status === 'dikirim'                          => '→ Selesai',
@@ -131,7 +132,7 @@
                     default                                               => null,
                 };
                 $nextColor = match(true) {
-                    $order->status === 'pending'                          => 'bg-blue-600 hover:bg-blue-700 text-white',
+                    $order->status === 'pembayaran'                        => 'bg-blue-600 hover:bg-blue-700 text-white',
                     $order->status === 'diproses' && $isDelivery          => 'bg-purple-600 hover:bg-purple-700 text-white',
                     $order->status === 'diproses' && !$isDelivery         => 'bg-orange-500 hover:bg-orange-600 text-white',
                     $order->status === 'dikirim'                          => 'bg-green-600 hover:bg-green-700 text-white',
@@ -166,9 +167,6 @@
                     @endif
                 </td>
                 <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->getPaymentLabel() }}</td>
-                <td class="py-4 px-6">
-                    <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc }}">{{ $statusLabel }}</span>
-                </td>
                 <td class="py-4 px-6 text-xs">
                     <p class="text-gray-400">{{ $order->created_at->format('d M Y, H:i') }}</p>
                     @if($order->tanggal_pengiriman)
@@ -204,7 +202,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="8" class="py-10 text-center text-gray-400 text-sm">
+            <tr><td colspan="7" class="py-10 text-center text-gray-400 text-sm">
                 Tidak ada pesanan
             </td></tr>
             @endforelse
@@ -230,7 +228,6 @@
                     <th class="text-left py-4 px-6 text-gray-500 font-semibold">Total</th>
                     <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pengiriman</th>
                     <th class="text-left py-4 px-6 text-gray-500 font-semibold">Pembayaran</th>
-                    <th class="text-left py-4 px-6 text-gray-500 font-semibold">Status</th>
                     <th class="text-left py-4 px-6 text-blue-600 font-semibold">Jadwal Kirim</th>
                     <th class="text-left py-4 px-6 text-gray-500 font-semibold">Aksi</th>
                 </tr>
@@ -251,7 +248,7 @@
                     };
                 @endphp
                 <tr>
-                    <td colspan="8" class="px-6 py-2 bg-blue-50 border-y border-blue-100">
+                    <td colspan="7" class="px-6 py-2 bg-blue-50 border-y border-blue-100">
                         <span class="text-blue-700 font-bold text-xs">📅 {{ $dayLabel }}</span>
                     </td>
                 </tr>
@@ -259,6 +256,7 @@
                 @php
                     $sc2 = match($order->status) {
                         'pending'      => 'bg-yellow-100 text-yellow-700',
+                        'pembayaran'   => 'bg-teal-100 text-teal-700',
                         'diproses'     => 'bg-blue-100 text-blue-700',
                         'dikirim'      => 'bg-purple-100 text-purple-700',
                         'siap_diambil' => 'bg-orange-100 text-orange-700',
@@ -266,6 +264,7 @@
                     };
                     $statusLabel2 = match($order->status) {
                         'pending'      => 'Menunggu',
+                        'pembayaran'   => 'Pembayaran',
                         'diproses'     => 'Sedang Dimasak',
                         'dikirim'      => 'Dikirim',
                         'siap_diambil' => 'Siap Diambil',
@@ -273,7 +272,7 @@
                     };
                     $isDelivery2 = ($order->metode_pengiriman ?? 'delivery') === 'delivery';
                     $nextStatus2 = match(true) {
-                        $order->status === 'pending'                           => 'diproses',
+                        $order->status === 'pembayaran'                        => 'diproses',
                         $order->status === 'diproses' && $isDelivery2          => 'dikirim',
                         $order->status === 'diproses' && !$isDelivery2         => 'siap_diambil',
                         $order->status === 'dikirim'                           => 'selesai',
@@ -309,9 +308,6 @@
                         @endif
                     </td>
                     <td class="py-4 px-6 text-gray-600 text-xs font-semibold uppercase">{{ $order->getPaymentLabel() }}</td>
-                    <td class="py-4 px-6">
-                        <span id="status-badge-{{ $order->id }}" class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc2 }}">{{ $statusLabel2 }}</span>
-                    </td>
                     <td class="py-4 px-6 text-xs">
                         <p class="text-blue-700 font-bold">{{ $order->tanggal_pengiriman->translatedFormat('l, d M Y') }}</p>
                         @if($order->waktu_pengiriman)
@@ -411,6 +407,7 @@ window.onNewOrderArrived = function() {
 const STATUS_BADGE = {
     belum_bayar:  'bg-amber-100 text-amber-700',
     pending:      'bg-yellow-100 text-yellow-700',
+    pembayaran:   'bg-teal-100 text-teal-700',
     diproses:     'bg-blue-100 text-blue-700',
     dikirim:      'bg-purple-100 text-purple-700',
     siap_diambil: 'bg-orange-100 text-orange-700',
@@ -421,6 +418,7 @@ const STATUS_BADGE = {
 const STATUS_LABEL = {
     belum_bayar:  'Belum Bayar',
     pending:      'Menunggu',
+    pembayaran:   'Pembayaran',
     diproses:     'Sedang Dimasak',
     dikirim:      'Dikirim',
     siap_diambil: 'Siap Diambil',
@@ -429,12 +427,12 @@ const STATUS_LABEL = {
 };
 
 function getNextStatus(currentStatus, isDelivery) {
-    if (currentStatus === 'pending')      return { status: 'diproses',     label: '→ Sedang Dimasak', color: 'bg-blue-600 hover:bg-blue-700 text-white' };
+    if (currentStatus === 'pembayaran')   return { status: 'diproses', label: '→ Mulai Masak', color: 'bg-blue-600 hover:bg-blue-700 text-white' };
     if (currentStatus === 'diproses')     return isDelivery
         ? { status: 'dikirim',      label: '→ Kirim',        color: 'bg-purple-600 hover:bg-purple-700 text-white' }
         : { status: 'siap_diambil', label: '→ Siap Diambil', color: 'bg-orange-500 hover:bg-orange-600 text-white' };
-    if (currentStatus === 'dikirim')      return { status: 'selesai',      label: '→ Selesai',      color: 'bg-green-600 hover:bg-green-700 text-white' };
-    if (currentStatus === 'siap_diambil') return { status: 'selesai',      label: '→ Selesai',      color: 'bg-green-600 hover:bg-green-700 text-white' };
+    if (currentStatus === 'dikirim')      return { status: 'selesai', label: '→ Selesai', color: 'bg-green-600 hover:bg-green-700 text-white' };
+    if (currentStatus === 'siap_diambil') return { status: 'selesai', label: '→ Selesai', color: 'bg-green-600 hover:bg-green-700 text-white' };
     return null;
 }
 
@@ -501,7 +499,7 @@ function updateRowUI(orderId, newStatus) {
     // Update angka pada tab
     const oldStatus = row.dataset.status;
     if (oldStatus && oldStatus !== newStatus) {
-        const activeStatuses = ['pending', 'diproses', 'dikirim', 'siap_diambil'];
+        const activeStatuses = ['pembayaran', 'diproses', 'dikirim', 'siap_diambil'];
         const oldSpan = document.getElementById(`tab-count-${oldStatus}`);
         if (oldSpan) {
             const n = parseInt(oldSpan.textContent) || 0;

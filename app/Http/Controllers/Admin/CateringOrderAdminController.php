@@ -31,6 +31,7 @@ class CateringOrderAdminController extends Controller
             'semua'               => (clone $baseQuery)->whereNotIn('status', ['selesai', 'dibatalkan'])->count(),
             'pengajuan'           => (clone $baseQuery)->where('status', 'pengajuan')->count(),
             'menunggu_pembayaran' => (clone $baseQuery)->where('status', 'menunggu_pembayaran')->count(),
+            'terkonfirmasi'       => (clone $baseQuery)->where('status', 'terkonfirmasi')->count(),
             'diproses'            => (clone $baseQuery)->where('status', 'diproses')->count(),
             'dikirim'             => (clone $baseQuery)->where('status', 'dikirim')->count(),
             'selesai'             => (clone $baseQuery)->where('status', 'selesai')->count(),
@@ -116,7 +117,7 @@ class CateringOrderAdminController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status'            => 'required|in:diproses,dikirim,selesai,dibatalkan',
+            'status'            => 'required|in:terkonfirmasi,diproses,dikirim,selesai,dibatalkan',
             'alasan_pembatalan' => 'required_if:status,dibatalkan|nullable|string|max:1000',
         ]);
 
@@ -129,11 +130,18 @@ class CateringOrderAdminController extends Controller
             return back()->withErrors(['status' => 'Pesanan pengajuan hanya bisa dibatalkan.']);
         }
 
-        if ($order->status === 'menunggu_pembayaran' && $request->status !== 'dibatalkan') {
+        if ($order->status === 'menunggu_pembayaran' && !in_array($request->status, ['terkonfirmasi', 'dibatalkan'])) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Menunggu pembayaran dari customer. Status tidak bisa diubah secara manual.'], 422);
             }
             return back()->withErrors(['status' => 'Menunggu pembayaran dari customer. Status tidak bisa diubah secara manual.']);
+        }
+
+        if ($order->status === 'terkonfirmasi' && !in_array($request->status, ['diproses', 'dibatalkan'])) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Dari status terkonfirmasi hanya bisa mulai proses atau dibatalkan.'], 422);
+            }
+            return back()->withErrors(['status' => 'Dari status terkonfirmasi hanya bisa mulai proses atau dibatalkan.']);
         }
 
         $updateData = ['status' => $request->status];

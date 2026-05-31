@@ -2,6 +2,7 @@
     $sc = match($order->status) {
         'belum_bayar'  => 'bg-amber-100 text-amber-700',
         'pending'      => 'bg-yellow-100 text-yellow-700',
+        'pembayaran'   => 'bg-teal-100 text-teal-700',
         'diproses'     => 'bg-blue-100 text-blue-700',
         'dikirim'      => 'bg-purple-100 text-purple-700',
         'siap_diambil' => 'bg-orange-100 text-orange-700',
@@ -13,6 +14,7 @@
     $statusLabel = match($order->status) {
         'belum_bayar'  => 'Belum Bayar',
         'pending'      => 'Menunggu',
+        'pembayaran'   => 'Sudah Bayar',
         'diproses'     => 'Sedang Dimasak',
         'dikirim'      => 'Dikirim',
         'siap_diambil' => 'Siap Diambil',
@@ -21,6 +23,7 @@
         default        => ucfirst($order->status),
     };
     $nextStatus = match(true) {
+        $order->status === 'pembayaran'               => 'diproses',
         $order->status === 'pending'                  => 'diproses',
         $order->status === 'diproses' && $isDelivery  => 'dikirim',
         $order->status === 'diproses' && !$isDelivery => 'siap_diambil',
@@ -29,6 +32,7 @@
         default                                       => null,
     };
     $nextLabel = match(true) {
+        $order->status === 'pembayaran'               => 'Mulai Masak',
         $order->status === 'pending'                  => 'Tandai Sedang Dimasak',
         $order->status === 'diproses' && $isDelivery  => 'Tandai Dikirim',
         $order->status === 'diproses' && !$isDelivery => 'Tandai Siap Diambil',
@@ -36,7 +40,7 @@
         $order->status === 'siap_diambil'             => 'Tandai Selesai',
         default                                       => null,
     };
-    $canCancel = $order->status === 'pending';
+    $canCancel = in_array($order->status, ['pending', 'pembayaran', 'diproses']);
 
     $isTimeLocked = false;
     if ($order->tanggal_pengiriman) {

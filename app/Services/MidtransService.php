@@ -190,9 +190,9 @@ class MidtransService
             'payment_type'            => $payload['payment_type'] ?? $order->payment_type,
         ];
 
-        // Pembayaran SUKSES → diproses.
-        if ($newStatus === 'diproses' && $order->status !== 'diproses') {
-            $updates['status'] = 'diproses';
+        // Pembayaran SUKSES → terkonfirmasi (menunggu admin mulai proses).
+        if ($newStatus === 'terkonfirmasi' && !in_array($order->status, ['terkonfirmasi', 'diproses', 'dikirim', 'selesai'])) {
+            $updates['status'] = 'terkonfirmasi';
             if (!$order->paid_at) {
                 $updates['paid_at'] = now();
             }
@@ -261,7 +261,7 @@ class MidtransService
 
             $updates['status'] = $newStatus;
 
-            if ($newStatus === 'pending' && !$order->paid_at) {
+            if ($newStatus === 'pembayaran' && !$order->paid_at) {
                 $updates['paid_at'] = now();
             }
 
@@ -321,8 +321,8 @@ class MidtransService
     public function mapCateringStatus(string $transactionStatus, ?string $fraudStatus): ?string
     {
         return match ($transactionStatus) {
-            'capture'    => ($fraudStatus === 'challenge') ? null : 'diproses',
-            'settlement' => 'diproses',
+            'capture'    => ($fraudStatus === 'challenge') ? null : 'terkonfirmasi',
+            'settlement' => 'terkonfirmasi',
             'expire', 'cancel', 'deny', 'failure' => 'dibatalkan',
             // pending → null: status catering tidak diubah (masih menunggu pembayaran).
             default      => null,
@@ -335,8 +335,8 @@ class MidtransService
     public function mapStatus(string $transactionStatus, ?string $fraudStatus): ?string
     {
         return match ($transactionStatus) {
-            'capture'    => ($fraudStatus === 'challenge') ? 'belum_bayar' : 'pending',
-            'settlement' => 'pending',
+            'capture'    => ($fraudStatus === 'challenge') ? 'belum_bayar' : 'pembayaran',
+            'settlement' => 'pembayaran',
             'pending'    => 'belum_bayar',
             'deny', 'cancel', 'expire', 'failure' => 'dibatalkan',
             default      => null,

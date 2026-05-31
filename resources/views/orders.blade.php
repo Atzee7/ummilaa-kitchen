@@ -4,48 +4,36 @@
 @section('content')
 <div class="px-4 md:px-10 lg:px-[80px] py-10 lg:py-[60px] min-h-[70vh]">
     <div class="mb-10">
-        <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Pesanan Saya</h1>
+        <h1 class="font-playfair text-[2rem] text-[#1a1a1a]">Riwayat Katalog</h1>
         <p class="text-[#999] mt-1.5 text-[0.9rem]">Pantau status dan riwayat pesanan Anda</p>
     </div>
 
     @php
-        $hasAnyOrder = $groupedOrders->isNotEmpty();
-        $otherDates  = $groupedOrders->keys()->filter(fn($d) => $d !== $today)->sortDesc()->values();
+        $hasAnyOrder   = $groupedOrders->isNotEmpty();
+        $otherDates    = $groupedOrders->keys()->filter(fn($d) => $d !== $today)->sortDesc()->values();
+        $aktifStatuses = ['belum_bayar', 'pending', 'pembayaran', 'diproses', 'dikirim', 'siap_diambil'];
+        $orderSteps    = [
+            ['label' => 'Menunggu Bayar'],
+            ['label' => 'Pembayaran'],
+            ['label' => 'Dimasak'],
+            ['label' => 'Dikirim'],
+            ['label' => 'Selesai'],
+        ];
         $tabBadge = 'tab-badge absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-[5px] flex items-center justify-center rounded-full text-[0.68rem] font-extrabold leading-none bg-[#EF4444] text-white shadow-[0_2px_6px_rgba(239,68,68,0.45)] ring-[2.5px] ring-white pointer-events-none';
         $tabBase  = 'status-tab relative inline-flex items-center px-5 py-[9px] rounded-[25px] border-[1.5px] text-[0.85rem] font-bold cursor-pointer transition-all whitespace-nowrap flex-shrink-0';
     @endphp
     @if($hasAnyOrder)
     <div class="relative mb-8">
     <div class="flex gap-3 overflow-x-auto pb-2 pt-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-4 px-4 md:mx-0 md:px-0">
-        <button class="{{ $tabBase }} bg-[#8B1A1A] text-white border-[#8B1A1A]" data-status="semua">
-            Semua
-            @if(($counts['semua'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['semua'] > 99 ? '99+' : $counts['semua'] }}</span>@endif
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-tab="aktif">
+            Aktif
+            @if(($counts['aktif'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['aktif'] > 99 ? '99+' : $counts['aktif'] }}</span>@endif
         </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="belum_bayar">
-            Belum Bayar
-            @if(($counts['belum_bayar'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['belum_bayar'] > 99 ? '99+' : $counts['belum_bayar'] }}</span>@endif
-        </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="pending">
-            Menunggu
-            @if(($counts['pending'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['pending'] > 99 ? '99+' : $counts['pending'] }}</span>@endif
-        </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="diproses">
-            Sedang Dimasak
-            @if(($counts['diproses'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['diproses'] > 99 ? '99+' : $counts['diproses'] }}</span>@endif
-        </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="dikirim">
-            Dikirim
-            @if(($counts['dikirim'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['dikirim'] > 99 ? '99+' : $counts['dikirim'] }}</span>@endif
-        </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="siap_diambil">
-            Siap Diambil
-            @if(($counts['siap_diambil'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['siap_diambil'] > 99 ? '99+' : $counts['siap_diambil'] }}</span>@endif
-        </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="selesai">
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-tab="selesai">
             Selesai
             @if(($counts['selesai'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['selesai'] > 99 ? '99+' : $counts['selesai'] }}</span>@endif
         </button>
-        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-status="dibatalkan">
+        <button class="{{ $tabBase }} border-maroon-200 bg-white text-[#777] hover:border-maroon hover:text-maroon" data-tab="dibatalkan">
             Dibatalkan
             @if(($counts['dibatalkan'] ?? 0) > 0)<span class="{{ $tabBadge }}">{{ $counts['dibatalkan'] > 99 ? '99+' : $counts['dibatalkan'] }}</span>@endif
         </button>
@@ -77,7 +65,8 @@
 
         <div class="flex flex-col gap-5 date-group-cards">
         @foreach($groupedOrders[$today] as $order)
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}">
+        @php $group = in_array($order->status, $aktifStatuses) ? 'aktif' : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan'); @endphp
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}" data-group="{{ $group }}">
 
             {{-- HEADER --}}
             <div class="flex justify-between items-start flex-wrap gap-y-2 px-4 sm:px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
@@ -92,6 +81,7 @@
                     @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
                     @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
                     @elseif($order->status === 'selesai') bg-green-100 text-green-800
+                    @elseif($order->status === 'pembayaran') bg-teal-50 text-teal-700
                     @else bg-pink-100 text-red-700 @endif">
                     @if($order->status === 'belum_bayar') <i class="fas fa-hourglass-half"></i> Belum Bayar
                     @elseif($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu
@@ -99,6 +89,7 @@
                     @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
                     @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
                     @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai
+                    @elseif($order->status === 'pembayaran') <i class="fas fa-credit-card"></i> Sudah Bayar
                     @else <i class="fas fa-times-circle"></i> Dibatalkan
                     @endif
                 </span>
@@ -156,6 +147,51 @@
                         <p class="text-[0.72rem] font-bold text-red-600 uppercase tracking-wider mb-0.5">Alasan Pembatalan</p>
                         <p class="text-[0.85rem] text-red-800 leading-relaxed line-clamp-2">{{ $order->alasan_pembatalan }}</p>
                     </div>
+                </div>
+                @endif
+                @if($order->status !== 'dibatalkan')
+                @php
+                    $isPickup       = ($order->metode_pengiriman ?? 'delivery') !== 'delivery';
+                    $paidNotCooking = in_array($order->status, ['pembayaran', 'pending']);
+                    $orderStepIndex = match($order->status) {
+                        'belum_bayar'             => 0,
+                        'pembayaran', 'pending'   => 0,
+                        'diproses'                => 1,
+                        'dikirim', 'siap_diambil' => 2,
+                        'selesai'                 => 3,
+                        default                   => -1,
+                    };
+                    $currentOrderSteps = [
+                        ['label' => 'Pembayaran'],
+                        ['label' => 'Dimasak'],
+                        ['label' => $isPickup ? 'Siap Diambil' : 'Dikirim'],
+                        ['label' => 'Selesai'],
+                    ];
+                @endphp
+                <div class="mt-4 pt-3 border-t border-maroon-100 flex items-center">
+                    @foreach($currentOrderSteps as $i => $step)
+                    @php
+                        $done    = ($orderStepIndex > $i) || ($paidNotCooking && $i === 0);
+                        $current = ($orderStepIndex === $i) && !($paidNotCooking && $i === 0);
+                    @endphp
+                    <div class="flex items-center {{ $i < count($currentOrderSteps) - 1 ? 'flex-1' : '' }}">
+                        <div class="flex flex-col items-center">
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[0.6rem] font-bold shrink-0
+                                {{ $done    ? 'bg-maroon text-white' : '' }}
+                                {{ $current ? 'bg-maroon text-white ring-4 ring-maroon/20' : '' }}
+                                {{ !$done && !$current ? 'bg-[#eee] text-[#bbb]' : '' }}">
+                                @if($done)<i class="fas fa-check"></i>@else{{ $i + 1 }}@endif
+                            </div>
+                            <span class="text-[0.6rem] mt-1 whitespace-nowrap font-semibold
+                                {{ $done || $current ? 'text-maroon' : 'text-[#ccc]' }}">
+                                {{ $step['label'] }}
+                            </span>
+                        </div>
+                        @if($i < count($currentOrderSteps) - 1)
+                        <div class="h-[2px] flex-1 mx-1 mb-[18px] {{ $orderStepIndex > $i ? 'bg-maroon' : 'bg-[#eee]' }}"></div>
+                        @endif
+                    </div>
+                    @endforeach
                 </div>
                 @endif
             </div>
@@ -252,7 +288,8 @@
         </div>
         <div class="flex flex-col gap-5 date-group-cards">
         @foreach($dateOrders as $order)
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}">
+        @php $group = in_array($order->status, $aktifStatuses) ? 'aktif' : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan'); @endphp
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}" data-group="{{ $group }}">
 
             {{-- HEADER --}}
             <div class="flex justify-between items-start flex-wrap gap-y-2 px-4 sm:px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
@@ -267,6 +304,7 @@
                     @elseif($order->status === 'dikirim') bg-purple-50 text-purple-800
                     @elseif($order->status === 'siap_diambil') bg-orange-50 text-orange-700
                     @elseif($order->status === 'selesai') bg-green-100 text-green-800
+                    @elseif($order->status === 'pembayaran') bg-teal-50 text-teal-700
                     @else bg-pink-100 text-red-700 @endif">
                     @if($order->status === 'belum_bayar') <i class="fas fa-hourglass-half"></i> Belum Bayar
                     @elseif($order->status === 'pending') <i class="fas fa-clock"></i> Menunggu
@@ -274,6 +312,7 @@
                     @elseif($order->status === 'dikirim') <i class="fas fa-truck"></i> Sedang Dikirim
                     @elseif($order->status === 'siap_diambil') <i class="fas fa-store"></i> Siap Diambil
                     @elseif($order->status === 'selesai') <i class="fas fa-check-circle"></i> Selesai
+                    @elseif($order->status === 'pembayaran') <i class="fas fa-credit-card"></i> Sudah Bayar
                     @else <i class="fas fa-times-circle"></i> Dibatalkan
                     @endif
                 </span>
@@ -331,6 +370,51 @@
                         <p class="text-[0.72rem] font-bold text-red-600 uppercase tracking-wider mb-0.5">Alasan Pembatalan</p>
                         <p class="text-[0.85rem] text-red-800 leading-relaxed line-clamp-2">{{ $order->alasan_pembatalan }}</p>
                     </div>
+                </div>
+                @endif
+                @if($order->status !== 'dibatalkan')
+                @php
+                    $isPickup       = ($order->metode_pengiriman ?? 'delivery') !== 'delivery';
+                    $paidNotCooking = in_array($order->status, ['pembayaran', 'pending']);
+                    $orderStepIndex = match($order->status) {
+                        'belum_bayar'             => 0,
+                        'pembayaran', 'pending'   => 0,
+                        'diproses'                => 1,
+                        'dikirim', 'siap_diambil' => 2,
+                        'selesai'                 => 3,
+                        default                   => -1,
+                    };
+                    $currentOrderSteps = [
+                        ['label' => 'Pembayaran'],
+                        ['label' => 'Dimasak'],
+                        ['label' => $isPickup ? 'Siap Diambil' : 'Dikirim'],
+                        ['label' => 'Selesai'],
+                    ];
+                @endphp
+                <div class="mt-4 pt-3 border-t border-maroon-100 flex items-center">
+                    @foreach($currentOrderSteps as $i => $step)
+                    @php
+                        $done    = ($orderStepIndex > $i) || ($paidNotCooking && $i === 0);
+                        $current = ($orderStepIndex === $i) && !($paidNotCooking && $i === 0);
+                    @endphp
+                    <div class="flex items-center {{ $i < count($currentOrderSteps) - 1 ? 'flex-1' : '' }}">
+                        <div class="flex flex-col items-center">
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[0.6rem] font-bold shrink-0
+                                {{ $done    ? 'bg-maroon text-white' : '' }}
+                                {{ $current ? 'bg-maroon text-white ring-4 ring-maroon/20' : '' }}
+                                {{ !$done && !$current ? 'bg-[#eee] text-[#bbb]' : '' }}">
+                                @if($done)<i class="fas fa-check"></i>@else{{ $i + 1 }}@endif
+                            </div>
+                            <span class="text-[0.6rem] mt-1 whitespace-nowrap font-semibold
+                                {{ $done || $current ? 'text-maroon' : 'text-[#ccc]' }}">
+                                {{ $step['label'] }}
+                            </span>
+                        </div>
+                        @if($i < count($currentOrderSteps) - 1)
+                        <div class="h-[2px] flex-1 mx-1 mb-[18px] {{ $orderStepIndex > $i ? 'bg-maroon' : 'bg-[#eee]' }}"></div>
+                        @endif
+                    </div>
+                    @endforeach
                 </div>
                 @endif
             </div>
@@ -403,6 +487,19 @@
     @endforeach
 
     </div>{{-- #ordersList --}}
+
+    <div id="empty-aktif" class="hidden text-center py-14 bg-[#fafafa] rounded-2xl text-[#bbb] mt-2">
+        <i class="fas fa-spinner text-2xl mb-3 block"></i>
+        <p class="text-sm">Tidak ada pesanan aktif</p>
+    </div>
+    <div id="empty-selesai" class="hidden text-center py-14 bg-[#fafafa] rounded-2xl text-[#bbb] mt-2">
+        <i class="fas fa-circle-check text-2xl mb-3 block"></i>
+        <p class="text-sm">Belum ada pesanan selesai</p>
+    </div>
+    <div id="empty-dibatalkan" class="hidden text-center py-14 bg-[#fafafa] rounded-2xl text-[#bbb] mt-2">
+        <i class="fas fa-circle-xmark text-2xl mb-3 block"></i>
+        <p class="text-sm">Tidak ada pesanan dibatalkan</p>
+    </div>
     @else
     {{-- Empty state global (gaya Riwayat Catering) --}}
     <div class="text-center py-20 bg-maroon-50 rounded-2xl">
@@ -430,25 +527,38 @@
         t.classList.remove('bg-white', 'text-[#777]', 'border-maroon-200', 'hover:border-maroon', 'hover:text-maroon');
     }
 
-    document.querySelectorAll('.status-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.status-tab').forEach(deactivateTab);
-            activateTab(tab);
-            const status = tab.dataset.status;
-
-            // Show/hide kartu
-            document.querySelectorAll('.order-card').forEach(card => {
-                card.classList.toggle('hidden', !(status === 'semua' || card.dataset.status === status));
-            });
-
-            // Show/hide date-group (kecuali "Hari ini" yang selalu tampil)
-            document.querySelectorAll('.date-group').forEach(group => {
-const cards = group.querySelectorAll('.order-card');
-                const anyVisible = [...cards].some(c => !c.classList.contains('hidden'));
-                group.classList.toggle('hidden', !anyVisible);
-            });
+    function switchTab(tab) {
+        document.querySelectorAll('.status-tab').forEach(t => {
+            t.dataset.tab === tab ? activateTab(t) : deactivateTab(t);
         });
+
+        let visibleCount = 0;
+        document.querySelectorAll('.order-card').forEach(card => {
+            const show = card.dataset.group === tab;
+            card.classList.toggle('hidden', !show);
+            if (show) visibleCount++;
+        });
+
+        document.querySelectorAll('.date-group').forEach(group => {
+            const anyVisible = [...group.querySelectorAll('.order-card')].some(c => !c.classList.contains('hidden'));
+            group.classList.toggle('hidden', !anyVisible);
+        });
+
+        ['aktif', 'selesai', 'dibatalkan'].forEach(t => {
+            const el = document.getElementById('empty-' + t);
+            if (el) el.classList.add('hidden');
+        });
+        if (visibleCount === 0) {
+            const emptyEl = document.getElementById('empty-' + tab);
+            if (emptyEl) emptyEl.classList.remove('hidden');
+        }
+    }
+
+    document.querySelectorAll('.status-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
     });
+
+    switchTab('{{ $defaultTab }}');
 
     // Testimoni form toggle via Tailwind hidden class
     function toggleForm(orderId) {

@@ -52,7 +52,7 @@ class OrderAdminController extends Controller
 
         $counts = [
             'semua'        => (clone $baseQuery)->whereNotIn('status', ['selesai', 'dibatalkan'])->count(),
-            'pending'      => (clone $baseQuery)->where('status', 'pending')->count(),
+            'pembayaran'   => (clone $baseQuery)->where('status', 'pembayaran')->count(),
             'diproses'     => (clone $baseQuery)->where('status', 'diproses')->count(),
             'dikirim'      => (clone $baseQuery)->where('status', 'dikirim')->count(),
             'siap_diambil' => (clone $baseQuery)->where('status', 'siap_diambil')->count(),
@@ -90,14 +90,22 @@ class OrderAdminController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status'            => 'required|in:belum_bayar,pending,diproses,dikirim,siap_diambil,selesai,dibatalkan',
+            'status'            => 'required|in:belum_bayar,pending,pembayaran,diproses,dikirim,siap_diambil,selesai,dibatalkan',
             'alasan_pembatalan' => 'required_if:status,dibatalkan|nullable|string|max:1000',
         ]);
 
         $order = Order::findOrFail($id);
 
-        if ($request->status === 'dibatalkan' && $order->status !== 'pending') {
-            $message = 'Pembatalan hanya dapat dilakukan saat status pesanan masih "Menunggu".';
+        if (in_array($order->status, ['selesai', 'dibatalkan'])) {
+            $message = 'Status pesanan sudah final dan tidak dapat diubah.';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 422);
+            }
+            return back()->withErrors(['status' => $message]);
+        }
+
+        if ($request->status === 'dibatalkan' && !in_array($order->status, ['pending', 'pembayaran', 'diproses'])) {
+            $message = 'Pembatalan hanya dapat dilakukan saat pesanan masih dalam status "Menunggu" atau "Sedang Dimasak".';
             if ($request->expectsJson()) {
                 return response()->json(['message' => $message], 422);
             }

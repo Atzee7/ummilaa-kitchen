@@ -258,14 +258,26 @@
                 <p class="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Status saat ini</p>
                 <span class="px-3 py-1.5 rounded-full text-sm font-bold {{ $sc }}">{{ $statusLabel }}</span>
             </div>
-            @if($isTimeLocked)
+            @if($order->status === 'selesai')
+            <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                <p class="text-2xl mb-1">✅</p>
+                <p class="text-sm font-semibold text-green-700">Pesanan Selesai</p>
+                <p class="text-xs text-green-500 mt-1">Status pesanan sudah final dan tidak dapat diubah.</p>
+            </div>
+            @elseif($order->status === 'dibatalkan')
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+                <p class="text-2xl mb-1">❌</p>
+                <p class="text-sm font-semibold text-red-700">Pesanan Dibatalkan</p>
+                <p class="text-xs text-red-400 mt-1">Status pesanan sudah final dan tidak dapat diubah.</p>
+            </div>
+            @elseif($isTimeLocked)
             {{-- TIME-LOCKED --}}
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center mb-4">
                 <p class="text-2xl mb-1">🔒</p>
                 <p class="text-sm font-semibold text-gray-600">Belum Waktunya</p>
                 <p class="text-xs text-gray-400 mt-1">{{ $lockTitle }}</p>
             </div>
-            @if($order->status === 'pending')
+            @if(in_array($order->status, ['pending', 'pembayaran', 'diproses']))
             <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
                 @csrf @method('PATCH')
                 <input type="hidden" name="status" value="dibatalkan">
@@ -291,10 +303,9 @@
                 <div class="mb-4">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Ubah Status</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-red-800 bg-white">
-                        @if($order->status === 'belum_bayar')
-                        <option value="belum_bayar" selected>Belum Bayar</option>
+                        @if($order->status === 'pembayaran')
+                        <option value="pembayaran" selected>Pembayaran</option>
                         @endif
-                        <option value="pending"      {{ $order->status === 'pending'      ? 'selected' : '' }}>Menunggu</option>
                         <option value="diproses"     {{ $order->status === 'diproses'     ? 'selected' : '' }}>Sedang Dimasak</option>
                         @if($isDelivery)
                         <option value="dikirim"      {{ $order->status === 'dikirim'      ? 'selected' : '' }}>Dikirim</option>
@@ -302,7 +313,7 @@
                         <option value="siap_diambil" {{ $order->status === 'siap_diambil' ? 'selected' : '' }}>Siap Diambil</option>
                         @endif
                         <option value="selesai"      {{ $order->status === 'selesai'      ? 'selected' : '' }}>Selesai</option>
-                        @if($order->status === 'pending' || $order->status === 'dibatalkan')
+                        @if(in_array($order->status, ['pending', 'pembayaran', 'diproses', 'dibatalkan']))
                         <option value="dibatalkan"   {{ $order->status === 'dibatalkan'   ? 'selected' : '' }}>Dibatalkan</option>
                         @endif
                     </select>
@@ -329,8 +340,8 @@
             <h3 class="font-playfair text-lg font-bold text-gray-800 mb-4">Alur Status</h3>
             @php
                 $steps = $isDelivery
-                    ? [['key' => 'pending', 'label' => 'Menunggu'], ['key' => 'diproses', 'label' => 'Sedang Dimasak'], ['key' => 'dikirim', 'label' => 'Dikirim'], ['key' => 'selesai', 'label' => 'Selesai']]
-                    : [['key' => 'pending', 'label' => 'Menunggu'], ['key' => 'diproses', 'label' => 'Sedang Dimasak'], ['key' => 'siap_diambil', 'label' => 'Siap Diambil'], ['key' => 'selesai', 'label' => 'Selesai']];
+                    ? [['key' => 'pembayaran', 'label' => 'Pembayaran'], ['key' => 'diproses', 'label' => 'Sedang Dimasak'], ['key' => 'dikirim', 'label' => 'Dikirim'], ['key' => 'selesai', 'label' => 'Selesai']]
+                    : [['key' => 'pembayaran', 'label' => 'Pembayaran'], ['key' => 'diproses', 'label' => 'Sedang Dimasak'], ['key' => 'siap_diambil', 'label' => 'Siap Diambil'], ['key' => 'selesai', 'label' => 'Selesai']];
                 $stepKeys = array_column($steps, 'key');
                 $currentIndex = array_search($order->status, $stepKeys);
             @endphp

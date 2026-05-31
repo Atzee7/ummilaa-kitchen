@@ -38,6 +38,7 @@
             $successStatusLabel = match($order->status) {
                 'belum_bayar'  => 'Belum Bayar',
                 'pending'      => 'Menunggu',
+                'pembayaran'   => 'Sudah Bayar',
                 'diproses'     => 'Sedang Dimasak',
                 'dikirim'      => 'Dikirim',
                 'siap_diambil' => 'Siap Diambil',

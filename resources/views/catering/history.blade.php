@@ -2,8 +2,9 @@
 
 @php
 $statusMeta = [
-    'pengajuan'           => ['Menunggu Konfirmasi', 'bg-yellow-50 text-yellow-700 border-yellow-200',   'fa-hourglass-half',  'border-yellow-400',  0],
+    'pengajuan'           => ['Menunggu Pengajuan', 'bg-yellow-50 text-yellow-700 border-yellow-200',   'fa-hourglass-half',  'border-yellow-400',  0],
     'menunggu_pembayaran' => ['Menunggu Pembayaran', 'bg-amber-50 text-orange-700 border-amber-200',    'fa-money-bill-wave', 'border-orange-400',  1],
+    'terkonfirmasi'       => ['Pembayaran Masuk',    'bg-teal-50 text-teal-700 border-teal-200',        'fa-circle-check',    'border-teal-400',    1],
     'diproses'            => ['Diproses',             'bg-blue-50 text-blue-700 border-blue-200',        'fa-utensils',        'border-blue-400',    2],
     'dikirim'             => ['Sedang Dikirim',       'bg-purple-50 text-purple-700 border-purple-200',  'fa-truck',           'border-purple-400',  3],
     'selesai'             => ['Selesai',              'bg-green-50 text-green-700 border-green-200',     'fa-circle-check',    'border-green-500',   4],
@@ -18,7 +19,7 @@ $steps = [
     ['key' => 'selesai',             'label' => 'Selesai'],
 ];
 
-$countAktif     = $orders->whereIn('status', ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim'])->count();
+$countAktif     = $orders->whereIn('status', ['pengajuan', 'menunggu_pembayaran', 'terkonfirmasi', 'diproses', 'dikirim'])->count();
 $countSelesai   = $orders->where('status', 'selesai')->count();
 $countDibatalkan = $orders->where('status', 'dibatalkan')->count();
 
@@ -87,8 +88,9 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
         @foreach($orders as $order)
         @php
             [$label, $badgeColor, $icon, $borderColor, $stepIndex] = $statusMeta[$order->status] ?? ['Tidak Diketahui', 'bg-gray-50 text-gray-700 border-gray-200', 'fa-circle', 'border-gray-300', -1];
-            $isCancelled = $order->status === 'dibatalkan';
-            $group = in_array($order->status, ['pengajuan', 'menunggu_pembayaran', 'diproses', 'dikirim']) ? 'aktif'
+            $isCancelled    = $order->status === 'dibatalkan';
+            $paidNotCooking = ($order->status === 'terkonfirmasi');
+            $group = in_array($order->status, ['pengajuan', 'menunggu_pembayaran', 'terkonfirmasi', 'diproses', 'dikirim']) ? 'aktif'
                    : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan');
         @endphp
 
@@ -132,9 +134,9 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
                 <div class="flex items-center gap-0">
                     @foreach($steps as $i => $step)
                     @php
-                        $done    = $stepIndex > $i;
-                        $current = $stepIndex === $i;
-                        $future  = $stepIndex < $i;
+                        $done    = ($stepIndex > $i) || ($paidNotCooking && $i === 1);
+                        $current = ($stepIndex === $i) && !($paidNotCooking && $i === 1);
+                        $future  = !$done && !$current;
                     @endphp
                     <div class="flex items-center {{ $i < count($steps) - 1 ? 'flex-1' : '' }}">
                         <div class="flex flex-col items-center">
@@ -175,12 +177,6 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
-                    @if($order->status === 'menunggu_pembayaran')
-                    <a href="{{ route('catering.payment', $order->id) }}"
-                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-maroon text-white rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-dark transition-all shadow-[0_2px_8px_rgba(139,26,26,0.2)]">
-                        <i class="fas fa-credit-card text-[0.72rem]"></i> Bayar Sekarang
-                    </a>
-                    @endif
                     @if($order->status === 'selesai')
                         @if($order->testimonial)
                             <span class="inline-flex items-center gap-1 text-green-700 text-[0.78rem] font-bold">
@@ -194,8 +190,12 @@ $defaultTab = $countAktif > 0 ? 'aktif' : ($countSelesai > 0 ? 'selesai' : 'diba
                         @endif
                     @endif
                     <a href="{{ route('catering.show', $order->id) }}"
-                       class="inline-flex items-center gap-1.5 px-4 py-2 border-[1.5px] border-maroon text-maroon rounded-lg font-bold text-[0.8rem] no-underline hover:bg-maroon-50 transition-all">
-                        <i class="fas fa-eye text-[0.72rem]"></i> Detail
+                       class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-[0.8rem] no-underline transition-all
+                           {{ $order->status === 'menunggu_pembayaran'
+                               ? 'bg-maroon text-white hover:bg-maroon-dark shadow-[0_2px_8px_rgba(139,26,26,0.2)]'
+                               : 'border-[1.5px] border-maroon text-maroon hover:bg-maroon-50' }}">
+                        <i class="fas fa-{{ $order->status === 'menunggu_pembayaran' ? 'credit-card' : 'eye' }} text-[0.72rem]"></i>
+                        {{ $order->status === 'menunggu_pembayaran' ? 'Lihat Detail & Bayar' : 'Detail' }}
                     </a>
                 </div>
             </div>
