@@ -75,9 +75,9 @@ class LaporanController extends Controller
                 ->groupBy('tanggal')->orderBy('tanggal')->get()
                 ->keyBy('tanggal');
 
-            // Tampilkan semua jam operasional toko 08:00–20:00
+            // Tampilkan semua jam dalam sehari (00:00–23:00)
             $grafikData = collect();
-            for ($h = 8; $h <= 20; $h++) {
+            for ($h = 0; $h <= 23; $h++) {
                 $key = str_pad($h, 2, '0', STR_PAD_LEFT);
                 $grafikData->push((object)[
                     'tanggal'    => $key,

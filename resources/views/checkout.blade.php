@@ -642,8 +642,21 @@
     })();
 
     // ====== PESAN UNTUK NANTI ======
-    const JAM_BUKA  = 8;
-    const JAM_TUTUP = 20;
+    const JADWAL_TOKO = {
+        0: { buka: 12, tutup: 19 }, // Minggu
+        1: null,                     // Senin — Tutup
+        2: { buka: 7,  tutup: 19 }, // Selasa
+        3: { buka: 12, tutup: 19 }, // Rabu
+        4: { buka: 12, tutup: 19 }, // Kamis
+        5: { buka: 12, tutup: 19 }, // Jumat
+        6: { buka: 12, tutup: 19 }, // Sabtu
+    };
+
+    function getJadwalHari(dateIso) {
+        if (!dateIso) return null;
+        const d = parseLocalDate(dateIso);
+        return JADWAL_TOKO[d.getDay()] ?? null;
+    }
 
     // Gunakan tanggal lokal (bukan UTC) agar cocok dengan server timezone (WIB)
     function localDateIso(d) {
@@ -738,35 +751,41 @@
             const d      = new Date(today);
             d.setDate(today.getDate() + i);
             const iso    = localDateIso(d);
+            const jadwal = getJadwalHari(iso);
+            const tutup  = !jadwal;
             const nama   = i === 0 ? 'Hari Ini' : i === 1 ? 'Besok'
                 : d.toLocaleDateString('id-ID', { weekday: 'long' });
             const tgl    = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            const active = tempDate === iso;
+            const active = !tutup && tempDate === iso;
             const row    = document.createElement('div');
-            row.className = 'flex items-center justify-between px-3 py-[13px] rounded-xl cursor-pointer transition-all mx-1 '
-                + (active ? 'bg-[#fdf0f0]' : 'hover:bg-[#fdf8f8]');
+            row.className = 'flex items-center justify-between px-3 py-[13px] rounded-xl mx-1 transition-all '
+                + (tutup ? 'opacity-60 cursor-not-allowed' : active ? 'bg-[#fdf0f0] cursor-pointer' : 'hover:bg-[#fdf8f8] cursor-pointer');
             row.innerHTML = `
                 <div>
-                    <p class="text-[0.9rem] font-bold" style="color:${active ? '#8B1A1A' : '#1a1a1a'}">${nama}</p>
-                    <p class="text-[0.75rem] mt-0.5" style="color:#999">${tgl}</p>
+                    <p class="text-[0.9rem] font-bold" style="color:${tutup ? '#bbb' : active ? '#8B1A1A' : '#1a1a1a'}">${nama}</p>
+                    <p class="text-[0.75rem] mt-0.5" style="color:${tutup ? '#ccc' : '#999'}">${tgl}</p>
                 </div>
-                ${active
-                    ? '<i class="fas fa-check-circle" style="color:#8B1A1A;font-size:1rem"></i>'
-                    : '<i class="fas fa-circle" style="color:#e8e0e0;font-size:0.55rem"></i>'
+                ${tutup
+                    ? '<span style="font-size:0.7rem;color:#e57373;font-weight:700;background:#fde8e8;padding:2px 8px;border-radius:9999px">Tutup</span>'
+                    : active
+                        ? '<i class="fas fa-check-circle" style="color:#8B1A1A;font-size:1rem"></i>'
+                        : '<i class="fas fa-circle" style="color:#e8e0e0;font-size:0.55rem"></i>'
                 }
             `;
-            row.addEventListener('click', () => {
-                if (tempDate !== iso) {
-                    if (tempHour !== null && !isHourAvailable(iso, tempHour)) {
-                        tempHour = null;
-                        tempMin  = null;
-                    } else if (tempMin !== null && !isTimeAvailable(iso, tempHour, tempMin)) {
-                        tempMin = null;
+            if (!tutup) {
+                row.addEventListener('click', () => {
+                    if (tempDate !== iso) {
+                        if (tempHour !== null && !isHourAvailable(iso, tempHour)) {
+                            tempHour = null;
+                            tempMin  = null;
+                        } else if (tempMin !== null && !isTimeAvailable(iso, tempHour, tempMin)) {
+                            tempMin = null;
+                        }
                     }
-                }
-                tempDate = iso;
-                showJnMain();
-            });
+                    tempDate = iso;
+                    showJnMain();
+                });
+            }
             container.appendChild(row);
         }
     }
@@ -775,7 +794,10 @@
     function buildHourGrid() {
         const container = document.getElementById('jn-hour-grid');
         container.innerHTML = '';
-        for (let h = JAM_BUKA; h < JAM_TUTUP; h++) {
+        const jadwal = getJadwalHari(tempDate);
+        const buka   = jadwal ? jadwal.buka  : 7;
+        const tutup  = jadwal ? jadwal.tutup : 19;
+        for (let h = buka; h < tutup; h++) {
             const available  = isHourAvailable(tempDate, h);
             const isSelected = tempHour === h;
             const btn = document.createElement('button');
@@ -837,14 +859,20 @@
     }
 
     function isHourAvailable(dateIso, h) {
-        if (!dateIso) return true;
+        if (!dateIso) return false;
+        const jadwal = getJadwalHari(dateIso);
+        if (!jadwal) return false;
+        if (h < jadwal.buka || h >= jadwal.tutup) return false;
         const todayIso = localDateIso(new Date());
         if (dateIso !== todayIso) return true;
         return isTimeAvailable(dateIso, h, 0) || isTimeAvailable(dateIso, h, 30);
     }
 
     function isTimeAvailable(dateIso, h, m) {
-        if (!dateIso) return true;
+        if (!dateIso) return false;
+        const jadwal = getJadwalHari(dateIso);
+        if (!jadwal) return false;
+        if (h < jadwal.buka || h >= jadwal.tutup) return false;
         const todayIso = localDateIso(new Date());
         if (dateIso !== todayIso) return true;
         const slotTime = new Date();

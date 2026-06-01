@@ -35,7 +35,7 @@
         <img class="w-full h-[280px] md:h-[400px] lg:h-[520px] object-cover rounded-[24px] shadow-[0_30px_70px_rgba(139,26,26,0.2)]"
              src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800" alt="Dimsum Ummilaa Kitchen">
         <div class="absolute top-[20px] right-[10px] lg:top-[30px] lg:right-[-20px] bg-maroon rounded-[16px] px-4 py-3 lg:px-5 lg:py-4 shadow-[0_10px_40px_rgba(139,26,26,0.3)] text-white text-center">
-            <strong class="block text-[1.4rem] font-playfair">50+</strong>
+            <strong class="block text-[1.4rem] font-playfair">10+</strong>
             <span class="text-[0.78rem] opacity-85">Varian Menu</span>
         </div>
     </div>
