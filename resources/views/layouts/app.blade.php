@@ -18,7 +18,7 @@
 
 {{-- NAVBAR --}}
 <nav x-data="{ mobileMenu: false }" class="flex items-center justify-between px-5 md:px-10 lg:px-[60px] py-4 bg-white shadow-sm">
-    <a href="{{ route('home') }}" class="font-playfair text-[1.4rem] lg:text-[1.6rem] font-bold text-maroon no-underline">
+    <a href="{{ route('home') }}" class="flex-1 font-playfair text-[1.4rem] lg:text-[1.6rem] font-bold text-maroon no-underline">
         Ummilaa
         <span class="text-[0.75rem] block text-[#666] font-sans font-medium tracking-[2px]">KITCHEN</span>
     </a>
@@ -38,7 +38,7 @@
     </div>
 
     {{-- Desktop Right Actions --}}
-    <div class="hidden lg:flex items-center gap-5">
+    <div class="hidden lg:flex flex-1 justify-end items-center gap-5">
         @auth
         <a href="{{ route('cart') }}" class="relative text-[1.2rem] text-maroon cursor-pointer">
             <i class="fas fa-shopping-cart"></i>
