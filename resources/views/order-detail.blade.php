@@ -140,7 +140,53 @@
                 <i class="fas fa-file-invoice"></i> Unduh Invoice
             </a>
             @endif
+            @if(!in_array($order->status, ['dibatalkan', 'selesai']))
+            <button type="button" onclick="document.getElementById('modal-cancel').classList.remove('hidden')"
+                class="w-full mt-3 py-[13px] border-[1.5px] border-red-300 text-red-600 rounded-xl font-bold text-[0.9rem] hover:bg-red-50 transition-all duration-200 flex items-center justify-center gap-2">
+                <i class="fas fa-times-circle"></i> Batalkan Pesanan
+            </button>
+            @endif
         </div>
     </div>
 </div>
+
+@if(!in_array($order->status, ['dibatalkan', 'selesai']))
+<div id="modal-cancel" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+        @if($order->status === 'belum_bayar')
+        <h3 class="font-bold text-[1rem] text-[#1a1a1a] mb-1">Batalkan Pesanan?</h3>
+        <p class="text-[0.8rem] text-[#888] mb-4">Stok produk akan dikembalikan. Tindakan ini tidak dapat dibatalkan.</p>
+        <form method="POST" action="{{ route('order.cancel', $order->id) }}">
+            @csrf
+            <textarea name="alasan_pembatalan" rows="3" required maxlength="500"
+                placeholder="Masukkan alasan pembatalan..."
+                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-[0.82rem] focus:outline-none focus:border-maroon mb-4 resize-none"></textarea>
+            <div class="flex gap-2">
+                <button type="button" onclick="document.getElementById('modal-cancel').classList.add('hidden')"
+                    class="flex-1 py-2.5 border border-gray-200 text-[#666] rounded-xl text-[0.82rem] font-bold hover:bg-gray-50 transition-all">
+                    Kembali
+                </button>
+                <button type="submit"
+                    class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-[0.82rem] font-bold hover:bg-red-700 transition-all">
+                    Konfirmasi Batal
+                </button>
+            </div>
+        </form>
+        @else
+        <div class="text-center">
+            <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-amber-500 text-[1.4rem]"></i>
+            </div>
+            <h3 class="font-bold text-[1rem] text-[#1a1a1a] mb-2">Tidak Dapat Dibatalkan</h3>
+            <p class="text-[0.85rem] text-[#888] mb-5">Pesanan ini tidak dapat dibatalkan karena sudah melewati tahap yang diperbolehkan.</p>
+            <button type="button" onclick="document.getElementById('modal-cancel').classList.add('hidden')"
+                class="w-full py-2.5 bg-maroon text-white rounded-xl text-[0.85rem] font-bold hover:bg-maroon-dark transition-all">
+                Mengerti
+            </button>
+        </div>
+        @endif
+    </div>
+</div>
+@endif
+
 @endsection
