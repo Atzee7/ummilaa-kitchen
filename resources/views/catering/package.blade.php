@@ -75,15 +75,15 @@
 
             {{-- Info chips --}}
             <div class="grid grid-cols-3 gap-3 mb-6">
-                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center">
+                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center shadow-sm">
                     <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Harga / Pax</p>
                     <p class="font-extrabold text-maroon text-[0.9rem]">Rp{{ number_format($package->price_per_pax, 0, ',', '.') }}</p>
                 </div>
-                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center">
+                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center shadow-sm">
                     <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Min. Order</p>
                     <p class="font-extrabold text-[#1a1a1a] text-[0.9rem]">{{ $package->min_pax ? $package->min_pax . ' pax' : '-' }}</p>
                 </div>
-                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center">
+                <div class="bg-white border border-maroon-200 rounded-xl px-4 py-3 text-center shadow-sm">
                     <p class="text-[0.65rem] font-bold uppercase tracking-widest text-[#bbb] mb-1">Maks. Order</p>
                     <p class="font-extrabold text-[#1a1a1a] text-[0.9rem]">{{ $package->max_pax ? $package->max_pax . ' pax' : '-' }}</p>
                 </div>

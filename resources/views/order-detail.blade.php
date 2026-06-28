@@ -34,7 +34,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 lg:gap-8 items-start">
         <div>
             {{-- PRODUK --}}
-            <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 mb-6">
+            <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 mb-6 shadow-sm">
                 <div class="font-extrabold text-[#1a1a1a] text-[0.97rem] mb-5 pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
                     <i class="fas fa-box text-maroon"></i> Detail Produk
                 </div>
@@ -57,7 +57,7 @@
 
             {{-- PENGIRIMAN / PENGAMBILAN --}}
             @php $isDelivery = ($order->metode_pengiriman ?? 'delivery') === 'delivery'; @endphp
-            <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7">
+            <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 shadow-sm">
                 <div class="font-extrabold text-[#1a1a1a] text-[0.97rem] mb-5 pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
                     <i class="fas {{ $isDelivery ? 'fa-map-marker-alt' : 'fa-store' }} text-maroon"></i>
                     {{ $isDelivery ? 'Info Pengiriman' : 'Info Pengambilan' }}

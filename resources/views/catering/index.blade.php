@@ -67,7 +67,7 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5 shadow-sm">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
                 <i class="fas fa-location-dot text-maroon text-[1rem]"></i>
             </div>
@@ -76,7 +76,7 @@
                 <p class="text-[0.8rem] text-[#777] leading-relaxed">Layanan catering hanya tersedia dalam radius <strong>5 km</strong> dari lokasi toko kami.</p>
             </div>
         </div>
-        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5 shadow-sm">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
                 <i class="fas fa-calendar-days text-maroon text-[1rem]"></i>
             </div>
@@ -85,7 +85,7 @@
                 <p class="text-[0.8rem] text-[#777] leading-relaxed">Pemesanan dilakukan minimal <strong>H-3</strong> dari tanggal acara.</p>
             </div>
         </div>
-        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5 shadow-sm">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
                 <i class="fas fa-calendar-check text-maroon text-[1rem]"></i>
             </div>
@@ -94,7 +94,7 @@
                 <p class="text-[0.8rem] text-[#777] leading-relaxed">Setiap tanggal hanya bisa diisi <strong>1 pesanan catering</strong>. Tanggal yang sudah dipesan tidak tersedia.</p>
             </div>
         </div>
-        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5 shadow-sm">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
                 <i class="fas fa-truck text-maroon text-[1rem]"></i>
             </div>
@@ -103,7 +103,7 @@
                 <p class="text-[0.8rem] text-[#777] leading-relaxed">Pengantaran tersedia pukul <strong>09.00–16.00 WIB</strong> sesuai waktu yang disepakati.</p>
             </div>
         </div>
-        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5 shadow-sm">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
                 <i class="fas fa-users text-maroon text-[1rem]"></i>
             </div>
@@ -112,7 +112,7 @@
                 <p class="text-[0.8rem] text-[#777] leading-relaxed">Jumlah pax wajib sesuai batas <strong>minimum & maksimum</strong> yang ditentukan pada setiap paket.</p>
             </div>
         </div>
-        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5">
+        <div class="flex items-start gap-4 bg-white border-[1.5px] border-maroon-200 rounded-2xl p-5 shadow-sm">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-maroon-50 flex items-center justify-center">
                 <i class="fas fa-comment-dots text-maroon text-[1rem]"></i>
             </div>
@@ -156,7 +156,7 @@
             <div id="pkgTrack" class="flex gap-4 md:gap-6 transition-transform duration-500">
                 @foreach($packages as $package)
                 <div class="group shrink-0 w-[calc(50%-8px)] md:w-[calc(33.333%-11px)]
-                            rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200
+                            rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 shadow-sm
                             transition-all duration-300 isolate
                             hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]">
                     <a href="{{ route('catering.package', $package->id) }}" class="no-underline block">

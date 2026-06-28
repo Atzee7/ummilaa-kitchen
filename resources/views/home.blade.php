@@ -68,7 +68,7 @@
         <div class="flex gap-7 will-change-transform" id="productCarousel">
             @foreach($featuredProducts as $product)
             <a href="{{ $product->status !== 'habis' ? route('product.show', $product->id) : '#' }}"
-               class="product-card flex-[0_0_calc(50%-14px)] md:flex-[0_0_calc(33.333%-19px)] lg:flex-[0_0_calc(25%-21px)] rounded-[20px] overflow-hidden bg-white border border-maroon-200 transition-all duration-300 no-underline block {{ $product->status === 'habis' ? 'pointer-events-none' : '' }} hover:shadow-[0_16px_48px_rgba(139,26,26,0.12)] hover:-translate-y-1.5">
+               class="product-card flex-[0_0_calc(50%-14px)] md:flex-[0_0_calc(33.333%-19px)] lg:flex-[0_0_calc(25%-21px)] rounded-[20px] overflow-hidden bg-white border border-maroon-200 shadow-sm transition-all duration-300 no-underline block {{ $product->status === 'habis' ? 'pointer-events-none' : '' }} hover:shadow-[0_16px_48px_rgba(139,26,26,0.12)] hover:-translate-y-1.5">
                 <div class="relative overflow-hidden aspect-[4/3] sm:aspect-auto sm:h-[160px] md:h-[180px] lg:h-[200px]">
                     <img class="absolute inset-0 w-full h-full object-cover bg-maroon-50 transition-transform duration-[400ms] {{ $product->status === 'habis' ? 'grayscale brightness-50' : 'group-hover:scale-105' }}"
                          src="{{ $product->image && Str::startsWith($product->image, 'products/') ? asset('storage/' . $product->image) : $product->image }}"

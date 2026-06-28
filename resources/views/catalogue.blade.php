@@ -75,7 +75,7 @@
 
         <div data-aos="fade-up" data-aos-duration="700" data-aos-delay="100" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6" id="productsGrid">
             @foreach($products as $product)
-            <div class="prod-card rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 transition-all duration-300 relative {{ $product->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]' }}"
+            <div class="prod-card rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 shadow-[0_2px_8px_rgba(139,26,26,0.2)] transition-all duration-300 relative {{ $product->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_16px_48px_rgba(139,26,26,0.1)] hover:-translate-y-[5px]' }}"
                 data-cat="{{ $product->categoryRelation->slug ?? '' }}"
                 data-name="{{ strtolower($product->name) }}"
                 @if($product->status !== 'habis')

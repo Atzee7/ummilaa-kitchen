@@ -35,7 +35,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 lg:gap-10 items-start">
 
         {{-- SIDEBAR --}}
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 lg:p-8 lg:text-center lg:sticky lg:top-[90px]">
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 lg:p-8 lg:text-center lg:sticky lg:top-[90px] shadow-sm">
             {{-- Mobile: horizontal | Desktop: vertical centered --}}
             <div class="flex items-center gap-4 lg:flex-col lg:items-center">
                 <div class="w-14 h-14 lg:w-[90px] lg:h-[90px] bg-maroon rounded-full flex items-center justify-center text-white text-[1.3rem] lg:text-[2rem] font-extrabold flex-shrink-0 lg:mx-auto lg:mb-4">
@@ -73,7 +73,7 @@
                 @csrf
 
                 {{-- INFO PRIBADI --}}
-                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 sm:p-8 mb-5">
+                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 sm:p-8 mb-5 shadow-sm">
                     <div class="font-extrabold text-[#1a1a1a] text-[0.88rem] sm:text-base mb-4 sm:mb-6 pb-3 sm:pb-[14px] border-b border-maroon-200 flex items-center gap-2">
                         <i class="fas fa-user text-maroon text-[0.85rem]"></i> Informasi Pribadi
                     </div>
@@ -102,7 +102,7 @@
                 </div>
 
                 {{-- ALAMAT + MAP --}}
-                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 sm:p-8 mb-5 sm:mb-6">
+                <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-5 sm:p-8 mb-5 sm:mb-6 shadow-sm">
                     <div class="font-extrabold text-[#1a1a1a] text-[0.88rem] sm:text-base mb-4 sm:mb-6 pb-3 sm:pb-[14px] border-b border-maroon-200 flex items-center gap-[10px]">
                         <i class="fas fa-map-marker-alt text-maroon"></i> Alamat Pengiriman
                     </div>

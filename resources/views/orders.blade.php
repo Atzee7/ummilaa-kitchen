@@ -66,7 +66,7 @@
         <div class="flex flex-col gap-5 date-group-cards">
         @foreach($groupedOrders[$today] as $order)
         @php $group = in_array($order->status, $aktifStatuses) ? 'aktif' : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan'); @endphp
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}" data-group="{{ $group }}">
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden shadow-sm transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}" data-group="{{ $group }}">
 
             {{-- HEADER --}}
             <div class="flex justify-between items-start flex-wrap gap-y-2 px-4 sm:px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">
@@ -289,7 +289,7 @@
         <div class="flex flex-col gap-5 date-group-cards">
         @foreach($dateOrders as $order)
         @php $group = in_array($order->status, $aktifStatuses) ? 'aktif' : ($order->status === 'selesai' ? 'selesai' : 'dibatalkan'); @endphp
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}" data-group="{{ $group }}">
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] overflow-hidden shadow-sm transition-all duration-200 hover:shadow-[0_8px_30px_rgba(139,26,26,0.08)] hover:-translate-y-0.5 order-card" data-status="{{ $order->status }}" data-group="{{ $group }}">
 
             {{-- HEADER --}}
             <div class="flex justify-between items-start flex-wrap gap-y-2 px-4 sm:px-6 py-[18px] bg-[#fafafa] border-b border-maroon-200">

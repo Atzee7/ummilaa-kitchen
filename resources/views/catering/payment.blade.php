@@ -14,7 +14,7 @@
     </div>
 
     <div class="max-w-xl mx-auto">
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5">
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5 shadow-sm">
             <div class="flex justify-between items-center text-[0.85rem] mb-5 bg-maroon-50 px-4 py-3 rounded-xl">
                 <span class="text-[#999]">Total yang dibayar</span>
                 <strong class="text-maroon text-[1.05rem] sm:text-[1.2rem]">Rp{{ number_format($order->total, 0, ',', '.') }}</strong>

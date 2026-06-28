@@ -38,7 +38,7 @@
         @endif
 
         {{-- HEADER --}}
-        <div class="bg-white border border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5">
+        <div class="bg-white border border-maroon-200 rounded-[18px] shadow-sm p-5 sm:p-7 mb-5">
             <div class="flex items-start justify-between gap-4 mb-5 pb-4 border-b border-maroon-100">
                 <div>
                     <p class="text-[0.72rem] text-[#999] mb-1">#{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</p>
@@ -94,7 +94,7 @@
 
         {{-- AKSI --}}
         @if($order->status === 'pengajuan')
-        <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] p-5 text-center">
+        <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] shadow-sm p-5 text-center">
             <p class="text-[0.88rem] text-[#666] mb-4">Pesanan Anda sudah diajukan. Lanjutkan diskusi & konfirmasi harga dengan admin via WhatsApp.</p>
             <a href="{{ $waLink }}" target="_blank" rel="noopener"
                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-extrabold text-white text-[0.9rem] no-underline hover:opacity-90 transition-all"
@@ -128,7 +128,7 @@
             </div>
         </div>
         @elseif($order->status === 'menunggu_pembayaran')
-        <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] p-5">
+        <div class="bg-maroon-50 border border-maroon-200 rounded-[18px] shadow-sm p-5">
             <p class="text-[0.88rem] text-[#666] mb-3 text-center">Total biaya pesanan Anda sudah ditetapkan oleh admin.</p>
 
             @if($order->costItems->isNotEmpty())
@@ -161,7 +161,7 @@
 
         {{-- RIWAYAT PESANAN --}}
         @if($order->histories->isNotEmpty())
-        <div class="bg-white border border-maroon-200 rounded-[18px] p-5 mt-5">
+        <div class="bg-white border border-maroon-200 rounded-[18px] shadow-sm p-5 mt-5">
             <h3 class="font-playfair text-[1rem] text-[#1a1a1a] mb-4">Riwayat Pesanan</h3>
             @php
                 $historyLabels = [

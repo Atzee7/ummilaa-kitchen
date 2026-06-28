@@ -108,7 +108,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
         @foreach($related as $r)
         <a href="{{ $r->status !== 'habis' ? route('product.show', $r->id) : '#' }}"
-           class="rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 transition-all duration-300 no-underline {{ $r->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_12px_36px_rgba(139,26,26,0.1)] hover:-translate-y-1' }}">
+           class="rounded-[18px] overflow-hidden bg-white border-[1.5px] border-maroon-200 shadow-sm transition-all duration-300 no-underline {{ $r->status === 'habis' ? 'cursor-default' : 'cursor-pointer hover:shadow-[0_12px_36px_rgba(139,26,26,0.1)] hover:-translate-y-1' }}">
             <div class="relative overflow-hidden h-[160px]">
                 <img src="{{ $r->image && Str::startsWith($r->image, 'products/') ? asset('storage/' . $r->image) : $r->image }}"
                      alt="{{ $r->name }}"

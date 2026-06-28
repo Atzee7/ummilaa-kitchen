@@ -18,7 +18,7 @@
     <div class="max-w-xl mx-auto">
 
         {{-- ===== BAYAR ONLINE via MIDTRANS SNAP ===== --}}
-        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5">
+        <div class="bg-white border-[1.5px] border-maroon-200 rounded-[18px] p-5 sm:p-7 mb-5 shadow-sm">
             <div class="flex items-center gap-3 mb-5 pb-4 border-b border-maroon-200">
                 <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-credit-card text-white text-[0.85rem]"></i>

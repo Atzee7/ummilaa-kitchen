@@ -12,7 +12,7 @@
         Order #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
     </div>
 
-    <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 max-w-[560px] mx-auto mb-10 text-left">
+    <div class="bg-white border-[1.5px] border-maroon-200 rounded-[20px] p-7 max-w-[560px] mx-auto mb-10 text-left shadow-sm">
         <div class="flex justify-between py-[10px] border-b border-[#f8f0f0] text-[0.9rem]">
             <span class="text-[#999]">Penerima</span><strong class="text-[#1a1a1a] font-bold">{{ $order->nama_penerima }}</strong>
         </div>
